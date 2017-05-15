@@ -156,9 +156,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		printf("Antes de copiar\n");
 		//Mostrar solucion
-
-		for(int i = 0; i < global_item_size; i++)//sustituir por global_item_size
+		float N=0;
+		for(int i = 0; i < global_item_size; i++){
 			printf("%d. max = %d. min = %d. n= %f\n", imagen[i], maximos[i], minimos[i], sumn[i]);
+			N+=sumn[i];
+		}
+		N=N/global_item_size;
 		printf("Mostrado\n");
 		// Clean up
 		ret = clFlush(command_queue);
@@ -174,7 +177,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		free(maximos);
 		free(minimos);
 
-		printf("M=%i s=%i \n",M,s);
+		printf("M=%i s=%i N=%f\n",M,s,N);
 		system("pause");
 	}
 	free(imagen);
