@@ -7,21 +7,25 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	for (int s = 2; s <= 4 ; s+=2)
+	int M = 8;
+	const int LIST_SIZE = M*M;// Lista de elementos de tamaño M
+	// Vectores de entrada		
+	int *imagen = (int*)malloc(sizeof(int)*LIST_SIZE);
+
+	for(int i = 0; i < LIST_SIZE; i++) {
+		imagen[i] = i;
+	}
+	double *sumn = (double*)malloc(sizeof(double)*LIST_SIZE);
+	double *N = (double*)malloc(sizeof(double)*LIST_SIZE);
+
+	for (int s = 2; s <= M/2 ; s*=2)
 	{
+		size_t local_item_size = s*s; // Grupo de trabajo de tamaño sxs
 
 
 		printf("iniciando\n");
 
-		// Vectores de entrada
-		int i;
-		const int LIST_SIZE = 64;// Lista de elementos de tamaño MxM
-		size_t local_item_size = s; // Grupo de trabajo de tamaño sxs
-		int *imagen = (int*)malloc(sizeof(int)*LIST_SIZE);
 
-		for(i = 0; i < LIST_SIZE; i++) {
-			imagen[i] = i;
-		}
 
 		// Cargar codigo del shader
 		FILE *fp;
@@ -69,6 +73,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			LIST_SIZE * sizeof(int), NULL, &ret);
 		cl_mem min_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
 			LIST_SIZE * sizeof(int), NULL, &ret);
+		cl_mem n_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
+			LIST_SIZE * sizeof(double), NULL, &ret);
 
 		// Copiar cada vector de entrada en su buffer
 		ret = clEnqueueWriteBuffer(command_queue, imagen_mem_obj, CL_TRUE, 0,
@@ -125,6 +131,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		ret = clSetKernelArg(kernel, 2, sizeof(cl_mem), (void *)&min_mem_obj);
 		printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+		ret = clSetKernelArg(kernel, 3, sizeof(cl_mem), (void *)&n_mem_obj);
+		printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 		//añadir para arreglar los problemas de salida
 		//ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
@@ -143,12 +151,14 @@ int _tmain(int argc, _TCHAR* argv[])
 		int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
 		ret = clEnqueueReadBuffer(command_queue, min_mem_obj, CL_TRUE, 0, 
 			LIST_SIZE * sizeof(int), minimos, 0, NULL, NULL);
-		int *n = (int*)malloc(sizeof(int)*LIST_SIZE);
-		int *N = (int*)malloc(sizeof(int)*LIST_SIZE);
+		ret = clEnqueueReadBuffer(command_queue, n_mem_obj, CL_TRUE, 0, 
+			LIST_SIZE * sizeof(double), sumn, 0, NULL, NULL);
+
 		printf("Antes de copiar\n");
 		//Mostrar solucion
-		for(i = 0; i < LIST_SIZE; i++)//sustituir por global_item_size
-			printf("%d. max = %d. min = %d\n", imagen[i], maximos[i], minimos[i]);
+
+		for(int i = 0; i < global_item_size; i++)//sustituir por global_item_size
+			printf("%d. max = %d. min = %d. n= %f\n", imagen[i], maximos[i], minimos[i], sumn[i]);
 		printf("Mostrado\n");
 		// Clean up
 		ret = clFlush(command_queue);
@@ -158,16 +168,18 @@ int _tmain(int argc, _TCHAR* argv[])
 		ret = clReleaseMemObject(imagen_mem_obj);
 		ret = clReleaseMemObject(max_mem_obj);
 		ret = clReleaseMemObject(min_mem_obj);
+		ret = clReleaseMemObject(n_mem_obj);
 		ret = clReleaseCommandQueue(command_queue);
 		ret = clReleaseContext(context);
-		free(imagen);
 		free(maximos);
 		free(minimos);
-		free(n);
-		free(N);
-		printf("tamaño de s=%i\n",s);
+
+		printf("M=%i s=%i \n",M,s);
 		system("pause");
 	}
+	free(imagen);
+	free(sumn);
+	free(N);
 	return 0;
 }
 
