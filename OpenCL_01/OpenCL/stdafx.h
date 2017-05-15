@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <CL/cl.h>
+#include <math.h>
 
 #ifdef __APPLE__
 #include <OpenCL/opencl.h>

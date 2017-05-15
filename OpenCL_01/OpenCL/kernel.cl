@@ -15,8 +15,8 @@ __kernel void vector_add(__global const int *A, __global  int *B, __global int *
 	int desplazamiento=get_group_id(0)*get_local_size(0);
     // Do the operation
 	for (int a=0;a<get_local_size(0);a++){
-		B[i] = max(A[desplazamiento+a],B[i]);
-		C[i] = min(A[desplazamiento+a],C[i]);
+		B[i] = max(A[a+i*get_local_size(0)],B[i]);
+		C[i] = min(A[a+i*get_local_size(0)],C[i]);
 	}
     
 
