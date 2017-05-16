@@ -14,20 +14,21 @@ __kernel void vector_add(__global const int *A, __global  int *B, __global int *
 	B[grid] = 0;
 	C[grid] = 2000000;
 
-	int s=(int)sqrt((double)get_local_size(0));
-	int M=(int)sqrt((double)get_global_size(0)*get_local_size(0));
+	const int s=(int)sqrt((double)get_local_size(0));
+	const int M=(int)sqrt((double)get_global_size(0)*get_local_size(0));
 
 	int ngrid=M/s;
 	int fila = get_global_id(0)/ngrid;
 	int col = get_global_id(0)%ngrid;
-	
-	int pos=fila*M*s+col*s;
+	int inicio=fila*M*s+col*s;
+
+	int pos=0;
 	for(int i=0;i<s;i++){
 		for (int j=0;j<s;j++){
-			B[grid] = max(A[pos+i*M+j],B[grid]);
-			C[grid] = min(A[pos+i*M+j],C[grid]);
+			pos=inicio+i*M+j;
+			B[grid] = max(A[pos],B[grid]);
+			C[grid] = min(A[pos],C[grid]);
 		}
 	}
     n[grid]=(double)(B[grid]-C[grid]+1);
-
 }

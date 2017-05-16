@@ -19,17 +19,48 @@ int _tmain(int argc, _TCHAR* argv[])
 		imagen[i] = i;
 		sumn[i]=0;
 	}
+	// Cargar codigo del shader
 
+	FILE *fp;
+	char *shader;
+	size_t source_size;
+
+	fp = fopen("kernel.cl", "r");
+	if (!fp) {
+		fprintf(stderr, "Fallo al cargar el kernel.\n");
+		exit(1);
+	}
+	shader = (char*)malloc(MAX_SOURCE_SIZE);
+	source_size = fread( shader, 1, MAX_SOURCE_SIZE, fp);
+	fclose( fp );
+	printf("shader cargado\n");
+
+	// conseguir informacion de la plataforma y el dispositivo
+	cl_device_id device_id = NULL;   
+	cl_uint ret_num_devices;
+	cl_uint ret_num_platforms;
+
+
+	cl_int ret = clGetPlatformIDs(0, NULL, &ret_num_platforms);
+	cl_platform_id *platforms = NULL;
+	platforms = (cl_platform_id*)malloc(ret_num_platforms*sizeof(cl_platform_id));
+
+	ret = clGetPlatformIDs(ret_num_platforms, platforms, NULL);
+	printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+
+	ret = clGetDeviceIDs( platforms[1], CL_DEVICE_TYPE_ALL, 1, 
+			&device_id, &ret_num_devices);
+		printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 	for (int s = 2; s <= M/2 ; s*=2)
 	{
+		system("cls");
 		printf("Iniciando s=%i\n",s);
 		size_t local_item_size = s*s; // Grupo de trabajo de tamaño sxs
 
 
-		printf("iniciando\n");
 
-		//borrar
+		//borrar, hace los mismo calculos que el kernel
 		/*for (int id = 0; id < (M*M)/(s*s); id+=1){
 		int ngrid=M/s;
 		int fila = id/ngrid;
@@ -50,36 +81,10 @@ int _tmain(int argc, _TCHAR* argv[])
 		}*/
 
 
-		// Cargar codigo del shader
-		FILE *fp;
-		char *shader;
-		size_t source_size;
-
-		fp = fopen("kernel.cl", "r");
-		if (!fp) {
-			fprintf(stderr, "Fallo al cargar el kernel.\n");
-			exit(1);
-		}
-		shader = (char*)malloc(MAX_SOURCE_SIZE);
-		source_size = fread( shader, 1, MAX_SOURCE_SIZE, fp);
-		fclose( fp );
-		printf("shader cargado\n");
-		// conseguir informacion de la plataforma y el dispositivo
-		cl_device_id device_id = NULL;   
-		cl_uint ret_num_devices;
-		cl_uint ret_num_platforms;
 
 
-		cl_int ret = clGetPlatformIDs(0, NULL, &ret_num_platforms);
-		cl_platform_id *platforms = NULL;
-		platforms = (cl_platform_id*)malloc(ret_num_platforms*sizeof(cl_platform_id));
 
-		ret = clGetPlatformIDs(ret_num_platforms, platforms, NULL);
-		printf("respuesta de la linea %d es %d\n", __LINE__, ret);
-
-		ret = clGetDeviceIDs( platforms[1], CL_DEVICE_TYPE_ALL, 1, 
-			&device_id, &ret_num_devices);
-		printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+		
 		// Creando el contexto de OpenCL
 		cl_context context = clCreateContext( NULL, 1, &device_id, NULL, NULL, &ret);
 		printf("respuesta de la linea %d es %d\n", __LINE__, ret);
@@ -206,11 +211,12 @@ int _tmain(int argc, _TCHAR* argv[])
 		ret = clReleaseContext(context);
 
 
-		
+
 		system("pause");
-		system("cls");
+
 
 	}
+	system("pause");
 	free(maximos);
 	free(minimos);
 	free(sumn);
