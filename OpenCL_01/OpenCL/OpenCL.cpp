@@ -7,7 +7,7 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	int M = 16;
+	int M = 320;
 	const int LIST_SIZE = M*M;// Lista de elementos de tamaño M
 	// Vectores de entrada		
 	int *imagen = (int*)malloc(sizeof(int)*LIST_SIZE);
@@ -163,7 +163,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 		//añadir para arreglar los problemas de salida
-		//ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
+		ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
 
 		// ejecutar el kernel OpenCL en la lista
 		size_t global_item_size = LIST_SIZE/local_item_size; // (M*M)/(s*s)
@@ -172,6 +172,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			printf("Excedido el numero de global_work_size, debe ser menor que CL_DEVICE_ADDRESS_BITS\n");
 		}else if(local_item_size>=CL_DEVICE_MAX_WORK_GROUP_SIZE){
 			printf("Excedido el numero de global_work_size, debe ser menor que CL_DEVICE_ADDRESS_BITS\n");
+		}else if(global_item_size%local_item_size!=0){
+			printf("global_item_size %% local_item_size ! = 0\n");
 		}else{
 			ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
 				&global_item_size, &local_item_size, 0, NULL, NULL);
@@ -216,7 +218,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	}
-	system("pause");
 	free(maximos);
 	free(minimos);
 	free(sumn);
