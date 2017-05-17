@@ -1,15 +1,15 @@
-﻿Compilación iniciada a las 17/05/2017 21:50:24.
+﻿Compilación iniciada a las 17/05/2017 22:08:34.
      1>Proyecto "C:\Users\usuario\Desktop\DBC\OpenCL_01\OpenCL\OpenCL.vcxproj" en el nodo 2 (Build destinos).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OpenCL.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt OpenCL.cpp
          OpenCL.cpp
      1>c:\users\usuario\desktop\dbc\opencl_01\opencl\opencl.cpp(30): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
-     1>c:\users\usuario\desktop\dbc\opencl_01\opencl\opencl.cpp(129): warning C4996: 'clCreateCommandQueue': se declaró obsoleto
+     1>c:\users\usuario\desktop\dbc\opencl_01\opencl\opencl.cpp(137): warning C4996: 'clCreateCommandQueue': se declaró obsoleto
                  c:\program files (x86)\intel\opencl sdk\6.3\include\cl\cl.h(1428) : vea la declaración de 'clCreateCommandQueue'
-     1>c:\users\usuario\desktop\dbc\opencl_01\opencl\opencl.cpp(235): warning C4018: '<' : no coinciden signed/unsigned
-     1>c:\users\usuario\desktop\dbc\opencl_01\opencl\opencl.cpp(261): warning C4244: '=' : conversión de 'double' a 'int'; posible pérdida de datos
-     1>c:\users\usuario\desktop\dbc\opencl_01\opencl\opencl.cpp(267): warning C4244: 'inicializando' : conversión de 'double' a 'int'; posible pérdida de datos
+     1>c:\users\usuario\desktop\dbc\opencl_01\opencl\opencl.cpp(243): warning C4018: '<' : no coinciden signed/unsigned
+     1>c:\users\usuario\desktop\dbc\opencl_01\opencl\opencl.cpp(269): warning C4244: '=' : conversión de 'double' a 'int'; posible pérdida de datos
+     1>c:\users\usuario\desktop\dbc\opencl_01\opencl\opencl.cpp(275): warning C4244: 'inicializando' : conversión de 'double' a 'int'; posible pérdida de datos
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\usuario\Desktop\DBC\OpenCL_01\Debug\OpenCL.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/lib/x86" OpenCL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\usuario\Desktop\DBC\OpenCL_01\Debug\OpenCL.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\usuario\Desktop\DBC\OpenCL_01\Debug\OpenCL.lib" /MACHINE:X86 Debug\OpenCL.obj
          Debug\stdafx.obj
@@ -18,4 +18,4 @@
 
 Compilación correcta.
 
-Tiempo transcurrido 00:00:00.43
+Tiempo transcurrido 00:00:00.49

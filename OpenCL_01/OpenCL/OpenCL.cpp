@@ -7,7 +7,7 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	int M = 16;
+	int M = 60;
 	int s = 2;
 	int LIST_SIZE = M*M;// Lista de elementos de tamaño M
 	// Vectores de entrada	
@@ -78,7 +78,15 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		printf("M=%i s= %i \n",M,s);
 		bool swap=false;
-		int subS=2;
+		int subS=s;
+		for (subS = 2; subS <= s; subS++)
+		{
+			double a=(double)s/(double)subS-s/subS;
+			printf("comparacion sub %i dif %f",subS,a);
+			if((double)s/(double)subS-s/subS==0){
+			break;
+			}
+		}
 		int subM=M;
 		int subListTam=LIST_SIZE;
 
@@ -212,8 +220,8 @@ int _tmain(int argc, _TCHAR* argv[])
 				printf("Excedido el numero de global_work_size, debe ser menor que CL_DEVICE_ADDRESS_BITS\n");
 			}else if(local_item_size>=CL_DEVICE_MAX_WORK_GROUP_SIZE){
 				printf("Excedido el numero de local_item_size, debe ser menor que CL_DEVICE_MAX_WORK_GROUP_SIZE\n");
-			}else if(global_item_size%local_item_size!=0){
-				printf("global_item_size %% local_item_size = %i %% %i   = %i\n",global_item_size,local_item_size,global_item_size%local_item_size);
+			//}else if(global_item_size%local_item_size!=0){
+			//	printf("global_item_size %% local_item_size = %i %% %i   = %i\n",global_item_size,local_item_size,global_item_size%local_item_size);
 			}else{
 				ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
 					&global_item_size, &local_item_size, 0, NULL, NULL);
@@ -265,10 +273,10 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("fin bucle\n");
 		double N = 0;
 		int tam = pow((double)(M/s),(2));
-		/*for(int i = 0; i < subListTam; i++){
+		for(int i = 0; i < subListTam; i++){
 			N+=sumn[i];
-			printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
-		}*/
+			//printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
+		}
 		N=N/(double)(subListTam);
 		printf("Mostrado\n");
 		printf("M = %i \t S = %i \t N = %f\n",M,s,N);
