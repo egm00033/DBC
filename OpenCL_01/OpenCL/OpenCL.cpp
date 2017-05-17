@@ -7,9 +7,10 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	int M = 8;
-	const int LIST_SIZE = M*M;// Lista de elementos de tamaño M
-	// Vectores de entrada		
+	int M = 32;
+	int LIST_SIZE = M*M;// Lista de elementos de tamaño M
+	// Vectores de entrada	
+	int *entrada = (int*)malloc(sizeof(int)*LIST_SIZE);
 	int *imagenM = (int*)malloc(sizeof(int)*LIST_SIZE);
 	int *imagenm = (int*)malloc(sizeof(int)*LIST_SIZE);
 	double *sumn = (double*)malloc(sizeof(double)*LIST_SIZE);
@@ -17,9 +18,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
 
 	for(int i = 0; i < LIST_SIZE; i++) {
-		imagenM[i] = i;
-		imagenm[i] = i;
-		sumn[i]=0;
+		entrada[i] = i;
 	}
 	// Cargar codigo del shader
 
@@ -54,15 +53,48 @@ int _tmain(int argc, _TCHAR* argv[])
 		&device_id, &ret_num_devices);
 	printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
-	for (int s = 2; s <= M/2 ; s*=2)
+	for (int s = 8; s <= M/2 ; s*=2)
 	{
+		system("cls");
 
 		bool swap=false;
-		do{
-			system("cls");
-			printf("Iniciando s=%i\n",s);
-			size_t local_item_size = s*s; // Grupo de trabajo de tamaño sxs
+		int subS=s;
+		int subM=M;
 
+		printf("nuevo s %i\n",subS);
+		for(int i = 0; i < M*M; i++) {
+			imagenM[i] = entrada[i];
+			imagenm[i] = entrada[i];
+			sumn[i]=0;
+		}
+
+		do{
+			if(swap){
+				printf("bucle \n");
+				for(int i = 0; i < LIST_SIZE; i++) {
+					imagenM[i] = maximos[i];
+					imagenm[i] = minimos[i];
+					sumn[i]=0;
+				}
+				subM=subM/subS;
+				subS=subM/2;
+				//subM=subM/2;
+				swap=false;
+			}
+			LIST_SIZE = subM*subM;
+
+			size_t local_item_size = subS*subS; // Grupo de trabajo de tamaño sxs
+			if(local_item_size>LIST_SIZE/local_item_size){
+				printf("hay swap \n");
+				local_item_size = LIST_SIZE/local_item_size;//se subdivide el gril
+				subS=sqrt((double)local_item_size);
+				swap=true;
+			}
+			printf("Iniciando s=%i, M=%i\n",subS,subM);
+
+			size_t global_item_size = LIST_SIZE/local_item_size; // (subM*subM)/(subS*subS)
+
+			printf("LIST_SIZE %i, global_item_size %i, local_item_size %i\n",LIST_SIZE,global_item_size,local_item_size);
 
 			// Creando el contexto de OpenCL
 			cl_context context = clCreateContext( NULL, 1, &device_id, NULL, NULL, &ret);
@@ -152,11 +184,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			//ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
 
 			// ejecutar el kernel OpenCL en la lista
-			if(local_item_size>LIST_SIZE/local_item_size){
-				local_item_size = LIST_SIZE/local_item_size;//se subdivide el gril
-				swap=true;
-			}
-			size_t global_item_size = LIST_SIZE/local_item_size; // (M*M)/(s*s)
+
 
 
 
@@ -192,7 +220,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				}
 				N=N/global_item_size;
 				printf("Mostrado\n");
-				printf("M=%i s=%i N=%f\n",M,s,N);
+				printf("subM=%i subS=%i N=%f\n",subM,subS,N);
 			}
 			// Clean up
 			ret = clFlush(command_queue);
@@ -206,7 +234,10 @@ int _tmain(int argc, _TCHAR* argv[])
 			ret = clReleaseMemObject(n_mem_obj);
 			ret = clReleaseCommandQueue(command_queue);
 			ret = clReleaseContext(context);
-			swap=false;
+			//swap=false;
+			if(M/s>=subM/subS){
+				swap=false;
+			}
 		}while(swap==true);
 
 		system("pause");
