@@ -55,10 +55,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 
-	//for (s ; s <= M/2 ; ){
 
+	//bucle para calcular todos los N
 	while(s<=M/2){
-		printf("M=%i s= %i \n",M,s);
+
 		if(s>M/2){
 			printf("FIN 1\n");
 			system("pause");
@@ -78,17 +78,18 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		printf("M=%i s= %i \n",M,s);
 		bool swap=false;
-		int subS=s;
+		int subS=2;
 		int subM=M;
+		int subListTam=LIST_SIZE;
 
-		printf("nuevo s %i\n",subS);
+		//copiar datos de entrada
 		for(int i = 0; i < M*M; i++) {
 			imagenM[i] = entrada[i];
 			imagenm[i] = entrada[i];
 			sumn[i]=0;
 		}
 
-		do{
+		do{//bucle iterativo para un S
 			if(swap){
 				printf("bucle \n");
 				for(int i = 0; i < LIST_SIZE; i++) {
@@ -97,32 +98,35 @@ int _tmain(int argc, _TCHAR* argv[])
 					//sumn[i]=0;
 				}
 				subM=subM/subS;
-				subS=subM/2;
-				//subM=subM/2;
-				swap=false;
-			}
-			LIST_SIZE = subM*subM;
+				while(subM%subS!=0&&subS<=subM/2){
+					printf("M=%i s= %i => %i\n",subM,subS,subS+1);
+					subS+=1;
 
+				}
+				if(subS>subM/2){
+					printf("analizar\n");
+					swap=false;
+					break;
+				}
+				//subM=subM/2;
+				
+			}
+
+			swap=true;
+			printf("iniciando bucle M=%i s= %i\n",subM,subS);
 			size_t local_item_size = subS*subS; // Grupo de trabajo de tamaño sxs
 			/*if(local_item_size>LIST_SIZE/local_item_size){
-				printf("hay swap \n");
-				local_item_size = LIST_SIZE/local_item_size;//se subdivide el gril
-				subS=sqrt((double)local_item_size);
-				swap=true;
+			printf("hay swap \n");
+			local_item_size = LIST_SIZE/local_item_size;//se subdivide el gril
+			subS=sqrt((double)local_item_size);
+			swap=true;
 			}
 			*/
 
-			if(local_item_size>LIST_SIZE/local_item_size){
-				printf("hay swap \n");
-				local_item_size = LIST_SIZE/local_item_size;//se subdivide el gril
-				subS=sqrt((double)local_item_size);
-				swap=true;
-			}
-			printf("Iniciando s=%i, M=%i\n",subS,subM);
+			
+			size_t global_item_size = subListTam/local_item_size; 
 
-			size_t global_item_size = LIST_SIZE/local_item_size; // (subM*subM)/(subS*subS)
-
-			printf("LIST_SIZE %i, global_item_size %i, local_item_size %i\n",LIST_SIZE,global_item_size,local_item_size);
+			printf("subListTam %i, global_item_size %i, local_item_size %i\n",subListTam,global_item_size,local_item_size);
 
 			// Creando el contexto de OpenCL
 			cl_context context = clCreateContext( NULL, 1, &device_id, NULL, NULL, &ret);
@@ -241,9 +245,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 				//Mostrar solucion
-				/*for(int i = 0; i < global_item_size; i++){
-				printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
-				}*/
+				for(int i = 0; i < global_item_size; i++){
+					printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
+				}
+				subListTam=pow((double)(subM/subS),2);
 
 			}
 			// Clean up
@@ -259,19 +264,19 @@ int _tmain(int argc, _TCHAR* argv[])
 			ret = clReleaseCommandQueue(command_queue);
 			ret = clReleaseContext(context);
 			//swap=false;
-			if(M/s>=subM/subS){
+			if(M/s<=subM/subS){
 				swap=false;
 			}
 		}while(swap==true);
 		printf("fin bucle\n");
 		double N = 0;
 		int tam = pow((double)(M/s),(2));
-		for(int i = 0; i < tam; i++){
+		for(int i = 0; i < subListTam; i++){
 			N+=sumn[i];
 			printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
 
 		}
-		N=N/(double)(tam);
+		N=N/(double)(subListTam);
 		printf("Mostrado\n");
 		printf("M = %i \t S = %i \t N = %f\n",M,s,N);
 		system("pause");
