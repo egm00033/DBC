@@ -7,7 +7,8 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	int M = 32;
+	int M = 16;
+	int s = 2;
 	int LIST_SIZE = M*M;// Lista de elementos de tamaño M
 	// Vectores de entrada	
 	int *entrada = (int*)malloc(sizeof(int)*LIST_SIZE);
@@ -53,10 +54,29 @@ int _tmain(int argc, _TCHAR* argv[])
 		&device_id, &ret_num_devices);
 	printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
-	for (int s = 8; s <= M/2 ; s*=2)
-	{
-		system("cls");
 
+	//for (s ; s <= M/2 ; ){
+
+	while(s<=M/2){
+		printf("M=%i s= %i \n",M,s);
+		if(s>M/2){
+			printf("FIN 1\n");
+			system("pause");
+			break;
+		}
+		while(M%s!=0){
+			//system("cls");
+			printf("no valido s=%i (resto = %i) \n",s,M%s);
+			s+=1;
+		}	
+
+		if(s>M/2){
+			printf("FIN 2\n");
+			system("pause");
+			break;
+		}
+
+		printf("M=%i s= %i \n",M,s);
 		bool swap=false;
 		int subS=s;
 		int subM=M;
@@ -74,7 +94,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				for(int i = 0; i < LIST_SIZE; i++) {
 					imagenM[i] = maximos[i];
 					imagenm[i] = minimos[i];
-					sumn[i]=0;
+					//sumn[i]=0;
 				}
 				subM=subM/subS;
 				subS=subM/2;
@@ -84,6 +104,14 @@ int _tmain(int argc, _TCHAR* argv[])
 			LIST_SIZE = subM*subM;
 
 			size_t local_item_size = subS*subS; // Grupo de trabajo de tamaño sxs
+			/*if(local_item_size>LIST_SIZE/local_item_size){
+				printf("hay swap \n");
+				local_item_size = LIST_SIZE/local_item_size;//se subdivide el gril
+				subS=sqrt((double)local_item_size);
+				swap=true;
+			}
+			*/
+
 			if(local_item_size>LIST_SIZE/local_item_size){
 				printf("hay swap \n");
 				local_item_size = LIST_SIZE/local_item_size;//se subdivide el gril
@@ -213,14 +241,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 				//Mostrar solucion
-				float N=0;
-				for(int i = 0; i < global_item_size; i++){
-					printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
-					N+=sumn[i];
-				}
-				N=N/global_item_size;
-				printf("Mostrado\n");
-				printf("subM=%i subS=%i N=%f\n",subM,subS,N);
+				/*for(int i = 0; i < global_item_size; i++){
+				printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
+				}*/
+
 			}
 			// Clean up
 			ret = clFlush(command_queue);
@@ -239,10 +263,20 @@ int _tmain(int argc, _TCHAR* argv[])
 				swap=false;
 			}
 		}while(swap==true);
+		printf("fin bucle\n");
+		double N = 0;
+		int tam = pow((double)(M/s),(2));
+		for(int i = 0; i < tam; i++){
+			N+=sumn[i];
+			printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
 
+		}
+		N=N/(double)(tam);
+		printf("Mostrado\n");
+		printf("M = %i \t S = %i \t N = %f\n",M,s,N);
 		system("pause");
 
-
+		s+=1;
 	}
 	free(maximos);
 	free(minimos);
