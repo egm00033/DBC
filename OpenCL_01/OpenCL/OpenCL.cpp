@@ -58,7 +58,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//bucle para calcular todos los N
 	while(s<=M/2){
-
+		system("cls");
 		if(s>M/2){
 			printf("FIN 1\n");
 			system("pause");
@@ -97,7 +97,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					imagenm[i] = minimos[i];
 					//sumn[i]=0;
 				}
-				subM=subM/subS;
+				
 				while(subM%subS!=0&&subS<=subM/2){
 					printf("M=%i s= %i => %i\n",subM,subS,subS+1);
 					subS+=1;
@@ -115,15 +115,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			swap=true;
 			printf("iniciando bucle M=%i s= %i\n",subM,subS);
 			size_t local_item_size = subS*subS; // Grupo de trabajo de tamaño sxs
-			/*if(local_item_size>LIST_SIZE/local_item_size){
-			printf("hay swap \n");
-			local_item_size = LIST_SIZE/local_item_size;//se subdivide el gril
-			subS=sqrt((double)local_item_size);
-			swap=true;
-			}
-			*/
 
-			
 			size_t global_item_size = subListTam/local_item_size; 
 
 			printf("subListTam %i, global_item_size %i, local_item_size %i\n",subListTam,global_item_size,local_item_size);
@@ -215,11 +207,6 @@ int _tmain(int argc, _TCHAR* argv[])
 			//añadir para arreglar los problemas de salida
 			//ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
 
-			// ejecutar el kernel OpenCL en la lista
-
-
-
-
 
 			if(global_item_size>=CL_DEVICE_ADDRESS_BITS){
 				printf("Excedido el numero de global_work_size, debe ser menor que CL_DEVICE_ADDRESS_BITS\n");
@@ -248,7 +235,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				for(int i = 0; i < global_item_size; i++){
 					printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
 				}
-				subListTam=pow((double)(subM/subS),2);
+				
 
 			}
 			// Clean up
@@ -264,18 +251,24 @@ int _tmain(int argc, _TCHAR* argv[])
 			ret = clReleaseCommandQueue(command_queue);
 			ret = clReleaseContext(context);
 			//swap=false;
-			if(M/s<=subM/subS){
+			if(M/s>=subM/subS){
+				printf(" M=%i s= %i",M,s);
+				printf(" > sM=%i ss= %i\n",subM,subS);
 				swap=false;
+				printf("condicion fin bucle\n");
+			}else{
+			//parametros para la siguiente ejecución del bucle
+				subListTam=pow((double)(subM/subS),2);
+				subM=subM/subS;
 			}
 		}while(swap==true);
 		printf("fin bucle\n");
 		double N = 0;
 		int tam = pow((double)(M/s),(2));
-		for(int i = 0; i < subListTam; i++){
+		/*for(int i = 0; i < subListTam; i++){
 			N+=sumn[i];
 			printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
-
-		}
+		}*/
 		N=N/(double)(subListTam);
 		printf("Mostrado\n");
 		printf("M = %i \t S = %i \t N = %f\n",M,s,N);
