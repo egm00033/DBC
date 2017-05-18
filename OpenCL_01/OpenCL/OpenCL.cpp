@@ -1,5 +1,4 @@
 // OpenCL.cpp: define el punto de entrada de la aplicacion de consola.
-//
 
 
 
@@ -54,31 +53,27 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 
 	// compilar programa
 	ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
-	if(ret ==CL_SUCCESS ){
-		printf("respuesta bildProgram = CL_SUCCESS \n");
-	}else{
-		if(ret == CL_INVALID_PROGRAM ){
-			printf("respuesta bildProgram = CL_INVALID_PROGRAM \n");
-		}else if(ret == CL_INVALID_VALUE  ){
-			printf("respuesta bildProgram = CL_INVALID_VALUE  \n");
-		}else if(ret == CL_INVALID_DEVICE   ){
-			printf("respuesta bildProgram = CL_INVALID_DEVICE   \n");
-		}else if(ret ==CL_INVALID_BINARY  ){
-			printf("respuesta bildProgram = CL_INVALID_BINARY  \n");
-		}else if(ret == CL_INVALID_BUILD_OPTIONS    ){
-			printf("respuesta bildProgram = CL_INVALID_BUILD_OPTIONS   \n");
-		}else if(ret == CL_COMPILER_NOT_AVAILABLE    ){
-			printf("respuesta bildProgram = CL_COMPILER_NOT_AVAILABLE    \n");
-		}else if(ret ==CL_BUILD_PROGRAM_FAILURE  ){
-			printf("respuesta bildProgram = CL_BUILD_PROGRAM_FAILURE  \n");
-		}else if(ret == CL_INVALID_OPERATION   ){
-			printf("respuesta bildProgram = CL_INVALID_OPERATION   \n");
-		}else if(ret == CL_OUT_OF_HOST_MEMORY   ){
-			printf("respuesta bildProgram = CL_OUT_OF_HOST_MEMORY   \n");
-		}else{
-			printf("respuesta bildProgram = desconocido \n");
-		}
+
+	if(ret == CL_INVALID_PROGRAM ){
+		printf("respuesta bildProgram = CL_INVALID_PROGRAM \n");
+	}else if(ret == CL_INVALID_VALUE  ){
+		printf("respuesta bildProgram = CL_INVALID_VALUE  \n");
+	}else if(ret == CL_INVALID_DEVICE   ){
+		printf("respuesta bildProgram = CL_INVALID_DEVICE   \n");
+	}else if(ret ==CL_INVALID_BINARY  ){
+		printf("respuesta bildProgram = CL_INVALID_BINARY  \n");
+	}else if(ret == CL_INVALID_BUILD_OPTIONS    ){
+		printf("respuesta bildProgram = CL_INVALID_BUILD_OPTIONS   \n");
+	}else if(ret == CL_COMPILER_NOT_AVAILABLE    ){
+		printf("respuesta bildProgram = CL_COMPILER_NOT_AVAILABLE    \n");
+	}else if(ret ==CL_BUILD_PROGRAM_FAILURE  ){
+		printf("respuesta bildProgram = CL_BUILD_PROGRAM_FAILURE  \n");
+	}else if(ret == CL_INVALID_OPERATION   ){
+		printf("respuesta bildProgram = CL_INVALID_OPERATION   \n");
+	}else if(ret == CL_OUT_OF_HOST_MEMORY   ){
+		printf("respuesta bildProgram = CL_OUT_OF_HOST_MEMORY   \n");
 	}
+
 
 	// Crear kernel de OpenCL
 	cl_kernel kernel = clCreateKernel(program, "vector_add", &ret);
@@ -143,6 +138,9 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 	ret = clReleaseMemObject(n_mem_obj);
 	ret = clReleaseCommandQueue(command_queue);
 	ret = clReleaseContext(context);
+
+	free(maximos);
+	free(minimos);
 }
 
 double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t source_size, int *entrada){
@@ -212,13 +210,14 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 	}while(swap==true);
 	printf("fin bucle\n");
 	double N = 0;
-	int tam = pow((double)(M/s),(2));
-	for(int i = 0; i < subM/subS; i++){
+	int tam = subM/subS;
+	tam*=tam;
+	for(int i = 0; i < tam; i++){
 		N+=sumn[i];
 		printf("%i. max = %d. min = %d. n= %f\n", i, imagenM[i], imagenm[i], sumn[i]);
 	}
-	printf("subM/subS=subListTam %i/%i=%i\n",subM,subS,global_item_size);
-	N=N/(double)(subM/subS);
+	printf("subM/subS=tam %i/%i=%i\n",subM,subS,tam);
+	N=N/(double)(tam);
 
 	free(sumn);
 	free(imagenM);
@@ -229,17 +228,14 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	int M = 12;
+	int M = 14;
 	int s = 2;
 	int LIST_SIZE = M*M;// Lista de elementos de tamaño M
 	// Vectores de entrada	
 	int *entrada = (int*)malloc(sizeof(int)*LIST_SIZE);
 
-	int *maximos = (int*)malloc(sizeof(int)*LIST_SIZE);
-	int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
-
 	for(int i = 0; i < LIST_SIZE; i++) {
-		entrada[i] = i;
+		entrada[i] = i%M;
 	}
 	// Cargar codigo del shader
 
@@ -309,8 +305,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("fin bucle\n\n\n");
 		s+=1;
 	}
-	free(maximos);
-	free(minimos);
 
 
 	return 0;
