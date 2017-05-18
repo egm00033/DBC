@@ -8,11 +8,10 @@
 
 
 
-void calcularNdeS(int subS, int M, cl_device_id device_id, char *shader, size_t source_size, int *imagenM,int *imagenm){
+void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t source_size, int *imagenM,int *imagenm,double *sumn){
 	cl_int ret;
 	int LIST_SIZE = M*M;
 	size_t local_item_size = subS*subS; 
-	double *sumn = (double*)malloc(sizeof(double)*LIST_SIZE);
 	int *maximos = (int*)malloc(sizeof(int)*LIST_SIZE);
 	int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
 	size_t global_item_size = LIST_SIZE/local_item_size; 
@@ -146,6 +145,88 @@ void calcularNdeS(int subS, int M, cl_device_id device_id, char *shader, size_t 
 	ret = clReleaseContext(context);
 }
 
+double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t source_size, int *entrada){
+
+	size_t global_item_size=0;
+	int LIST_SIZE=M*M;
+	int subListTam=LIST_SIZE;
+	int *imagenM = (int*)malloc(sizeof(int)*LIST_SIZE);
+	int *imagenm = (int*)malloc(sizeof(int)*LIST_SIZE);
+	double *sumn = (double*)malloc(sizeof(double)*LIST_SIZE);
+
+	int subS=s;
+	int subM=M;
+	for (subS = 2; subS <= s; subS++)
+	{
+		double a=(double)s/(double)subS-s/subS;
+		printf("comparacion sub %i dif %f\n",subS,a);
+		if((double)s/(double)subS-s/subS==0){
+			break;
+		}
+	}
+
+
+	for(int i = 0; i < M*M; i++) {
+		imagenM[i] = entrada[i];
+		imagenm[i] = entrada[i];
+		sumn[i]=0;
+	}
+	bool swap=false;
+	do{
+		//bucle iterativo para un S
+		if(swap){
+			printf("swap \n");
+
+			while(subS<=subM/2
+				&&(M/s)%(subM/subS)!=0){
+					printf("M=%i s= %i => %i\n",subM,subS,subS+1);
+					subS+=1;
+
+			}
+
+			if(subS>subM/2){
+				printf("no borro\n");
+				swap=false;
+				break;
+			}
+			//subM=subM/2;
+
+		}
+
+		swap=true;
+		//desde ----------------->
+		printf("iniciando bucle M=%i s= %i\n",subM,subS);
+		calcularn(subS, subM, device_id, shader,  source_size, imagenM, imagenm,sumn);
+		//  <--------------------hasta
+
+		//swap=false;
+		if(M/s>=subM/subS){
+			printf(" M=%i s= %i",M,s);
+			printf(" > sM=%i ss= %i\n",subM,subS);
+			swap=false;
+		}else{
+			//parametros para la siguiente ejecución del bucle
+			subListTam=pow((double)(subM/subS),2);
+			subM=subM/subS;
+		}
+	}while(swap==true);
+	printf("fin bucle\n");
+	double N = 0;
+	int tam = pow((double)(M/s),(2));
+	for(int i = 0; i < subM/subS; i++){
+		N+=sumn[i];
+		printf("%i. max = %d. min = %d. n= %f\n", i, imagenM[i], imagenm[i], sumn[i]);
+	}
+	printf("subM/subS=subListTam %i/%i=%i\n",subM,subS,global_item_size);
+	N=N/(double)(subM/subS);
+
+	free(sumn);
+	free(imagenM);
+	free(imagenm);
+
+	return N;
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	int M = 12;
@@ -153,9 +234,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	int LIST_SIZE = M*M;// Lista de elementos de tamaño M
 	// Vectores de entrada	
 	int *entrada = (int*)malloc(sizeof(int)*LIST_SIZE);
-	int *imagenM = (int*)malloc(sizeof(int)*LIST_SIZE);
-	int *imagenm = (int*)malloc(sizeof(int)*LIST_SIZE);
-	double *sumn = (double*)malloc(sizeof(double)*LIST_SIZE);
+
 	int *maximos = (int*)malloc(sizeof(int)*LIST_SIZE);
 	int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
 
@@ -219,72 +298,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		printf("M=%i s= %i \n",M,s);
 		bool swap=false;
-		int subS=s;
-		for (subS = 2; subS <= s; subS++)
-		{
-			double a=(double)s/(double)subS-s/subS;
-			printf("comparacion sub %i dif %f\n",subS,a);
-			if((double)s/(double)subS-s/subS==0){
-				break;
-			}
-		}
-		int subM=M;
-		int subListTam=LIST_SIZE;
 
-		//copiar datos de entrada
-		for(int i = 0; i < M*M; i++) {
-			imagenM[i] = entrada[i];
-			imagenm[i] = entrada[i];
-			sumn[i]=0;
-		}
-		size_t global_item_size=0;
-		do{
-			//bucle iterativo para un S
-			if(swap){
-				printf("swap \n");
 
-				while(subS<=subM/2
-					&&(M/s)%(subM/subS)!=0){
-					printf("M=%i s= %i => %i\n",subM,subS,subS+1);
-					subS+=1;
+		//<<<<<<<<<<<<<<<<<------inicio
+		double N = calcularN(s, M, device_id, shader, source_size, entrada);
+		//fin------------------->
 
-				}
-
-				if(subS>subM/2){
-					printf("no borro\n");
-					swap=false;
-					break;
-				}
-				//subM=subM/2;
-
-			}
-
-			swap=true;
-			//desde ----------------->
-			printf("iniciando bucle M=%i s= %i\n",subM,subS);
-			calcularNdeS(subS, subM, device_id, shader,  source_size, imagenM, imagenm);
-			//  <--------------------hasta
-
-			//swap=false;
-			if(M/s>=subM/subS){
-				printf(" M=%i s= %i",M,s);
-				printf(" > sM=%i ss= %i\n",subM,subS);
-				swap=false;
-			}else{
-				//parametros para la siguiente ejecución del bucle
-				subListTam=pow((double)(subM/subS),2);
-				subM=subM/subS;
-			}
-		}while(swap==true);
-		printf("fin bucle\n");
-		double N = 0;
-		int tam = pow((double)(M/s),(2));
-		for(int i = 0; i < global_item_size; i++){
-			N+=sumn[i];
-			printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
-		}
-		printf("subM/subS=subListTam %i/%i=%i\n",subM,subS,global_item_size);
-		N=N/(double)(global_item_size);
 		printf("M = %i \t S = %i \t N = %f\n",M,s,N);
 		system("pause");
 		printf("fin bucle\n\n\n");
@@ -292,9 +311,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	free(maximos);
 	free(minimos);
-	free(sumn);
-	free(imagenM);
-	free(imagenm);
+
 
 	return 0;
 }
