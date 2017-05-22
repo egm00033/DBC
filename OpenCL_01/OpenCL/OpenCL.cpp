@@ -3,11 +3,21 @@
 
 
 #include "stdafx.h"
+#include <math.h>
 
-
-
+int max(int a, int b){
+	if(a>b)
+		return a;
+	return b;
+}
+int min(int a, int b){
+	if(a<b)
+		return a;
+	return b;
+}
 
 void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t source_size, int *imagenM,int *imagenm,double *sumn){
+	printf("Inicio cacularn s'=%i\n",subS);
 	cl_int ret;
 	int LIST_SIZE = M*M;
 	size_t local_item_size = subS*subS; 
@@ -106,7 +116,34 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 	}else if(global_item_size<local_item_size){
 		printf("ERROR: global_item_size<local_item_size = %i < %i  \n",global_item_size,local_item_size);
 		//se hace de forma tradicional
+		printf("Iniciando calculo manual\n");
 
+		int sGrid=M/subS;
+		for (int global = 0; global < global_item_size; global++)
+		{
+			int filaGrid=global/sGrid;
+			int colGrid=global%sGrid;
+			int grid=sGrid*filaGrid+colGrid;
+
+			maximos[grid] = 0;
+			minimos[grid] = 2000000;
+			for(int local = 0; local < local_item_size; local++){
+
+
+				int filaLocal=local/subS;
+				int colLocal=local%subS;
+
+				int inicio=filaGrid*M*subS+colGrid*subS;
+
+				int pos=inicio+filaLocal*M+colLocal;
+				maximos[grid] = max(imagenM[pos],maximos[grid]);
+				minimos[grid] = min(imagenm[pos],minimos[grid]);
+				printf("actual = %i, max %i, min %i \n",imagenm[pos],maximos[grid],minimos[grid]);
+
+			}
+			sumn[grid]=(double)(maximos[grid]-minimos[grid]+1);
+			printf("grid = %i\n",grid);
+		}
 
 	}else{
 		ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
@@ -120,14 +157,12 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 		ret = clEnqueueReadBuffer(command_queue, n_mem_obj, CL_TRUE, 0, 
 			LIST_SIZE * sizeof(double), sumn, 0, NULL, NULL);
 
-		//Mostrar solucion
-		for(int i = 0; i < global_item_size; i++){
-			//printf("%d. max = %d. min = %d. n= %f\n", i, maximos[i], minimos[i], sumn[i]);
-			imagenM[i]=maximos[i];
-			imagenm[i]=minimos[i];
-		}
-
-
+	}
+	//copiar y Mostrar solucion
+	for(int i = 0; i < global_item_size; i++){
+		printf("%d. max = %d. min = %d. n= %f\n", i, maximos[i], minimos[i], sumn[i]);
+		imagenM[i]=maximos[i];
+		imagenm[i]=minimos[i];
 	}
 
 
@@ -146,10 +181,11 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 
 	free(maximos);
 	free(minimos);
+	printf("Fin cacularn s=%i\n",subS);
 }
 
 double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t source_size, int *entrada){
-
+	printf("Inicio cacularN s=%i\n",s);
 	size_t global_item_size=0;
 	int LIST_SIZE=M*M;
 	int subListTam=LIST_SIZE;
@@ -157,18 +193,12 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 	int *imagenm = (int*)malloc(sizeof(int)*LIST_SIZE);
 	double *sumn = (double*)malloc(sizeof(double)*LIST_SIZE);
 
-	int subS=s;
+	int subS=2;
 	int subM=M;
-	for (subS = 2; subS <= s; subS++)
-	{
-		double a=(double)s/(double)subS-s/subS;
-		printf("comparacion sub %i dif %f\n",subS,a);
-		if((double)s/(double)subS-s/subS==0){
-			break;
-		}
-	}
+	//subdividir en grid menores
 
 
+	//vectores de entrada
 	for(int i = 0; i < M*M; i++) {
 		imagenM[i] = entrada[i];
 		imagenm[i] = entrada[i];
@@ -176,65 +206,56 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 	}
 	bool swap=false;
 	do{
-		//bucle iterativo para un S
-		if(swap){
-			printf("swap \n");
-
-			while(subS<=subM/2
-				&&(M/s)%(subM/subS)!=0){
-					printf("M=%i s= %i => %i\n",subM,subS,subS+1);
-					subS+=1;
-
-			}
-
-			if(subS>subM/2){
-				printf("no borro\n");
-				swap=false;
+		//bucle iterativo para un S'
+		for (subS=2 ; subS <= s; subS++)
+		{
+			if(M%subS==0&&s%subS==0){
 				break;
 			}
-			//subM=subM/2;
-
 		}
-
-		swap=true;
+		subM=M;
 		//desde ----------------->
-		printf("iniciando bucle M=%i s= %i\n",subM,subS);
+		printf("iniciando bucle subM=%i subS= %i\n",subM,subS);
 		calcularn(subS, subM, device_id, shader,  source_size, imagenM, imagenm,sumn);
 		//  <--------------------hasta
 
 		//swap=false;
+		M=M/subS;
+		s=s/subS;
 		if(M/s>=subM/subS){
-			printf(" M=%i s= %i",M,s);
-			printf(" > sM=%i ss= %i\n",subM,subS);
+			printf("saliendo bucle (%i / %i)",M,s);
+			printf(" == (%i / %i)\n",subM,subS);
 			swap=false;
 		}else{
 			//parametros para la siguiente ejecución del bucle
 			subListTam=pow((double)(subM/subS),2);
-			subM=subM/subS;
+			//subM=subM/subS;
+			swap=true;
 		}
 	}while(swap==true);
 	printf("fin bucle\n");
 	double N = 0;
-	int tam = subM/subS;
+	int tam = M;
 	tam*=tam;
 	for(int i = 0; i < tam; i++){
 		N+=sumn[i];
 		printf("%i. max = %d. min = %d. n= %f\n", i, imagenM[i], imagenm[i], sumn[i]);
 	}
-	printf("subM/subS=tam %i/%i=%i\n",subM,subS,tam);
+	printf("subM 2=tam %i^2=%i\n",M,tam);
 	N=N/(double)(tam);
 
 	free(sumn);
 	free(imagenM);
 	free(imagenm);
-
+	printf("Fin cacularN s=%i\n",s);
 	return N;
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	int M = 128;
-	int s = 2;
+
+	int M = 12;
+	int s = 6;
 	int LIST_SIZE = M*M;// Lista de elementos de tamaño M
 	// Vectores de entrada	
 	int *entrada = (int*)malloc(sizeof(int)*LIST_SIZE);
@@ -280,24 +301,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	//bucle para calcular todos los N
 	while(s<=M/2){
 		system("cls");
-		if(s>M/2){
-			printf("FIN 1\n");
-			system("pause");
-			break;
-		}
-		while(M%s!=0){
+
+		while(M%s!=0&&s<=M/2){
 			//system("cls");
 			printf("no valido s=%i (resto = %i) \n",s,M%s);
 			s+=1;
 		}	
 
-		if(s>M/2){
-			printf("FIN 2\n");
-			system("pause");
-			break;
-		}
-
-		printf("M=%i s= %i \n",M,s);
+		printf("Iniciando M=%i s= %i \n",M,s);
 		bool swap=false;
 
 
