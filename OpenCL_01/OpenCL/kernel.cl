@@ -28,8 +28,8 @@ __kernel void vector_add(__global const int *A,__global const int *a, __global  
 			pos=inicio+i*M+j;
 			B[grid] = max(A[pos],B[grid]);
 			C[grid] = min(a[pos],C[grid]);
-			//B[grid]=inicio;
-			//C[grid]=col;
+			//B[grid]= max(pos,B[grid]);
+			//C[grid]= min(pos,C[grid]);
 		}
 	}
     n[grid]=(double)(B[grid]-C[grid]+1);

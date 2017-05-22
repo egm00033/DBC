@@ -13,7 +13,7 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 	size_t local_item_size = subS*subS; 
 	int *maximos = (int*)malloc(sizeof(int)*LIST_SIZE);
 	int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
-	size_t global_item_size = LIST_SIZE/local_item_size; 
+	const size_t global_item_size = LIST_SIZE/local_item_size; 
 
 	printf("subListTam %i, global_item_size %i, local_item_size %i\n",LIST_SIZE,global_item_size,local_item_size);
 
@@ -101,8 +101,13 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 		printf("Excedido el numero de global_work_size, debe ser menor que CL_DEVICE_ADDRESS_BITS\n");
 	}else if(local_item_size>=CL_DEVICE_MAX_WORK_GROUP_SIZE){
 		printf("Excedido el numero de local_item_size, debe ser menor que CL_DEVICE_MAX_WORK_GROUP_SIZE\n");
-		//}else if(global_item_size%local_item_size!=0){
-		//	printf("global_item_size %% local_item_size = %i %% %i   = %i\n",global_item_size,local_item_size,global_item_size%local_item_size);
+	}else if(LIST_SIZE!=global_item_size*local_item_size){
+		printf("ERROR: global_item_size*local_item_size = %i * %i   != %i\n",global_item_size,local_item_size,global_item_size*local_item_size);
+	}else if(global_item_size<local_item_size){
+		printf("ERROR: global_item_size<local_item_size = %i < %i  \n",global_item_size,local_item_size);
+		//se hace de forma tradicional
+
+
 	}else{
 		ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
 			&global_item_size, &local_item_size, 0, NULL, NULL);
@@ -117,7 +122,7 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 
 		//Mostrar solucion
 		for(int i = 0; i < global_item_size; i++){
-			printf("%d. max = %d. min = %d. n= %f\n", imagenM[i], maximos[i], minimos[i], sumn[i]);
+			//printf("%d. max = %d. min = %d. n= %f\n", i, maximos[i], minimos[i], sumn[i]);
 			imagenM[i]=maximos[i];
 			imagenm[i]=minimos[i];
 		}
@@ -228,14 +233,14 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	int M = 14;
+	int M = 128;
 	int s = 2;
 	int LIST_SIZE = M*M;// Lista de elementos de tamaño M
 	// Vectores de entrada	
 	int *entrada = (int*)malloc(sizeof(int)*LIST_SIZE);
 
 	for(int i = 0; i < LIST_SIZE; i++) {
-		entrada[i] = i%M;
+		entrada[i] = i;
 	}
 	// Cargar codigo del shader
 
@@ -305,7 +310,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("fin bucle\n\n\n");
 		s+=1;
 	}
-
+	system("pause");
 
 	return 0;
 }
