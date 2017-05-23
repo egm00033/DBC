@@ -17,7 +17,7 @@ int min(int a, int b){
 }
 
 void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t source_size, int *imagenM,int *imagenm,double *sumn){
-	printf("Inicio cacularn s'=%i\n",subS);
+	printf("Inicio cacularn s'=%i, M=%i\n",subS,M);
 	cl_int ret;
 	int LIST_SIZE = M*M;
 	size_t local_item_size = subS*subS; 
@@ -106,7 +106,6 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 	//añadir para arreglar los problemas de salida
 	ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
 
-	bool subdividir=true;
 	if(global_item_size>=CL_DEVICE_ADDRESS_BITS){
 		printf("Excedido el numero de global_work_size = %i, debe ser menor que CL_DEVICE_ADDRESS_BITS=%i\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
 	}else if(local_item_size>=CL_DEVICE_MAX_WORK_GROUP_SIZE){
@@ -146,7 +145,6 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 		}
 
 	}else{
-		subdividir=false;
 		ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
 			&global_item_size, &local_item_size, 0, NULL, NULL);
 		printf("Inicio copiar buffers\n");
@@ -159,24 +157,10 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 			LIST_SIZE * sizeof(double), sumn, 0, NULL, NULL);
 
 	}
-	//if subdividir
-	if(subdividir&&M>2&&M%2==0&&M>subS*subS){
-		//si el número de operaciones es mayor a la capacidad del dispositivo, se subdivide las operaciones en grupos
-		int nElementos=global_item_size;
-		
-		printf("\n");
-		for (int i = 0; i < 4; i++)
-		{
-			int *vector=(imagenM+i*global_item_size/4);
-			printf("subdividir tam = %i, posInicial=%i M=%i\n",global_item_size,vector[0],M/2);
-			calcularn(subS, M/2, device_id, shader,  source_size, imagenM+i*global_item_size/4, imagenm,sumn);
-		}
-		printf("\n");
-	
-	}
+
 	//copiar y Mostrar solucion
 	for(int i = 0; i < global_item_size; i++){
-		printf("%d. max = %d. min = %d. n= %f\n", i, maximos[i], minimos[i], sumn[i]);
+		//printf("%d. max = %d. min = %d. n= %f\n", i, maximos[i], minimos[i], sumn[i]);
 		imagenM[i]=maximos[i];
 		imagenm[i]=minimos[i];
 	}
@@ -225,28 +209,26 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 		//bucle iterativo para un S'
 		for (subS=2 ; subS < s; subS++)
 		{
-			printf("subS=%i, num grid = %i\n",subS,(M/subS)*(M/subS));
 			if(M%subS==0&&s%subS==0&&CL_DEVICE_ADDRESS_BITS>pow(double(M/subS),2)){
-				printf("valido subS=%i subM%subS=%i\n",subS,M%subS);
 				break;
 			}
 		}
-		if(subS>M/2){
-			printf("s= %i no valido\n",subS);
-			break;
-		}
+
 		subM=M;
-		//desde ----------------->
-		printf("iniciando bucle subM=%i subS= %i\n",subM,subS);
-		calcularn(subS, subM, device_id, shader,  source_size, imagenM, imagenm,sumn);
-		//  <--------------------hasta
+
+
+		//es necesario subdividir?
+		if((M*M)/(subS*subS)>CL_DEVICE_ADDRESS_BITS||(subS*subS>CL_DEVICE_MAX_WORK_GROUP_SIZE)){
+			printf("-------------------------------------subdividir obligatorio\n");
+		}else{
+			calcularn(subS, subM, device_id, shader,  source_size, imagenM, imagenm,sumn);
+		}
+
 
 		//swap=false;
 		M=M/subS;
 		s=s/subS;
 		if(M/s>=subM/subS){
-			printf("saliendo bucle (%i / %i)",M,s);
-			printf(" == (%i / %i)\n",subM,subS);
 			swap=false;
 		}else{
 			//parametros para la siguiente ejecución del bucle
@@ -256,21 +238,19 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 		}
 	}while(swap==true);
 	double N = 0;
-	if(!swap){
-		printf("fin bucle %i<%i\n",M/2,subS);
 
-		int tam = M;
-		tam*=tam;
-		for(int i = 0; i < tam; i++){
-			N+=sumn[i];
-			//printf("%i. max = %d. min = %d. n= %f\n", i, imagenM[i], imagenm[i], sumn[i]);
-		}
-		N=N/(double)(tam);
+
+	int tam = M;
+	tam*=tam;
+	for(int i = 0; i < tam; i++){
+		N+=sumn[i];
+		//printf("%i. max = %d. min = %d. n= %f\n", i, imagenM[i], imagenm[i], sumn[i]);
 	}
+	N=N/(double)(tam);
+
 	free(sumn);
 	free(imagenM);
 	free(imagenm);
-	printf("Fin cacularN N=%f\n",N);
 	return N;
 }
 
@@ -300,7 +280,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	shader = (char*)malloc(MAX_SOURCE_SIZE);
 	source_size = fread( shader, 1, MAX_SOURCE_SIZE, fp);
 	fclose( fp );
-	printf("shader cargado\n");
 
 	// conseguir informacion de la plataforma y el dispositivo
 	cl_device_id device_id = NULL;   
@@ -313,11 +292,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	platforms = (cl_platform_id*)malloc(ret_num_platforms*sizeof(cl_platform_id));
 
 	ret = clGetPlatformIDs(ret_num_platforms, platforms, NULL);
-	printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 	ret = clGetDeviceIDs( platforms[1], CL_DEVICE_TYPE_ALL, 1, 
 		&device_id, &ret_num_devices);
-	printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 
 
@@ -327,11 +306,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		while(M%s!=0&&s<=M/2){
 			//system("cls");
-			printf("no valido s=%i (resto = %i) \n",s,M%s);
 			s+=1;
 		}	
 
-		printf("Iniciando M=%i s= %i \n",M,s);
 
 		//<<<<<<<<<<<<<<<<<------inicio
 		double N = calcularN(s, M, device_id, shader, source_size, entrada);
