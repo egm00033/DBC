@@ -16,13 +16,19 @@ int min(int a, int b){
 	return b;
 }
 
-void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t source_size, int *imagenM,int *imagenm,double *sumn){
+void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t source_size, int **imagenM,int **imagenm,int **sumn){
 	printf("Inicio cacularn s'=%i\n",subS);
 	cl_int ret;
 	int LIST_SIZE = M*M;
 	size_t local_item_size = subS*subS; 
-	int *maximos = (int*)malloc(sizeof(int)*LIST_SIZE);
-	int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
+	int **maximos =(int **) calloc(M,sizeof(int *));
+	for (int i = 0; i < M; i++){
+		imagenM[i]=(int *) calloc(M,sizeof(int));
+	}
+	int **minimos =(int **) calloc(M,sizeof(int *));
+	for (int i = 0; i < M; i++){
+		imagenM[i]=(int *) calloc(M,sizeof(int));
+	}
 	const size_t global_item_size = LIST_SIZE/local_item_size; 
 
 	printf("subListTam %i, global_item_size %i, local_item_size %i\n",LIST_SIZE,global_item_size,local_item_size);
@@ -50,10 +56,10 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 
 	// Copiar cada vector de entrada en su buffer
 	ret = clEnqueueWriteBuffer(command_queue, imagen_mem_objM, CL_TRUE, 0,
-		LIST_SIZE * sizeof(int), imagenM, 0, NULL, NULL);
+		LIST_SIZE * sizeof(int), imagenM[0], 0, NULL, NULL);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 	ret = clEnqueueWriteBuffer(command_queue, imagen_mem_objm, CL_TRUE, 0,
-		LIST_SIZE * sizeof(int), imagenm, 0, NULL, NULL);
+		LIST_SIZE * sizeof(int), imagenm[0], 0, NULL, NULL);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 	// Crear programa del shader
@@ -125,8 +131,8 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 			int colGrid=global%sGrid;
 			int grid=sGrid*filaGrid+colGrid;
 
-			maximos[grid] = 0;
-			minimos[grid] = 2000000;
+			maximos[0][grid] = 0;
+			minimos[0][grid] = 2000000;
 			for(int local = 0; local < local_item_size; local++){
 
 
@@ -136,12 +142,12 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 				int inicio=filaGrid*M*subS+colGrid*subS;
 
 				int pos=inicio+filaLocal*M+colLocal;
-				maximos[grid] = max(imagenM[pos],maximos[grid]);
-				minimos[grid] = min(imagenm[pos],minimos[grid]);
-				printf("actual = %i, max %i, min %i \n",imagenm[pos],maximos[grid],minimos[grid]);
+				maximos[0][grid] = max(imagenM[0][pos],maximos[0][grid]);
+				minimos[0][grid] = min(imagenm[0][pos],minimos[0][grid]);
+				printf("actual = %i, max %i, min %i \n",imagenm[0][pos],maximos[0][grid],minimos[0][grid]);
 
 			}
-			sumn[grid]=(double)(maximos[grid]-minimos[grid]+1);
+			sumn[0][grid]=(double)(maximos[0][grid]-minimos[0][grid]+1);
 			//printf("grid = %i\n",grid);
 		}
 
@@ -163,22 +169,22 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 	if(M>2&&M%2==0&&M>subS*subS){
 		//si el número de operaciones es mayor a la capacidad del dispositivo, se subdivide las operaciones en grupos
 		int nElementos=global_item_size;
-		
+
 		printf("\n");
-		for (int i = 0; i < 4; i++)
+		/*for (int i = 0; i < 4; i++)
 		{
 			int *vector=(imagenM+i*global_item_size/4);
 			printf("subdividir tam = %i, posInicial=%i M=%i\n",global_item_size,vector[0],M/2);
 			calcularn(subS, M/2, device_id, shader,  source_size, imagenM+i*global_item_size/4, imagenm,sumn);
-		}
+		}*/
 		printf("\n");
-	
+
 	}
 	//copiar y Mostrar solucion
 	for(int i = 0; i < global_item_size; i++){
 		printf("%d. max = %d. min = %d. n= %f\n", i, maximos[i], minimos[i], sumn[i]);
-		imagenM[i]=maximos[i];
-		imagenm[i]=minimos[i];
+		imagenM[0][i]=maximos[0][i];
+		imagenm[0][i]=minimos[0][i];
 	}
 
 
@@ -195,19 +201,34 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 	ret = clReleaseCommandQueue(command_queue);
 	ret = clReleaseContext(context);
 
+	for (int i = 0; i < M; i++)
+	{
+		free(maximos[i]);
+		free(minimos[i]);
+	}
+
 	free(maximos);
 	free(minimos);
 	printf("Fin cacularn s=%i\n",subS);
 }
 
-double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t source_size, int *entrada){
+double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t source_size, int **entrada){
 	printf("Inicio cacularN s=%i\n",s);
 	size_t global_item_size=0;
 	int LIST_SIZE=M*M;
 	int subListTam=LIST_SIZE;
-	int *imagenM = (int*)malloc(sizeof(int)*LIST_SIZE);
-	int *imagenm = (int*)malloc(sizeof(int)*LIST_SIZE);
-	double *sumn = (double*)malloc(sizeof(double)*LIST_SIZE);
+	int **imagenM =(int **) calloc(M,sizeof(int *));
+	for (int i = 0; i < M; i++){
+		imagenM[i]=(int *) calloc(M,sizeof(int));
+	}
+	int **imagenm =(int **) calloc(M,sizeof(int *));
+	for (int i = 0; i < M; i++){
+		imagenm[i]=(int *) calloc(M,sizeof(int));
+	}
+	int **sumn =(int **) calloc(M,sizeof(double *));
+	for (int i = 0; i < M; i++){
+		sumn[i]=(int *) calloc(M,sizeof(double));
+	}
 
 	int subS=2;
 	int subM=M;
@@ -215,10 +236,12 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 
 
 	//vectores de entrada
-	for(int i = 0; i < M*M; i++) {
-		imagenM[i] = entrada[i];
-		imagenm[i] = entrada[i];
-		sumn[i]=0;
+	for(int i = 0; i < M; i++) {
+		for(int j = 0; j < M; j++) {
+			imagenM[i][j] = entrada[i][j];
+			imagenm[i][j] = entrada[i][j];
+			sumn[i][j]=0;
+		}
 	}
 	bool swap=true;
 	do{
@@ -261,11 +284,19 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 
 		int tam = M;
 		tam*=tam;
-		for(int i = 0; i < tam; i++){
-			N+=sumn[i];
+		for(int i = 0; i < M; i++){
+			for(int j = 0; j < M; j++){
+			N+=sumn[i][j];
 			//printf("%i. max = %d. min = %d. n= %f\n", i, imagenM[i], imagenm[i], sumn[i]);
+			}
 		}
 		N=N/(double)(tam);
+	}
+	for (int i = 0; i < M; i++)
+	{
+		free(imagenM[i]);
+		free(imagenm[i]);
+		free(sumn[i]);
 	}
 	free(sumn);
 	free(imagenM);
@@ -281,13 +312,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	int s = 2;
 	int LIST_SIZE = M*M;// Lista de elementos de tamaño M
 	// Vectores de entrada	
-	int *entrada = (int*)malloc(sizeof(int)*LIST_SIZE);
+	//int *entrada = (int*)malloc(sizeof(int)*LIST_SIZE);
+	int **entrada =(int **) calloc(M,sizeof(int *));
+	for (int i = 0; i < M; i++){
+		entrada[i]=(int *) calloc(M,sizeof(int));
+	}
 
 	for(int i = 0; i < LIST_SIZE; i++) {
-		entrada[i] = i;
+		entrada[i/M][i%M] = i;
+		printf("%i=%i=%i\n",i,entrada[0][i],entrada[i/M][i%M]);
 	}
 	// Cargar codigo del shader
-
+	system("pause");
 	FILE *fp;
 	char *shader;
 	size_t source_size;
@@ -342,7 +378,12 @@ int _tmain(int argc, _TCHAR* argv[])
 		s+=1;
 	}
 	system("pause");
+	for (int i = 0; i < M; i++)
+	{
+		free(entrada[i]);
+	}
 
+	free(entrada);
 	return 0;
 }
 
