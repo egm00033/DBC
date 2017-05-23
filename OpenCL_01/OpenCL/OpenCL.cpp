@@ -185,7 +185,7 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 }
 
 double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t source_size, int *entrada){
-	printf("Inicio cacularN s=%i\n",s);
+	printf("Inicio cacularN M= %i, s= %i\n",M,s);
 	size_t global_item_size=0;
 	int LIST_SIZE=M*M;
 	int subListTam=LIST_SIZE;
@@ -218,8 +218,28 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 
 
 		//es necesario subdividir?
-		if((M*M)/(subS*subS)>CL_DEVICE_ADDRESS_BITS||(subS*subS>CL_DEVICE_MAX_WORK_GROUP_SIZE)){
+		//if((M*M)/(subS*subS)>CL_DEVICE_ADDRESS_BITS||(subS*subS>CL_DEVICE_MAX_WORK_GROUP_SIZE)){
+		if(true){
 			printf("-------------------------------------subdividir obligatorio\n");
+			if(M%2==0&&subS%2==0){
+				int Msubdivision=M/2;
+				for (int i = 0; i < 4; i++)
+				{
+					int inicio=(i/2)*M*Msubdivision+(i%2)*Msubdivision;
+					int desplazamiento=Msubdivision;
+					for(int j = 0; j < Msubdivision*Msubdivision; j++) {
+						imagenM[j] = entrada[inicio+M*(j/Msubdivision)+(j%Msubdivision)];
+						imagenm[j] = entrada[inicio+desplazamiento];
+						printf("pos= %i, tabla= %i\n",j,inicio+M*(j/Msubdivision)+(j%Msubdivision));
+						sumn[i]=0;
+					}
+					calcularn(subS, Msubdivision, device_id, shader,  source_size, imagenM, imagenm,sumn);
+				}
+				subM=subM/2;
+			}else{
+
+				printf("no se puede subdividir por 2\n");
+			}
 		}else{
 			calcularn(subS, subM, device_id, shader,  source_size, imagenM, imagenm,sumn);
 		}
@@ -257,7 +277,7 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	int M = 24;
+	int M = 8;
 	int s = 2;
 	int LIST_SIZE = M*M;// Lista de elementos de tamaño M
 	// Vectores de entrada	
