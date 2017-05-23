@@ -160,7 +160,7 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 
 	}
 	//if subdividir
-	if(M>2&&M%2==0&&M>subS*subS){
+	if(subdividir&&M>2&&M%2==0&&M>subS*subS){
 		//si el número de operaciones es mayor a la capacidad del dispositivo, se subdivide las operaciones en grupos
 		int nElementos=global_item_size;
 		
@@ -277,7 +277,7 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	int M = 8;
+	int M = 24;
 	int s = 2;
 	int LIST_SIZE = M*M;// Lista de elementos de tamaño M
 	// Vectores de entrada	

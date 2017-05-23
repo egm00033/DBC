@@ -1,4 +1,4 @@
-﻿Compilación iniciada a las 23/05/2017 17:49:14.
+﻿Compilación iniciada a las 23/05/2017 19:11:16.
      1>Proyecto "C:\Users\usuario\Desktop\DBC\OpenCL_01\OpenCL\OpenCL.vcxproj" en el nodo 2 (Build destinos).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OpenCL.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt OpenCL.cpp
@@ -19,4 +19,4 @@
 
 Compilación correcta.
 
-Tiempo transcurrido 00:00:00.66
+Tiempo transcurrido 00:00:00.70
