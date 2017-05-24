@@ -160,7 +160,7 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 
 	//copiar y Mostrar solucion
 	for(int i = 0; i < global_item_size; i++){
-		//printf("%d. max = %d. min = %d. n= %f\n", i, maximos[i], minimos[i], sumn[i]);
+		printf("%d. max = %d. min = %d. n= %f\n", i, maximos[i], minimos[i], sumn[i]);
 		imagenM[i]=maximos[i];
 		imagenm[i]=minimos[i];
 	}
@@ -222,20 +222,34 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 		if(true){
 			printf("-------------------------------------subdividir obligatorio\n");
 			if(M%2==0&&subS%2==0){
+				int *subImagenM = (int*)malloc(sizeof(int)*LIST_SIZE);
+				int *subImagenm = (int*)malloc(sizeof(int)*LIST_SIZE);
+				double *subSumn = (double*)malloc(sizeof(double)*LIST_SIZE);
 				int Msubdivision=M/2;
 				for (int i = 0; i < 4; i++)
 				{
+					//cargar
 					int inicio=(i/2)*M*Msubdivision+(i%2)*Msubdivision;
 					int desplazamiento=Msubdivision;
 					for(int j = 0; j < Msubdivision*Msubdivision; j++) {
-						imagenM[j] = entrada[inicio+M*(j/Msubdivision)+(j%Msubdivision)];
-						imagenm[j] = entrada[inicio+desplazamiento];
-						printf("pos= %i, tabla= %i\n",j,inicio+M*(j/Msubdivision)+(j%Msubdivision));
-						sumn[i]=0;
+						subImagenM[j] = entrada[inicio+M*(j/Msubdivision)+(j%Msubdivision)];
+						subImagenm[j] = entrada[inicio+M*(j/Msubdivision)+(j%Msubdivision)];
+						subSumn[j]=0;
 					}
-					calcularn(subS, Msubdivision, device_id, shader,  source_size, imagenM, imagenm,sumn);
+					calcularn(subS, Msubdivision, device_id, shader,  source_size, subImagenM, subImagenm,subSumn);
+					//guardar
+
+					for(int j = 0; j < Msubdivision*Msubdivision; j++) {
+						subImagenM[j] = entrada[inicio+M*(j/Msubdivision)+(j%Msubdivision)];
+						subImagenm[j] = entrada[inicio+M*(j/Msubdivision)+(j%Msubdivision)];
+						subSumn[i]=0;
+					}
 				}
-				subM=subM/2;
+				free(subImagenM);
+				free(subImagenm);
+				free(subSumn);
+				subM=subM/4;
+
 			}else{
 
 				printf("no se puede subdividir por 2\n");
@@ -264,7 +278,7 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 	tam*=tam;
 	for(int i = 0; i < tam; i++){
 		N+=sumn[i];
-		//printf("%i. max = %d. min = %d. n= %f\n", i, imagenM[i], imagenm[i], sumn[i]);
+		printf("%i. max = %d. min = %d. n= %f\n", i, imagenM[i], imagenm[i], sumn[i]);
 	}
 	N=N/(double)(tam);
 
