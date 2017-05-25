@@ -33,4 +33,5 @@ __kernel void vector_add(__global const int *A,__global const int *a, __global  
 		}
 	}
     n[grid]=(double)(B[grid]-C[grid]+1);
+
 }

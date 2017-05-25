@@ -17,7 +17,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	//indica la ruta de la imagen a cargar
 
-	char *path=".\\images\\D3.bmp";
+	char *path=".\\images\\D84.bmp";//guardar como bmp 256
 	long int ancho=0;
 	long int alto=0;
 	int niveldeGris=256;
