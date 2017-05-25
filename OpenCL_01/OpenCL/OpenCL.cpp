@@ -137,7 +137,7 @@ void calcularn(int subS, int M, cl_device_id device_id, char *shader, size_t sou
 				int pos=inicio+filaLocal*M+colLocal;
 				maximos[grid] = max(imagenM[pos],maximos[grid]);
 				minimos[grid] = min(imagenm[pos],minimos[grid]);
-				printf("actual = %i, max %i, min %i \n",imagenm[pos],maximos[grid],minimos[grid]);
+				//printf("actual = %i, max %i, min %i \n",imagenm[pos],maximos[grid],minimos[grid]);
 
 			}
 			sumn[grid]=(double)(maximos[grid]-minimos[grid]+1);
@@ -219,14 +219,14 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 
 		//es necesario subdividirM
 		//if((M*M)/(subS*subS)>CL_DEVICE_ADDRESS_BITS||(subS*subS>CL_DEVICE_MAX_WORK_GROUP_SIZE)){
-		if(M>4&&M%2==0&&(M/2)%subS==0){
+		if(M>4&&M%2==0&&(M/2)%subS==0&&M/2>subS){
 			printf("-------------------------------------subdividir obligatorio\n s=%i M=%i",subS,M);
 
 				int *subImagenM = (int*)malloc(sizeof(int)*LIST_SIZE);
 				int *subImagenm = (int*)malloc(sizeof(int)*LIST_SIZE);
 				double *subSumn = (double*)malloc(sizeof(double)*LIST_SIZE);
 				int Msubdivision=M/2;
-				int nuevaM=Msubdivision/2;
+				int nuevaM=Msubdivision/subS;
 
 				for (int i = 0; i < 4; i++)
 				{
@@ -240,10 +240,12 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 					}
 					calcularn(subS, Msubdivision, device_id, shader,  source_size, subImagenM, subImagenm,subSumn);
 					//se ha reducido 1/4
-					printf("nuevo tam=%i*%i=%i\n",nuevaM,nuevaM,nuevaM*nuevaM);
-					int inicioD=(i/2)*Msubdivision*nuevaM+(i%2)*nuevaM;
+					//int inicioD=(i/2)*nuevaM*nuevaM*(subS-1)+(i%2)*nuevaM;
+					int ancho=M/subS;
+					int inicioD=(i/2)*ancho*(ancho/2)+(i%2)*nuevaM;
 					for(int j = 0; j < nuevaM*nuevaM; j++) {
-						int pos=inicioD+Msubdivision*(j/nuevaM)+(j%nuevaM);
+						//int pos=inicioD+ancho*(j/nuevaM)+(j%nuevaM);
+						int pos=inicioD+ancho*(j/nuevaM)+(j%nuevaM);
 						imagenM[pos]=subImagenM[j];
 						imagenm[pos]=subImagenm[j];
 						sumn[pos]=subSumn[j];
@@ -257,6 +259,7 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 				free(subSumn);
 
 		}else{
+			printf("Calculo sin subdividir\n");
 			calcularn(subS, subM, device_id, shader,  source_size, imagenM, imagenm,sumn);
 		}
 
