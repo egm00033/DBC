@@ -147,7 +147,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		int *N = (int*)malloc(sizeof(int)*LIST_SIZE);
 		printf("Antes de copiar\n");
 		//Mostrar solucion
-		for(i = 0; i < LIST_SIZE; i++)//sustituir por global_item_size
+		for(i = 0; i < global_item_size; i++)//sustituir por global_item_size
 			printf("%d. max = %d. min = %d\n", imagen[i], maximos[i], minimos[i]);
 		printf("Mostrado\n");
 		// Clean up
