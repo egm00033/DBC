@@ -5,6 +5,15 @@
 
 DBC::DBC(int **imagen, int ancho,int nivelGris)
 {
+
+	anchoMatriz=ancho;
+	//inicializar la entrada de opencl
+	entradaOpencl =(int **) calloc((anchoMatriz/2-1),sizeof(int *));
+	for (int i = 0; i < anchoMatriz/2-1; i++){
+		entradaOpencl[i]=(int *) calloc(anchoMatriz*anchoMatriz,sizeof(int));
+	}
+	entradaOpencl[0][0]=0;
+
 	//tiempo
 	clock_t inicio,fin,totalInicio;
 	totalInicio=inicio=clock();
@@ -46,10 +55,8 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 			printf("%i\t;%f\t;%i\t;%f\t;%f\t;%f\n",s,r,N,y,x,D);
 		}
 		inicio=clock();
-
-
-		//}
 	}
+
 
 	printf("\ntiempo total de ejecucion: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
 
@@ -71,11 +78,10 @@ DBC::~DBC(void)
 }
 
 //devuelve el valor n de un grid sxs
-int DBC::calculars(int s, int I, int J, float sPrima){
+int DBC::calculars(int s, int I, int J, float sPrima,int &pos){
 	int k=257;
 	int l=0;
 	int n=0;
-
 	//corrigiendo el desbordamiento 
 	if(I>anchoMatriz-s)
 		I=anchoMatriz-s;
@@ -92,6 +98,8 @@ int DBC::calculars(int s, int I, int J, float sPrima){
 			if(matriz[i][j]>l){
 				l=matriz[i][j];
 			}
+			entradaOpencl[s-2][pos]=matriz[i][j];
+			pos+=1;
 		}
 	}
 
@@ -107,11 +115,12 @@ int DBC::calculars(int s, int I, int J, float sPrima){
 //Calcula N para un tamaño s dado
 int DBC::calcularN(int s,float sPrima){
 	int N=0;
-	for (int i = 0; i < anchoMatriz; i+=s)
+	int pos=0;
+	for (int i = 0; i < anchoMatriz/s*s; i+=s)
 	{
-		for (int j = 0; j  < anchoMatriz; j+=s)
+		for (int j = 0; j  < anchoMatriz/s*s; j+=s)
 		{
-			N+=DBC::calculars(s, i, j,sPrima);
+			N+=DBC::calculars(s, i, j,sPrima,pos);
 		}
 
 	}
@@ -185,9 +194,9 @@ void DBC::calcularDF(){
 	float errorPunto;
 	for (int i = numElementos-1; i >= 0; i--)
 	{	
-		errorPunto=grafica[i].y-grafica[i].x*D-C;
-		if(errorPunto<=E&&errorPunto>(-E)){
-			printf("%f;%f;\n", grafica[i].y, grafica[i].x);
-		}
+	errorPunto=grafica[i].y-grafica[i].x*D-C;
+	if(errorPunto<=E&&errorPunto>(-E)){
+	printf("%f;%f;\n", grafica[i].y, grafica[i].x);
+	}
 	}*/
 }

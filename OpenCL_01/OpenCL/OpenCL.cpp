@@ -7,10 +7,9 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	for (int s = 2; s <= 4 ; s+=2)
-	{
 
 
+	int s=1;
 		printf("iniciando\n");
 
 		// Vectores de entrada
@@ -52,6 +51,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		ret = clGetDeviceIDs( platforms[1], CL_DEVICE_TYPE_ALL, 1, 
 			&device_id, &ret_num_devices);
+		printf("devices %i\n",platforms);
 		printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 		// Creando el contexto de OpenCL
 		cl_context context = clCreateContext( NULL, 1, &device_id, NULL, NULL, &ret);
@@ -132,7 +132,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("Antes de la ejecucion\n");
 		// ejecutar el kernel OpenCL en la lista
 		size_t global_item_size = LIST_SIZE/local_item_size; // numero total de operaciones (tamaño del vector)
-
+		global_item_size=1;
 		ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
 			&global_item_size, &local_item_size, 0, NULL, NULL);
 		printf("Después de la ejecucion\n");
@@ -167,7 +167,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		free(N);
 		printf("tamaño de s=%i\n",s);
 		system("pause");
-	}
+	
 	return 0;
 }
 

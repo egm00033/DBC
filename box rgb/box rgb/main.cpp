@@ -25,6 +25,13 @@ int _tmain(int argc, _TCHAR* argv[])
 	//cargar gif
 	int **imagen=leerImagenBMP(path, ancho, alto);//carga en memoria una matriz con la información de la imagen
 
+
+	//cambiar imagen por posicion
+	for (int i = 0; i < ancho; i++)
+	{
+		for (int j = 0; j < ancho; j++)
+		imagen[i][j]=i*ancho+j;
+	}
 	//crea una instancia de Differential Box-Counting
 	DBC c=DBC(imagen, ancho, niveldeGris);
 	//c.mostrarGrafica();

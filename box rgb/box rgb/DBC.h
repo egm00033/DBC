@@ -30,12 +30,13 @@ private:
 	float C;
 	float E;
 	int **matriz;//matriz con los valores de una imagen en escala de gris
+	int **entradaOpencl;
 	int anchoMatriz;
 	interpretacion* grafica;//array  con todos los resultados necesarios para calcular la Dimensión fractal
 	int numElementos;
 
 	int calcularN( int s, float rangoColor);//divide la imagen en grill de tamaño s
-	int calculars(int s, int I, int J, float rangoColor);// calcula el valor minimo y maximo de un grill concreto
+	int calculars(int s, int I, int J, float rangoColor,int &pos);// calcula el valor minimo y maximo de un grill concreto
 public:
 	DBC(int **matriz, int M,int G);//constructor
 	~DBC(void);
