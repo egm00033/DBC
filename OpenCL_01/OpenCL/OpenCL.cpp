@@ -204,7 +204,7 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 		imagenm[i] = entrada[i];
 		sumn[i]=0;
 	}
-	bool swap=true;
+	bool subdividirS=true;
 	do{
 		//bucle iterativo para un S'
 		for (subS=2 ; subS < s; subS++)
@@ -217,60 +217,61 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 		subM=M;
 
 
-		//es necesario subdividir?
+		//es necesario subdividirM
 		//if((M*M)/(subS*subS)>CL_DEVICE_ADDRESS_BITS||(subS*subS>CL_DEVICE_MAX_WORK_GROUP_SIZE)){
-		if(true){
-			printf("-------------------------------------subdividir obligatorio\n");
-			if(M%2==0&&subS%2==0){
+		if(M>4&&M%2==0&&(M/2)%subS==0){
+			printf("-------------------------------------subdividir obligatorio\n s=%i M=%i",subS,M);
+
 				int *subImagenM = (int*)malloc(sizeof(int)*LIST_SIZE);
 				int *subImagenm = (int*)malloc(sizeof(int)*LIST_SIZE);
 				double *subSumn = (double*)malloc(sizeof(double)*LIST_SIZE);
 				int Msubdivision=M/2;
+				int nuevaM=Msubdivision/2;
+
 				for (int i = 0; i < 4; i++)
 				{
 					//cargar
-					int inicio=(i/2)*M*Msubdivision+(i%2)*Msubdivision;
-					int desplazamiento=Msubdivision;
+					printf("inicio grid=%i\n",i);
+					int inicioA=(i/2)*M*Msubdivision+(i%2)*Msubdivision;
 					for(int j = 0; j < Msubdivision*Msubdivision; j++) {
-						subImagenM[j] = entrada[inicio+M*(j/Msubdivision)+(j%Msubdivision)];
-						subImagenm[j] = entrada[inicio+M*(j/Msubdivision)+(j%Msubdivision)];
+						subImagenM[j] = entrada[inicioA+M*(j/Msubdivision)+(j%Msubdivision)];
+						subImagenm[j] = entrada[inicioA+M*(j/Msubdivision)+(j%Msubdivision)];
 						subSumn[j]=0;
 					}
 					calcularn(subS, Msubdivision, device_id, shader,  source_size, subImagenM, subImagenm,subSumn);
-					//guardar
+					//se ha reducido 1/4
+					printf("nuevo tam=%i*%i=%i\n",nuevaM,nuevaM,nuevaM*nuevaM);
+					int inicioD=(i/2)*Msubdivision*nuevaM+(i%2)*nuevaM;
+					for(int j = 0; j < nuevaM*nuevaM; j++) {
+						int pos=inicioD+Msubdivision*(j/nuevaM)+(j%nuevaM);
+						imagenM[pos]=subImagenM[j];
+						imagenm[pos]=subImagenm[j];
+						sumn[pos]=subSumn[j];
 
-					for(int j = 0; j < Msubdivision*Msubdivision; j++) {
-						subImagenM[j] = entrada[inicio+M*(j/Msubdivision)+(j%Msubdivision)];
-						subImagenm[j] = entrada[inicio+M*(j/Msubdivision)+(j%Msubdivision)];
-						subSumn[i]=0;
+						printf("pos = %i \t valor=%i \t j=%i, valorsub=%i\n",pos,imagenM[pos],j,subImagenM[j]);
+
 					}
 				}
 				free(subImagenM);
 				free(subImagenm);
 				free(subSumn);
-				subM=subM/4;
 
-			}else{
-
-				printf("no se puede subdividir por 2\n");
-			}
 		}else{
 			calcularn(subS, subM, device_id, shader,  source_size, imagenM, imagenm,sumn);
 		}
 
 
-		//swap=false;
 		M=M/subS;
 		s=s/subS;
 		if(M/s>=subM/subS){
-			swap=false;
+			subdividirS=false;
 		}else{
 			//parametros para la siguiente ejecución del bucle
 			subListTam=pow((double)(subM/subS),2);
 			//subM=subM/subS;
-			swap=true;
+			subdividirS=true;
 		}
-	}while(swap==true);
+	}while(subdividirS==true);
 	double N = 0;
 
 
@@ -291,7 +292,7 @@ double calcularN(int s, int M,cl_device_id device_id, char *shader,  size_t sour
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	int M = 8;
+	int M = 12;
 	int s = 2;
 	int LIST_SIZE = M*M;// Lista de elementos de tamaño M
 	// Vectores de entrada	
