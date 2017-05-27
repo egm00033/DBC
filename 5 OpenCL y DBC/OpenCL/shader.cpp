@@ -33,13 +33,13 @@ shader::shader(void)
 	// Creando el contexto de OpenCL
 	context = clCreateContext( NULL, 1, &device_id, NULL, NULL, &ret);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
-	
+
 	// Crear lista de operadiones para ejecutar
 	//por defecto en orden | CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE (4º argumento)
 	command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
-	
+
 	printf("antes de la construccion\n");
 	// Crear programa del codigoShader
 	program = clCreateProgramWithSource(context, 1, 
@@ -79,19 +79,23 @@ shader::shader(void)
 }
 float shader::getDF(int **entradaOpencl, int M,int s){
 	cl_int ret;
-	printf("iniciando s=%i\n",s);
+	printf("iniciando s=%i M=%i\n",s,M);
 
 	const int LIST_SIZE = M*M;// Lista de elementos de tamaño MxM
 	size_t local_item_size = s*s; // Grupo de trabajo de tamaño sxs
+	size_t global_item_size = LIST_SIZE/local_item_size; // numero total de operaciones (tamaño del vector)
+
+	printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
 	int *imagen = (int*)malloc(sizeof(int)*LIST_SIZE);
 
 	for(int i = 0; i < LIST_SIZE; i++) {
 		imagen[i] = entradaOpencl[s-2][i];
-		/*if(i%local_item_size==0)
-			printf("\n");
-		printf(" %i\t",imagen[i]);*/
-		
+		//if(i%local_item_size==0)
+		//printf("\n");
+		//printf(" (%i)%i\t",i,imagen[i]);
+
 	}
+	//imagen[22464]=666;
 
 
 
@@ -109,8 +113,6 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 
-
-
 	// Establecer argumentos
 	ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&imagen_mem_obj);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
@@ -124,35 +126,51 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 	//añadir para arreglar los problemas de salida
 	//ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
 
-	//printf("Antes de la ejecucion\n");
-	// ejecutar el kernel OpenCL en la lista
-	size_t global_item_size = LIST_SIZE/local_item_size; // numero total de operaciones (tamaño del vector)
+	printf("1\n");
 
-	ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
-		&global_item_size, &local_item_size, 0, NULL, NULL);
-	//printf("Después de la ejecucion\n");
-	// Copiar el buffer minimos en el vector minimos
-	int *maximos = (int*)malloc(sizeof(int)*LIST_SIZE);
-	ret = clEnqueueReadBuffer(command_queue, max_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(int), maximos, 0, NULL, NULL);
-	int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
-	ret = clEnqueueReadBuffer(command_queue, min_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(int), minimos, 0, NULL, NULL);
+	//limite hardware
+	if(global_item_size>=CL_DEVICE_ADDRESS_BITS){
+		printf("Excedido el numero de global_work_size(%i), debe ser menor que CL_DEVICE_ADDRESS_BITS(%i)\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
+	}else if(local_item_size>=CL_DEVICE_MAX_WORK_GROUP_SIZE){
+		printf("Excedido el numero de local_item_size(%i), debe ser menor que CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",local_item_size,CL_DEVICE_MAX_WORK_GROUP_SIZE);
+		//}else if(global_item_size%local_item_size!=0){
+		//	printf("global_item_size %% local_item_size = %i %% %i   = %i\n",global_item_size,local_item_size,global_item_size%local_item_size);
+	//}else if(LIST_SIZE>=CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE){
+		//printf("limite buffer = %i\n",CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE );
+	}else{
+		printf("1.5\n");
+		ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
+			&global_item_size, &local_item_size, 0, NULL, NULL);
+		if(ret!=0)printf("clEnqueueNDRangeKernel=%i\n",ret,ret);
 
 
-	printf("tam=%i\n",global_item_size);
+		// Copiar el buffer minimos en el vector minimos
 
-	//Mostrar solucion
-	for(int i = 0; i < global_item_size; i++)//sustituir por global_item_size
-		printf("%d. max = %d. min = %d\n", i, maximos[i], minimos[i]);
-	printf("tam=%i\n",global_item_size);
-	// Clean up
-	
+		int *maximos = (int*)malloc(sizeof(int)*LIST_SIZE);
+		printf("2.5\n");
+		ret = clEnqueueReadBuffer(command_queue, max_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(int), maximos, 0, NULL, NULL);
+		if(ret!=0)printf("copiar max=%i\n",ret);
+		printf("3\n");
+		int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
+		ret = clEnqueueReadBuffer(command_queue, min_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(int), minimos, 0, NULL, NULL);
+
+		printf("4\n");
+
+		//Mostrar solucion
+		for(int i = 0; i < global_item_size; i++){//sustituir por global_item_size
+			printf("%d. max = %d. min = %d\n", i, maximos[i], minimos[i]);
+			if(i%(M/s)+1==0)system("pause");
+		}
+		// Clean up
+		free(maximos);
+		free(minimos);
+	}
 	ret = clReleaseMemObject(imagen_mem_obj);
 	ret = clReleaseMemObject(max_mem_obj);
 	ret = clReleaseMemObject(min_mem_obj);
-	
+
 	free(imagen);
-	free(maximos);
-	free(minimos);
+
 
 	return 0;
 }

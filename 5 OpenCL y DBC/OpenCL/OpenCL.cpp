@@ -17,7 +17,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	//cambiar imagen por posicion
-	ancho=16;
+	ancho=150;
 	printf("imagen leida\n");
 	for (int i = 0; i < ancho; i++)
 	{
