@@ -7,7 +7,6 @@
 *rellena el ancho y alto de la imagen
 *
 */
-
 int **leerImagenBMP(char *nome,long &ancho,long &alto){
 	FILE *fpin;
 	char   id[] = "  ";

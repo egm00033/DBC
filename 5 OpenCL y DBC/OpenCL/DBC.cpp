@@ -16,47 +16,30 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	entradaOpencl[0][0]=0;
 
 	//tiempo
-	clock_t inicio,fin,totalInicio;
-	totalInicio=inicio=clock();
+	clock_t fin,totalInicio;
+	totalInicio=clock();
 
 	matriz=imagen;
-	float sPrima;
 	anchoMatriz=ancho;
 	numElementos=0;
 
 	//guardar los resultado para todos los tamaños de s
 	int *v=(int*)calloc(anchoMatriz/2,sizeof(int));
 
-
-
-
-	printf("s\t;r\t;N\t;y\t;x\t;D\n");
 	//halla N para tamaños M>=s>1d
 	for (int s = 2; s <= anchoMatriz/2; s++)
 	{
-		float r=(float)s/(float)anchoMatriz;
-		sPrima=(float)nivelGris*(float)s/(float)anchoMatriz;
-		int N=DBC::calcularN(s,sPrima);
-
-		float y=log10((float)N);
-		float x=log10(1/r);
-		float D=(y/x);
-
-		//se guarda en una estructura para el cálculo de D, C y E.
-
-		numElementos+=1;
+		DBC::dividirS(s);
 		fin=clock();
-		if(anchoMatriz%s==0){
-			printf("%i\t;%f\t;%i\t;%f\t;%f\t;%f\n",s,r,N,y,x,D);
-		}
-		inicio=clock();
 	}
 
+	printf("\ntiempo total de la ordenacion: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
 
-	printf("\ntiempo total de ejecucion: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
-
-	calcularDF();
-
+	//llamar al programa
+	shader s=shader();
+	float f=s.getDF(entradaOpencl,anchoMatriz,2);
+	f=s.getDF(entradaOpencl,anchoMatriz,4);
+	
 
 }
 
@@ -71,11 +54,9 @@ DBC::~DBC(void)
 	free(matriz);
 }
 
-//devuelve el valor n de un grid sxs
-int DBC::calculars(int s, int I, int J, float sPrima,int &pos){
-	int k=257;
-	int l=0;
-	int n=0;
+//ordena las cadillas de los grid en la fila de la matriz con los valores de entrada
+void DBC::ordenarS(int s, int I, int J,int &pos){
+
 	//corrigiendo el desbordamiento 
 	if(I>anchoMatriz-s)
 		I=anchoMatriz-s;
@@ -86,39 +67,26 @@ int DBC::calculars(int s, int I, int J, float sPrima,int &pos){
 	{
 		for (int j = J; j  < J+s; j++)
 		{
-			if(matriz[i][j]<k){
-				k=matriz[i][j];
-			}
-			if(matriz[i][j]>l){
-				l=matriz[i][j];
-			}
+
 			entradaOpencl[s-2][pos]=matriz[i][j];
 			pos+=1;
 		}
 	}
 
-	l=(int)((float)l/(float)(sPrima));
-	k=(int)((float)k/(float)(sPrima));
-	n=((int)((float)l/(float)(sPrima))-((float)k/(float)(sPrima)))+1;
-	/*if(s==320){
-	printf(" n= %i s= %i \n",n,s);
-	}*/
-	return n;
 }
 
 //Calcula N para un tamaño s dado
-int DBC::calcularN(int s,float sPrima){
-	int N=0;
+void DBC::dividirS(int s){
+
 	int pos=0;
 	for (int i = 0; i < anchoMatriz/s*s; i+=s)
 	{
 		for (int j = 0; j  < anchoMatriz/s*s; j+=s)
 		{
-			N+=DBC::calculars(s, i, j,sPrima,pos);
+			DBC::ordenarS(s, i, j,pos);
 		}
 
 	}
-	return N;
 }
 
 void DBC::mostrarGrafica(){
@@ -128,7 +96,7 @@ void DBC::mostrarGrafica(){
 
 
 void DBC::calcularDF(){
-
+	/*
 	float penxy=0.0;
 	float sumax=0.0;
 	float sumay=0.0;
@@ -163,13 +131,13 @@ void DBC::calcularDF(){
 	float divisor=0;
 
 	for(int i=0;i<tam;i++){
-		sumae+=pow(divisor,2)/(1+pow(D,2));
+	sumae+=pow(divisor,2)/(1+pow(D,2));
 
 	}
 
 	printf("\nC=%f\n",C);
 	E=sqrt(sumae)/(float)tam;
-	printf("E=%f\n",E);
+	printf("E=%f\n",E);*/
 
 
 }

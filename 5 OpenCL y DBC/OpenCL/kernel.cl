@@ -8,7 +8,11 @@ get_num_groups	Number of work groups
 get_group_id	Work group ID*/
 __kernel void vector_add(__global const int *A, __global  int *B, __global int *C) {
 
-		B[get_global_id(0)] = get_global_id(0);
-		C[get_global_id(0)] = get_local_id(0);
+	B[get_global_id(0)] = 0;
+	C[get_global_id(0)] = 500000;
 
+	for(int i=0;i<get_local_size(0);i++){
+		B[get_global_id(0)] = max(B[get_global_id(0)],A[get_global_id(0)*get_local_size(0)+i]);
+		C[get_global_id(0)] = min(C[get_global_id(0)],A[get_global_id(0)*get_local_size(0)+i]);
+	}
 }

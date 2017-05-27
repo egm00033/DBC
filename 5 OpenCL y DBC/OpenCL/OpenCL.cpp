@@ -7,7 +7,7 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-		char *path=".\\images\\D3.bmp";
+	char *path=".\\images\\D3.bmp";
 	long int ancho=0;
 	long int alto=0;
 	int niveldeGris=256;
@@ -17,16 +17,17 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	//cambiar imagen por posicion
+	ancho=8;
 	for (int i = 0; i < ancho; i++)
 	{
 		for (int j = 0; j < ancho; j++)
-		imagen[i][j]=i*ancho+j;
+			imagen[i][j]=i*ancho+j;
 	}
 
 	DBC c=DBC(imagen, ancho, niveldeGris);
 
-	shader s=shader();
-
+	
+	system("pause");
 	return 0;
 }
 

@@ -28,8 +28,8 @@ private:
 	int anchoMatriz;
 	int numElementos;
 
-	int calcularN( int s, float rangoColor);//divide la imagen en grill de tamaño s
-	int calculars(int s, int I, int J, float rangoColor,int &pos);// calcula el valor minimo y maximo de un grill concreto
+	void dividirS( int s);//divide la imagen en grill de tamaño s
+	void ordenarS(int s, int I, int J,int &pos);// calcula el valor minimo y maximo de un grill concreto
 public:
 	DBC(int **matriz, int M,int G);//constructor
 	~DBC(void);
