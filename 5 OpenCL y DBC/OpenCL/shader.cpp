@@ -90,7 +90,11 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 	int *imagen = (int*)malloc(sizeof(int)*LIST_SIZE);
 
 	for(i = 0; i < LIST_SIZE; i++) {
-		imagen[i] = i;
+		imagen[i] = entradaOpencl[s-2][i];
+		if(i%local_item_size==0)
+			printf("\n");
+		printf("col %i = %i\t",i%s,imagen[i]);
+		
 	}
 
 

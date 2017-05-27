@@ -31,15 +31,18 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	{
 		DBC::dividirS(s);
 		fin=clock();
+		//printf("subdividiendo s= %i\n",s);
 	}
 
 	printf("\ntiempo total de la ordenacion: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
 
 	//llamar al programa
-	shader s=shader();
-	float f=s.getDF(entradaOpencl,anchoMatriz,2);
-	f=s.getDF(entradaOpencl,anchoMatriz,4);
-	
+	shader programa=shader();
+	float f=0;
+	for (int s = 2; s <= anchoMatriz/2; s++)
+	{
+		f=programa.getDF(entradaOpencl,anchoMatriz,s);
+	}
 
 }
 
@@ -69,7 +72,9 @@ void DBC::ordenarS(int s, int I, int J,int &pos){
 		{
 
 			entradaOpencl[s-2][pos]=matriz[i][j];
+			//printf("col %i = %i\t",pos,matriz[i][j]);
 			pos+=1;
+
 		}
 	}
 
