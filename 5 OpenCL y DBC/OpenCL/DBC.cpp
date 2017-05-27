@@ -1,0 +1,176 @@
+#include "stdafx.h"
+#include "DBC.h"
+
+
+
+
+DBC::DBC(int **imagen, int ancho,int nivelGris)
+{
+
+	anchoMatriz=ancho;
+	//inicializar la entrada de opencl
+	entradaOpencl =(int **) calloc((anchoMatriz/2-1),sizeof(int *));
+	for (int i = 0; i < anchoMatriz/2-1; i++){
+		entradaOpencl[i]=(int *) calloc(anchoMatriz*anchoMatriz,sizeof(int));
+	}
+	entradaOpencl[0][0]=0;
+
+	//tiempo
+	clock_t inicio,fin,totalInicio;
+	totalInicio=inicio=clock();
+
+	matriz=imagen;
+	float sPrima;
+	anchoMatriz=ancho;
+	numElementos=0;
+
+	//guardar los resultado para todos los tamaños de s
+	int *v=(int*)calloc(anchoMatriz/2,sizeof(int));
+
+
+
+
+	printf("s\t;r\t;N\t;y\t;x\t;D\n");
+	//halla N para tamaños M>=s>1d
+	for (int s = 2; s <= anchoMatriz/2; s++)
+	{
+		float r=(float)s/(float)anchoMatriz;
+		sPrima=(float)nivelGris*(float)s/(float)anchoMatriz;
+		int N=DBC::calcularN(s,sPrima);
+
+		float y=log10((float)N);
+		float x=log10(1/r);
+		float D=(y/x);
+
+		//se guarda en una estructura para el cálculo de D, C y E.
+
+		numElementos+=1;
+		fin=clock();
+		if(anchoMatriz%s==0){
+			printf("%i\t;%f\t;%i\t;%f\t;%f\t;%f\n",s,r,N,y,x,D);
+		}
+		inicio=clock();
+	}
+
+
+	printf("\ntiempo total de ejecucion: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
+
+	calcularDF();
+
+
+}
+
+
+DBC::~DBC(void)
+{
+	for (int i = 0; i < anchoMatriz; i++)
+	{
+		free(matriz[i]);
+	}
+
+	free(matriz);
+}
+
+//devuelve el valor n de un grid sxs
+int DBC::calculars(int s, int I, int J, float sPrima,int &pos){
+	int k=257;
+	int l=0;
+	int n=0;
+	//corrigiendo el desbordamiento 
+	if(I>anchoMatriz-s)
+		I=anchoMatriz-s;
+	if(J>anchoMatriz-s)
+		J=anchoMatriz-s;
+
+	for (int i = I; i < I+s; i++)
+	{
+		for (int j = J; j  < J+s; j++)
+		{
+			if(matriz[i][j]<k){
+				k=matriz[i][j];
+			}
+			if(matriz[i][j]>l){
+				l=matriz[i][j];
+			}
+			entradaOpencl[s-2][pos]=matriz[i][j];
+			pos+=1;
+		}
+	}
+
+	l=(int)((float)l/(float)(sPrima));
+	k=(int)((float)k/(float)(sPrima));
+	n=((int)((float)l/(float)(sPrima))-((float)k/(float)(sPrima)))+1;
+	/*if(s==320){
+	printf(" n= %i s= %i \n",n,s);
+	}*/
+	return n;
+}
+
+//Calcula N para un tamaño s dado
+int DBC::calcularN(int s,float sPrima){
+	int N=0;
+	int pos=0;
+	for (int i = 0; i < anchoMatriz/s*s; i+=s)
+	{
+		for (int j = 0; j  < anchoMatriz/s*s; j+=s)
+		{
+			N+=DBC::calculars(s, i, j,sPrima,pos);
+		}
+
+	}
+	return N;
+}
+
+void DBC::mostrarGrafica(){
+
+
+}
+
+
+void DBC::calcularDF(){
+
+	float penxy=0.0;
+	float sumax=0.0;
+	float sumay=0.0;
+	float sumx2=0.0;
+	float sumy2=0.0;
+
+	int tam=numElementos;
+
+	//inicia la parte de regresion lineal
+
+	//x=log(1/r)
+	//y=log(N)
+
+
+	float a=tam*penxy;
+	float b=sumax*sumay;
+	float c=tam*sumx2;
+	float d=pow(sumax,2);
+
+	D=(a-b)/(c-d);
+	printf("\ny=D*x+C\n");
+	printf("Pendiente = D = %f\n",D);
+
+	float e=(sumay*(1/(float)tam));
+	float f=(D*(1/(float)tam)*sumax);
+
+	C=e-f;
+
+
+	//calculo del error
+	float sumae=0;
+	float divisor=0;
+
+	for(int i=0;i<tam;i++){
+		sumae+=pow(divisor,2)/(1+pow(D,2));
+
+	}
+
+	printf("\nC=%f\n",C);
+	E=sqrt(sumae)/(float)tam;
+	printf("E=%f\n",E);
+
+
+}
+

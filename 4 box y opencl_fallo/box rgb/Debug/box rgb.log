@@ -1,0 +1,15 @@
+﻿Compilación iniciada a las 27/05/2017 16:19:32.
+     1>Proyecto "C:\Users\usuario\Desktop\DBC\box y opencl\box rgb\box rgb.vcxproj" en el nodo 2 (Build destinos).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /D _CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\box+Open.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt DBC.cpp shader.cpp
+         shader.cpp
+     1>c:\users\usuario\desktop\dbc\box y opencl\box rgb\shader.cpp(58): error C4996: 'clCreateCommandQueue': se declaró obsoleto
+                 c:\program files (x86)\intel\opencl sdk\6.3\include\cl\cl.h(1428) : vea la declaración de 'clCreateCommandQueue'
+         DBC.cpp
+     1>c:\users\usuario\desktop\dbc\box y opencl\box rgb\dbc.cpp(108): warning C4244: '=' : conversión de 'float' a 'int'; posible pérdida de datos
+         Generando código...
+     1>Compilación del proyecto terminada "C:\Users\usuario\Desktop\DBC\box y opencl\box rgb\box rgb.vcxproj" (Build destinos) -- ERROR.
+
+ERROR al compilar.
+
+Tiempo transcurrido 00:00:00.14
