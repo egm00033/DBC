@@ -6,7 +6,7 @@
 
 DBC::DBC(int **imagen, int ancho,int nivelGris)
 {
-
+	printf("DBC\n");
 	anchoMatriz=ancho;
 	//inicializar la entrada de opencl
 	entradaOpencl =(int **) calloc((anchoMatriz/2-1),sizeof(int *));
@@ -34,14 +34,14 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 		//printf("subdividiendo s= %i\n",s);
 	}
 
-	printf("\ntiempo total de la ordenacion: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
+	//printf("\ntiempo total de la ordenacion: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
 
 	//llamar al programa
 	shader programa=shader();
 	float f=0;
 	for (int s = 2; s <= anchoMatriz/2; s++)
 	{
-		f=programa.getDF(entradaOpencl,anchoMatriz,s);
+		f=programa.getDF(entradaOpencl,anchoMatriz/s*s,s);
 	}
 
 }
@@ -72,10 +72,11 @@ void DBC::ordenarS(int s, int I, int J,int &pos){
 		{
 
 			entradaOpencl[s-2][pos]=matriz[i][j];
-			//printf("col %i = %i\t",pos,matriz[i][j]);
+			//printf("%i\t",matriz[i][j]);
 			pos+=1;
 
 		}
+		//printf("\n");
 	}
 
 }

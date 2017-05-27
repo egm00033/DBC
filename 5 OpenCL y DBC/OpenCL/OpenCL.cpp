@@ -17,14 +17,15 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	//cambiar imagen por posicion
-	ancho=6;
+	ancho=16;
+	printf("imagen leida\n");
 	for (int i = 0; i < ancho; i++)
 	{
 		for (int j = 0; j < ancho; j++){
 			imagen[i][j]=i*ancho+j;
-			printf("%i %i = %i\t",i,j,imagen[i][j]);
+			//printf(" %i\t",imagen[i][j]);
 		}
-		printf("\n");
+		//printf("\n");
 	}
 
 	DBC c=DBC(imagen, ancho, niveldeGris);

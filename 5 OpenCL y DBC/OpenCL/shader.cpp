@@ -48,7 +48,7 @@ shader::shader(void)
 	// compilar programa
 	ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
 	if(ret ==CL_SUCCESS ){
-		printf("respuesta bildProgram = CL_SUCCESS \n");
+		//printf("respuesta bildProgram = CL_SUCCESS \n");
 	}else{
 		if(ret == CL_INVALID_PROGRAM ){
 			printf("respuesta bildProgram = CL_INVALID_PROGRAM \n");
@@ -79,21 +79,17 @@ shader::shader(void)
 }
 float shader::getDF(int **entradaOpencl, int M,int s){
 	cl_int ret;
-	printf("iniciando\n");
-
-	// Vectores de entrada
-	int i;
-	
+	printf("iniciando s=%i\n",s);
 
 	const int LIST_SIZE = M*M;// Lista de elementos de tamaño MxM
 	size_t local_item_size = s*s; // Grupo de trabajo de tamaño sxs
 	int *imagen = (int*)malloc(sizeof(int)*LIST_SIZE);
 
-	for(i = 0; i < LIST_SIZE; i++) {
+	for(int i = 0; i < LIST_SIZE; i++) {
 		imagen[i] = entradaOpencl[s-2][i];
-		if(i%local_item_size==0)
+		/*if(i%local_item_size==0)
 			printf("\n");
-		printf("col %i = %i\t",i%s,imagen[i]);
+		printf(" %i\t",imagen[i]);*/
 		
 	}
 
@@ -128,13 +124,13 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 	//añadir para arreglar los problemas de salida
 	//ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
 
-	printf("Antes de la ejecucion\n");
+	//printf("Antes de la ejecucion\n");
 	// ejecutar el kernel OpenCL en la lista
 	size_t global_item_size = LIST_SIZE/local_item_size; // numero total de operaciones (tamaño del vector)
 
 	ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
 		&global_item_size, &local_item_size, 0, NULL, NULL);
-	printf("Después de la ejecucion\n");
+	//printf("Después de la ejecucion\n");
 	// Copiar el buffer minimos en el vector minimos
 	int *maximos = (int*)malloc(sizeof(int)*LIST_SIZE);
 	ret = clEnqueueReadBuffer(command_queue, max_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(int), maximos, 0, NULL, NULL);
@@ -145,8 +141,8 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 	printf("tam=%i\n",global_item_size);
 
 	//Mostrar solucion
-	for(i = 0; i < global_item_size; i++)//sustituir por global_item_size
-		printf("%d. max = %d. min = %d\n", imagen[i], maximos[i], minimos[i]);
+	for(int i = 0; i < global_item_size; i++)//sustituir por global_item_size
+		printf("%d. max = %d. min = %d\n", i, maximos[i], minimos[i]);
 	printf("tam=%i\n",global_item_size);
 	// Clean up
 	
