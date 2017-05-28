@@ -77,22 +77,17 @@ shader::shader(void)
 	kernel = clCreateKernel(program, "vector_add", &ret);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 }
-float shader::subdividirCalculos(int *vEntrada,int s,int inicio,int tamanioLista){
-
+float shader::subdividirCalculos(int *vEntrada,int s,int M,int inicio,int tamanioLista){
+	float sumatoria=0;
 	cl_int ret;
 	int s2=s*s;
 	const int LIST_SIZE =tamanioLista;// Lista de elementos de tamaño MxM
 	size_t global_item_size = LIST_SIZE/s2; // numero total de operaciones (tamaño del vector)
 	size_t local_item_size = 4; // Grupo de trabajo de tamaño sxs
+	float sPrima=(float)256*(float)s/(float)M;//pondera la altura del grid (s x s x sPrima)
 
 
 	if(mostrarInfo)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
-	//int *vEntrada = (int*)malloc(sizeof(int)*LIST_SIZE);
-
-
-	//vEntrada=entradaOpencl[s-2];
-
-
 
 	//crear buffers de memoria en el dispositivo por cada vector
 	cl_mem imagen_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
@@ -101,6 +96,8 @@ float shader::subdividirCalculos(int *vEntrada,int s,int inicio,int tamanioLista
 		LIST_SIZE * sizeof(int), NULL, &ret);
 	cl_mem min_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
 		LIST_SIZE * sizeof(int), NULL, &ret);
+	cl_mem n_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
+		LIST_SIZE * sizeof(float), NULL, &ret);
 
 
 	/*cl_int clSetKernelArg (	
@@ -108,7 +105,10 @@ float shader::subdividirCalculos(int *vEntrada,int s,int inicio,int tamanioLista
 	cl_uint arg_index,
 	size_t arg_size,
 	const void *arg_value)*/
-	ret=clSetKernelArg(kernel, 3, sizeof(s2), &s2);
+	ret=clSetKernelArg(kernel, 4, sizeof(s2), &s2);
+	if(ret!=0)printf("clSetKernelArg(s2), linea: %d, error: %d\n", __LINE__, ret);
+
+	ret=clSetKernelArg(kernel, 5, sizeof(s2), &sPrima);
 	if(ret!=0)printf("clSetKernelArg(s2), linea: %d, error: %d\n", __LINE__, ret);
 
 	// Copiar cada vector de entrada en su buffer
@@ -127,6 +127,9 @@ float shader::subdividirCalculos(int *vEntrada,int s,int inicio,int tamanioLista
 	ret = clSetKernelArg(kernel, 2, sizeof(cl_mem), (void *)&min_mem_obj);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
+	ret = clSetKernelArg(kernel, 3, sizeof(cl_mem), (void *)&n_mem_obj);
+	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+
 	//añadir para arreglar los problemas de salida
 	//ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
 
@@ -142,8 +145,6 @@ float shader::subdividirCalculos(int *vEntrada,int s,int inicio,int tamanioLista
 		ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
 			&global_item_size, &local_item_size, 0, NULL, NULL);
 		if(ret!=0)printf("clEnqueueNDRangeKernel=%i\n",ret,ret);
-
-
 		// Copiar el buffer minimos en el vector minimos
 
 		int *maximos = (int*)malloc(sizeof(int)*LIST_SIZE);
@@ -151,32 +152,39 @@ float shader::subdividirCalculos(int *vEntrada,int s,int inicio,int tamanioLista
 		if(ret!=0)printf("copiar max=%i\n",ret);
 		int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
 		ret = clEnqueueReadBuffer(command_queue, min_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(int), minimos, 0, NULL, NULL);
-
+		float *n = (float*)malloc(sizeof(float)*LIST_SIZE);
+		ret = clEnqueueReadBuffer(command_queue, n_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(float), n, 0, NULL, NULL);
 		//Mostrar solucion
-		if(mostrarInfo){
-			for(int i = 0; i < global_item_size; i++){//sustituir por global_item_size
-				if(i<3||i>global_item_size-4)
-					printf("%d. max = %d. min = %d\n", i, maximos[i], minimos[i]);
+
+		for(int i = 0; i < global_item_size; i++){//sustituir por global_item_size
+			sumatoria+=n[i];
+			if(mostrarInfo){
+				//if(i<3||i>global_item_size-4)
+				//printf("%d. max = %d. min = %d\n", i, maximos[i], minimos[i]);
 			}
 		}
+
 		// Clean up
 		free(maximos);
 		free(minimos);
+		free(n);
 	}
 	ret = clReleaseMemObject(imagen_mem_obj);
 	ret = clReleaseMemObject(max_mem_obj);
 	ret = clReleaseMemObject(min_mem_obj);
-
-	return 0;
+	ret = clReleaseMemObject(n_mem_obj);
+	//printf("sumatoria = %f \n ",sumatoria);
+	return sumatoria;
 }
 float shader::getDF(int *vEntrada, int M,int s){
-
-	mostrarInfo=true;
+	float N=0;
+	mostrarInfo=false;
 	if(mostrarInfo)printf("\niniciando s=%i M=%i\n",s,M);
 	int tam_lista=M*M;
 	int s2=s*s;
 	int nGrid=M/s;
 	int particiones=1;
+
 
 	//calcular el num particiones
 	while((tam_lista/particiones)/s2>=CL_DEVICE_ADDRESS_BITS){
@@ -184,14 +192,13 @@ float shader::getDF(int *vEntrada, int M,int s){
 		while(nGrid%particiones!=0)
 			particiones+=1;
 	}
-	printf("particiones = %i\n",particiones);
 	//si no tiene espacion nuestro dispositivo para ejecutar lodos los global_group a la vez
 	if(particiones==1){
-		subdividirCalculos(vEntrada, s,0,tam_lista);
+		N+=subdividirCalculos(vEntrada, s,M,0,tam_lista);
 	}else{
 		//subdividir workgroup
 
-		
+
 		int tamSubLista=tam_lista/particiones;
 		int *subLista = (int *) malloc(tamSubLista * sizeof(int));
 
@@ -199,10 +206,10 @@ float shader::getDF(int *vEntrada, int M,int s){
 		for (int p = 0; p < particiones; p++)
 		{
 			int inicio=p*tamSubLista;
-			printf("Iniciando s=%i particion=%i\n",s,p);
+			if(mostrarInfo)printf("Iniciando s=%i particion=%i\n",s,p);
 			memcpy(subLista, vEntrada + inicio,tamSubLista*sizeof(int));
 
-			subdividirCalculos(subLista, s,inicio,tamSubLista);
+			N+=subdividirCalculos(subLista, s,M,inicio,tamSubLista);
 		}
 
 		//fin for
@@ -210,8 +217,7 @@ float shader::getDF(int *vEntrada, int M,int s){
 		free(subLista);
 	}
 
-
-	return 0;
+	return N;
 }
 
 shader::~shader(void)

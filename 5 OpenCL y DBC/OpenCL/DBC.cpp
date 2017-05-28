@@ -44,6 +44,7 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 		for (int s = 2; s <= anchoMatriz/2; s++)
 		{
 			f=programa.getDF(entradaOpencl[s-2],anchoMatriz/s*s,s);
+			printf("s= %i; N = %f; r=%f \n",s,f,(float)s/(float)anchoMatriz);
 		}
 	//}
 
