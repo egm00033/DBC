@@ -79,7 +79,7 @@ shader::shader(void)
 }
 float shader::getDF(int **entradaOpencl, int M,int s){
 	cl_int ret;
-	printf("iniciando s=%i M=%i\n",s,M);
+	printf("\niniciando s=%i M=%i\n",s,M);
 
 	const int LIST_SIZE = M*M;// Lista de elementos de tamaño MxM
 	size_t local_item_size = s*s; // Grupo de trabajo de tamaño sxs
@@ -95,7 +95,6 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 		//printf(" (%i)%i\t",i,imagen[i]);
 
 	}
-	//imagen[22464]=666;
 
 
 
@@ -126,7 +125,6 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 	//añadir para arreglar los problemas de salida
 	//ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
 
-	printf("1\n");
 
 	//limite hardware
 	if(global_item_size>=CL_DEVICE_ADDRESS_BITS){
@@ -138,7 +136,6 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 	//}else if(LIST_SIZE>=CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE){
 		//printf("limite buffer = %i\n",CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE );
 	}else{
-		printf("1.5\n");
 		ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
 			&global_item_size, &local_item_size, 0, NULL, NULL);
 		if(ret!=0)printf("clEnqueueNDRangeKernel=%i\n",ret,ret);
@@ -147,19 +144,16 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 		// Copiar el buffer minimos en el vector minimos
 
 		int *maximos = (int*)malloc(sizeof(int)*LIST_SIZE);
-		printf("2.5\n");
 		ret = clEnqueueReadBuffer(command_queue, max_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(int), maximos, 0, NULL, NULL);
 		if(ret!=0)printf("copiar max=%i\n",ret);
-		printf("3\n");
 		int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
 		ret = clEnqueueReadBuffer(command_queue, min_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(int), minimos, 0, NULL, NULL);
 
-		printf("4\n");
-
 		//Mostrar solucion
 		for(int i = 0; i < global_item_size; i++){//sustituir por global_item_size
+			if(i<3||i>global_item_size-4)
 			printf("%d. max = %d. min = %d\n", i, maximos[i], minimos[i]);
-			if(i%(M/s)+1==0)system("pause");
+			//if(i%(M/s)+1==0)system("pause");
 		}
 		// Clean up
 		free(maximos);
