@@ -174,14 +174,24 @@ float shader::getDF(int *vEntrada, int M,int s){
 	mostrarInfo=true;
 	if(mostrarInfo)printf("\niniciando s=%i M=%i\n",s,M);
 	int tam_lista=M*M;
-	
+	int s2=s*s;
+	int nGrid=M/s;
+	int particiones=1;
 
+	//calcular el num particiones
+	while((tam_lista/particiones)/s2>=CL_DEVICE_ADDRESS_BITS){
+		particiones+=1;
+		while(nGrid%particiones!=0)
+			particiones+=1;
+	}
+	printf("particiones = %i\n",particiones);
 	//si no tiene espacion nuestro dispositivo para ejecutar lodos los global_group a la vez
-	if(false){
+	if(particiones==1){
 		subdividirCalculos(vEntrada, s,0,tam_lista);
 	}else{
 		//subdividir workgroup
-		int particiones=2;
+
+		
 		int tamSubLista=tam_lista/particiones;
 		int *subLista = (int *) malloc(tamSubLista * sizeof(int));
 

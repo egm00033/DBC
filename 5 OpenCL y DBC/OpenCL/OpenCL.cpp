@@ -16,9 +16,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	int **imagen=leerImagenBMP(path, ancho, alto);//carga en memoria una matriz con la información de la imagen
 
 
-	//cambiar imagen por posicion
-	ancho=8;
+	
+	
 	printf("imagen leida\n");
+	//cambiar imagen por posicion
+	/*ancho=640;
 	for (int i = 0; i < ancho; i++)
 	{
 		for (int j = 0; j < ancho; j++){
@@ -26,7 +28,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			//printf(" %i\t",imagen[i][j]);
 		}
 		//printf("\n");
-	}
+	}*/
 
 	DBC c=DBC(imagen, ancho, niveldeGris);
 
