@@ -77,7 +77,7 @@ shader::shader(void)
 	kernel = clCreateKernel(program, "vector_add", &ret);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 }
-float shader::getDF(int **entradaOpencl, int M,int s){
+float shader::getDF(int *vEntrada, int M,int s){
 
 	bool mostrarInfo=true;
 
@@ -86,18 +86,14 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 	int s2=s*s;
 	const int LIST_SIZE = M*M;// Lista de elementos de tamaño MxM
 	size_t global_item_size = LIST_SIZE/s2; // numero total de operaciones (tamaño del vector)
-	size_t local_item_size = global_item_size/4; // Grupo de trabajo de tamaño sxs
+	size_t local_item_size = 4; // Grupo de trabajo de tamaño sxs
 
 
 	if(mostrarInfo)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
-	int *imagen = (int*)malloc(sizeof(int)*LIST_SIZE);
+	//int *vEntrada = (int*)malloc(sizeof(int)*LIST_SIZE);
 
-	for(int i = 0; i < LIST_SIZE; i++) {
-		imagen[i] = entradaOpencl[s-2][i];
-		//if(i%local_item_size==0)
-		//printf("\n");
-		//printf(" (%i)%i\t",i,imagen[i]);
-	}
+
+	//vEntrada=entradaOpencl[s-2];
 
 
 
@@ -120,7 +116,7 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 
 	// Copiar cada vector de entrada en su buffer
 	ret = clEnqueueWriteBuffer(command_queue, imagen_mem_obj, CL_TRUE, 0,
-		LIST_SIZE * sizeof(int), imagen, 0, NULL, NULL);
+		LIST_SIZE * sizeof(int), vEntrada, 0, NULL, NULL);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 
@@ -143,8 +139,6 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 		printf("Excedido el numero de global_work_size(%i), debe ser menor que CL_DEVICE_ADDRESS_BITS(%i)\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
 	}else if(local_item_size>=CL_DEVICE_MAX_WORK_GROUP_SIZE){
 		printf("Excedido el numero de local_item_size(%i), debe ser menor que CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",local_item_size,CL_DEVICE_MAX_WORK_GROUP_SIZE);
-		//}else if(global_item_size%local_item_size!=0){
-		//	printf("global_item_size %% local_item_size = %i %% %i   = %i\n",global_item_size,local_item_size,global_item_size%local_item_size);
 		//}else if(LIST_SIZE>=CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE){
 		//printf("limite buffer = %i\n",CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE );
 	}else{
@@ -177,7 +171,7 @@ float shader::getDF(int **entradaOpencl, int M,int s){
 	ret = clReleaseMemObject(max_mem_obj);
 	ret = clReleaseMemObject(min_mem_obj);
 
-	free(imagen);
+	//free(vEntrada);
 
 
 	return 0;

@@ -17,6 +17,6 @@ private:
 public:
 	shader(void);
 	~shader(void);
-	float getDF(int **entradaOpencl,int M,int s);
+	float getDF(int *vEntrada,int M,int s);
 };
 
