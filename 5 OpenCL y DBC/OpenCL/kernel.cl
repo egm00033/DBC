@@ -12,16 +12,11 @@ __kernel void vector_add(__global const int *A, __global  int *B, __global int *
 	C[get_global_id(0)] = 500000;
 	int pos=0;
 	pos=get_global_id(0)*get_local_size(0);
-	C[get_global_id(0)] = A[pos];
-	pos=min(pos,22465);
-	//pos=max(pos,22463);
-	/*if(pos==22464){
-		for(int i=0;i<get_local_size(0);i++){
-			B[get_global_id(0)] = max(B[get_global_id(0)],A[pos+i]);
-			C[get_global_id(0)] = min(C[get_global_id(0)],A[pos+i]);
-
-		}
-	}*/
-	B[get_global_id(0)]=A[pos];
+	int ultimo=(get_global_size(0)-1)*get_local_size(0);//evita que se desborde el vector
+	pos=min(pos,ultimo);
 	
+	for(int i=0;i<get_local_size(0);i++){
+		B[get_global_id(0)] = max(B[get_global_id(0)],A[pos+i]);
+		C[get_global_id(0)] = min(C[get_global_id(0)],A[pos+i]);
+	}
 }
