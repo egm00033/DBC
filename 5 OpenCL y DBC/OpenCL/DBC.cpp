@@ -39,15 +39,13 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	//llamar al programa
 	shader programa=shader();
 	float f=0;
-	for (int s = 2; s <= anchoMatriz/2; s++)
-	{
-		if(s<=anchoMatriz/s){
+	//for (int i = 0; i < 100; i++){//bucle para estresar
+	
+		for (int s = 2; s <= anchoMatriz/2; s++)
+		{
 			f=programa.getDF(entradaOpencl,anchoMatriz/s*s,s);
-		}else{
-			printf("%i(s) > %i(particiones) localsize>globarsize\n",s,anchoMatriz/s);
 		}
-	}
-
+	//}
 }
 
 
