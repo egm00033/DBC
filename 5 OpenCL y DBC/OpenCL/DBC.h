@@ -27,6 +27,8 @@ private:
 	int **entradaOpencl;
 	int anchoMatriz;
 	int numElementos;
+	interpretacion *grafica;//array  con todos los resultados necesarios para calcular la Dimensión fractal
+
 
 	void dividirS( int s);//divide la imagen en grill de tamaño s
 	void ordenarS(int s, int I, int J,int &pos);// calcula el valor minimo y maximo de un grill concreto

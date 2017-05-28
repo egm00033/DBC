@@ -39,8 +39,6 @@ shader::shader(void)
 	command_queue = clCreateCommandQueue(context, device_id, 0, &ret);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
-
-	printf("antes de la construccion\n");
 	// Crear programa del codigoShader
 	program = clCreateProgramWithSource(context, 1, 
 		(const char **)&codigoShader, (const size_t *)&source_size, &ret);

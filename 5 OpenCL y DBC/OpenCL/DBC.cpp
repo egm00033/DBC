@@ -9,6 +9,7 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	printf("DBC\n");
 	anchoMatriz=ancho;
 	//inicializar la entrada de opencl
+	grafica=(interpretacion*) calloc(anchoMatriz/2-1,sizeof(interpretacion));
 	entradaOpencl =(int **) calloc((anchoMatriz/2-1),sizeof(int *));
 	for (int i = 0; i < anchoMatriz/2-1; i++){
 		entradaOpencl[i]=(int *) calloc(anchoMatriz*anchoMatriz,sizeof(int));
@@ -17,42 +18,53 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 
 	//tiempo
 	clock_t fin,totalInicio;
-	totalInicio=clock();
+
 
 	matriz=imagen;
 	anchoMatriz=ancho;
-	numElementos=0;
 
 	//guardar los resultado para todos los tamaños de s
 	int *v=(int*)calloc(anchoMatriz/2,sizeof(int));
 
 	//halla N para tamaños M>=s>1d
+	totalInicio=clock();
 	for (int s = 2; s <= anchoMatriz/2; s++)
 	{
 		DBC::dividirS(s);
-		fin=clock();
 		//printf("subdividiendo s= %i\n",s);
 	}
-
-	//printf("\ntiempo total de la ordenacion: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
+	fin=clock();
+	printf("\ntiempo total de la ordenacion: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
 
 	//llamar al programa
 	shader programa=shader();
-	float f=0;
-	//for (int i = 0; i < 100; i++){//bucle para estresar
-	
-		for (int s = 2; s <= anchoMatriz/2; s++)
-		{
-			f=programa.getDF(entradaOpencl[s-2],anchoMatriz/s*s,s);
-			printf("s= %i; N = %f; r=%f \n",s,f,(float)s/(float)anchoMatriz);
-		}
-	//}
+	float N=0;
 
-		for (int i = 0; i < anchoMatriz/2-1; i++)
-		{
-			free(entradaOpencl[i]);
-		}
-		free(entradaOpencl);
+
+	float r=0;
+
+	totalInicio=clock();
+	for (int s = 2; s <= anchoMatriz/2; s++)
+	{
+		N=programa.getDF(entradaOpencl[s-2],anchoMatriz/s*s,s);
+		grafica[s-2].y=log10((float)N);
+	}
+	fin=clock();	
+	printf("\ntiempo de la ejecucion del shader: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
+
+	printf("s; N ; r ;logN;lor(1/r)\n");
+	for (int s = 2; s <= anchoMatriz/2; s++)
+	{
+		r=(float)s/(float)anchoMatriz;
+		grafica[s-2].x=log10(1/r);
+		printf("%i;%f;%f;\n",s,grafica[s-2].y,grafica[s-2].x);
+	}
+
+	for (int i = 0; i < anchoMatriz/2-1; i++)
+	{
+		free(entradaOpencl[i]);
+	}
+	free(entradaOpencl);
 }
 
 

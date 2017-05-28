@@ -25,7 +25,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "targetver.h"
+#include "Util.h"
 #include "shader.h"
 #include "DBC.h"
-#include "Util.h"
+
 

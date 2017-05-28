@@ -91,7 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DBC.cpp" />
-    <ClCompile Include="OpenCL.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
