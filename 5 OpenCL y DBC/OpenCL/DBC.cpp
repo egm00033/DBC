@@ -46,6 +46,12 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 			f=programa.getDF(entradaOpencl[s-2],anchoMatriz/s*s,s);
 		}
 	//}
+
+		for (int i = 0; i < anchoMatriz/2-1; i++)
+		{
+			free(entradaOpencl[i]);
+		}
+		free(entradaOpencl);
 }
 
 

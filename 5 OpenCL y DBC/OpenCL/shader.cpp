@@ -77,14 +77,11 @@ shader::shader(void)
 	kernel = clCreateKernel(program, "vector_add", &ret);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 }
-float shader::getDF(int *vEntrada, int M,int s){
-
-	bool mostrarInfo=true;
+float shader::subdividirCalculos(int *vEntrada,int s,int inicio,int tamanioLista){
 
 	cl_int ret;
-	if(mostrarInfo)printf("\niniciando s=%i M=%i\n",s,M);
 	int s2=s*s;
-	const int LIST_SIZE = M*M;// Lista de elementos de tamaño MxM
+	const int LIST_SIZE =tamanioLista;// Lista de elementos de tamaño MxM
 	size_t global_item_size = LIST_SIZE/s2; // numero total de operaciones (tamaño del vector)
 	size_t local_item_size = 4; // Grupo de trabajo de tamaño sxs
 
@@ -160,7 +157,6 @@ float shader::getDF(int *vEntrada, int M,int s){
 			for(int i = 0; i < global_item_size; i++){//sustituir por global_item_size
 				if(i<3||i>global_item_size-4)
 					printf("%d. max = %d. min = %d\n", i, maximos[i], minimos[i]);
-				//if(i%(M/s)+1==0)system("pause");
 			}
 		}
 		// Clean up
@@ -171,7 +167,38 @@ float shader::getDF(int *vEntrada, int M,int s){
 	ret = clReleaseMemObject(max_mem_obj);
 	ret = clReleaseMemObject(min_mem_obj);
 
-	//free(vEntrada);
+	return 0;
+}
+float shader::getDF(int *vEntrada, int M,int s){
+
+	mostrarInfo=true;
+	if(mostrarInfo)printf("\niniciando s=%i M=%i\n",s,M);
+	int tam_lista=M*M;
+	
+
+	//si no tiene espacion nuestro dispositivo para ejecutar lodos los global_group a la vez
+	if(false){
+		subdividirCalculos(vEntrada, s,0,tam_lista);
+	}else{
+		//subdividir workgroup
+		int particiones=2;
+		int tamSubLista=tam_lista/particiones;
+		int *subLista = (int *) malloc(tamSubLista * sizeof(int));
+
+		//for
+		for (int p = 0; p < particiones; p++)
+		{
+			int inicio=p*tamSubLista;
+			printf("Iniciando s=%i particion=%i\n",s,p);
+			memcpy(subLista, vEntrada + inicio,tamSubLista*sizeof(int));
+
+			subdividirCalculos(subLista, s,inicio,tamSubLista);
+		}
+
+		//fin for
+
+		free(subLista);
+	}
 
 
 	return 0;
