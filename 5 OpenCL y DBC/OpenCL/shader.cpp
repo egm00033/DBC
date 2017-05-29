@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "shader.h"
 
-
+//creación del programa dependiento de nuestro HW
 shader::shader(void)
 {
 	cl_int ret;
@@ -75,16 +75,18 @@ shader::shader(void)
 	kernel = clCreateKernel(program, "vector_add", &ret);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 }
-float shader::subdividirCalculos(int *vEntrada,int s,int M,int inicio,int tamanioLista){
+
+//permite subdividir la lista de calculos
+float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,const int inicio,const int tamanioLista,const float sPrima){
 	float sumatoria=0;
 	cl_int ret;
 	int s2=s*s;
 	const int LIST_SIZE =tamanioLista;// Lista de elementos de tamaño MxM
 	size_t global_item_size = LIST_SIZE/s2; // numero total de operaciones (tamaño del vector)
 	size_t local_item_size = 4; // Grupo de trabajo de tamaño sxs
-	float sPrima=(float)256*(float)s/(float)M;//pondera la altura del grid (s x s x sPrima)
+	//float sPrima=(float)256/((float)M/(float)s);//pondera la altura del grid (s x s x sPrima)
 
-
+	//printf("sPrima = %f / %f / %f = %f\n",(float)256,(float)M,(float)s,sPrima);
 	if(mostrarInfo)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
 
 	//crear buffers de memoria en el dispositivo por cada vector
@@ -156,9 +158,9 @@ float shader::subdividirCalculos(int *vEntrada,int s,int M,int inicio,int tamani
 
 		for(int i = 0; i < global_item_size; i++){//sustituir por global_item_size
 			sumatoria+=n[i];
-			if(mostrarInfo){
-				//if(i<3||i>global_item_size-4)
-				//printf("%d. max = %d. min = %d\n", i, maximos[i], minimos[i]);
+			if(s==320){
+				if(i<3||i>global_item_size-4)
+				printf("%d. max = %d. min = %d. n = %f\n", i, maximos[i], minimos[i],n[i]);
 			}
 		}
 
@@ -174,7 +176,11 @@ float shader::subdividirCalculos(int *vEntrada,int s,int M,int inicio,int tamani
 	//printf("sumatoria = %f \n ",sumatoria);
 	return sumatoria;
 }
-float shader::getDF(int *vEntrada, int M,int s){
+
+//Calcula la sumatoria de n para un tamaño s dado
+float shader::CalcularN(int *vEntrada, int M,int s){
+	float sPrima=(float)256/((float)M/(float)s);
+	M=M/s*s;//se ajusta la lista de elementos para evitar desbordarse
 	float N=0;
 	mostrarInfo=false;
 	if(mostrarInfo)printf("\niniciando s=%i M=%i\n",s,M);
@@ -182,7 +188,7 @@ float shader::getDF(int *vEntrada, int M,int s){
 	int s2=s*s;
 	int nGrid=M/s;
 	int particiones=1;
-
+	
 
 	//calcular el num particiones
 	while((tam_lista/particiones)/s2>=CL_DEVICE_ADDRESS_BITS){
@@ -192,7 +198,7 @@ float shader::getDF(int *vEntrada, int M,int s){
 	}
 	//si no tiene espacion nuestro dispositivo para ejecutar lodos los global_group a la vez
 	if(particiones==1){
-		N+=subdividirCalculos(vEntrada, s,M,0,tam_lista);
+		N+=subdividirCalculos(vEntrada, s,M,0,tam_lista,sPrima);
 	}else{
 		//subdividir workgroup
 
@@ -207,7 +213,7 @@ float shader::getDF(int *vEntrada, int M,int s){
 			if(mostrarInfo)printf("Iniciando s=%i particion=%i\n",s,p);
 			memcpy(subLista, vEntrada + inicio,tamSubLista*sizeof(int));
 
-			N+=subdividirCalculos(subLista, s,M,inicio,tamSubLista);
+			N+=subdividirCalculos(subLista, s,M,inicio,tamSubLista,sPrima);
 		}
 
 		//fin for

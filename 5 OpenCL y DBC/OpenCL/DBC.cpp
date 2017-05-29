@@ -16,7 +16,6 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	for (int i = 0; i < anchoMatriz/2-1; i++){
 		entradaOpencl[i]=(int *) calloc(anchoMatriz*anchoMatriz,sizeof(int));
 	}
-	entradaOpencl[0][0]=0;
 
 	//tiempo
 	clock_t fin,totalInicio;
@@ -44,7 +43,8 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	totalInicio=clock();
 	for (int s = 2; s <= anchoMatriz/2; s++)
 	{
-		N=programa.getDF(entradaOpencl[s-2],anchoMatriz/s*s,s);
+		N=programa.CalcularN(entradaOpencl[s-2],anchoMatriz,s);
+		//printf("%i \t%f\t %f\n",s,N,log10((float)N));
 		grafica[s-2].y=log10((float)N);
 	}
 	fin=clock();	
@@ -173,9 +173,9 @@ void DBC::calcularDF(){
 
 	}
 
-	printf("\nC=%f\n",C);
+	//printf("\nC=%f\n",C);
 	E=sqrt(sumae)/(float)tam;
-	printf("E=%f\n",E);
+	//printf("E=%f\n",E);
 
 }
 
