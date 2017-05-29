@@ -17,9 +17,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	int **imagen=leerImagenBMP(path, ancho, alto);//carga en memoria una matriz con la información de la imagen
 
 
-
-
-	printf("imagen leida\n");
 	
 	if(false){//cambiar imagen por posicion
 		ancho=8;
@@ -32,9 +29,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			//printf("\n");
 		}
 	}
-
+	//calcular DF
 	DBC c=DBC(imagen, ancho, niveldeGris);
-
 
 	system("pause");
 	return 0;

@@ -6,7 +6,9 @@
 
 DBC::DBC(int **imagen, int ancho,int nivelGris)
 {
-	printf("DBC\n");
+	bool mostrarInfo=true;
+	float N=0;
+	float r=0;
 	anchoMatriz=ancho;
 	//inicializar la entrada de opencl
 	grafica=(interpretacion*) calloc(anchoMatriz/2-1,sizeof(interpretacion));
@@ -18,7 +20,6 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 
 	//tiempo
 	clock_t fin,totalInicio;
-
 
 	matriz=imagen;
 	anchoMatriz=ancho;
@@ -38,10 +39,7 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 
 	//llamar al programa
 	shader programa=shader();
-	float N=0;
-
-
-	float r=0;
+	
 
 	totalInicio=clock();
 	for (int s = 2; s <= anchoMatriz/2; s++)
@@ -52,13 +50,19 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	fin=clock();	
 	printf("\ntiempo de la ejecucion del shader: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
 
-	printf("s; N ; r ;logN;lor(1/r)\n");
+	//mostrar resultado de la ejecucion
+	if(mostrarInfo)printf("s; N ; r ;logN;lor(1/r)\n");
+	int mayor=0;
 	for (int s = 2; s <= anchoMatriz/2; s++)
 	{
 		r=(float)s/(float)anchoMatriz;
 		grafica[s-2].x=log10(1/r);
-		printf("%i;%f;%f;\n",s,grafica[s-2].y,grafica[s-2].x);
+		if(mostrarInfo)printf("%i;%f;%f;\n",s,grafica[s-2].y,grafica[s-2].x);
 	}
+	//crear gráfica
+	mostrar(grafica,anchoMatriz/2-1);
+
+	calcularDF();
 
 	for (int i = 0; i < anchoMatriz/2-1; i++)
 	{
@@ -123,20 +127,26 @@ void DBC::mostrarGrafica(){
 
 
 void DBC::calcularDF(){
-	/*
+	
 	float penxy=0.0;
 	float sumax=0.0;
 	float sumay=0.0;
 	float sumx2=0.0;
 	float sumy2=0.0;
 
-	int tam=numElementos;
+	int tam=anchoMatriz/2-1;
 
 	//inicia la parte de regresion lineal
 
 	//x=log(1/r)
 	//y=log(N)
-
+	for(int i=0;i<tam;i++){
+		sumay+=grafica[i].y;
+		sumax+=grafica[i].x;
+		sumy2+=grafica[i].y*grafica[i].y;
+		sumx2+=grafica[i].x*grafica[i].x;
+		penxy+=grafica[i].y*grafica[i].x;
+	}
 
 	float a=tam*penxy;
 	float b=sumax*sumay;
@@ -144,7 +154,7 @@ void DBC::calcularDF(){
 	float d=pow(sumax,2);
 
 	D=(a-b)/(c-d);
-	printf("\ny=D*x+C\n");
+	//printf("\ny=D*x+C\n");
 	printf("Pendiente = D = %f\n",D);
 
 	float e=(sumay*(1/(float)tam));
@@ -158,14 +168,14 @@ void DBC::calcularDF(){
 	float divisor=0;
 
 	for(int i=0;i<tam;i++){
-	sumae+=pow(divisor,2)/(1+pow(D,2));
+		divisor=(D*grafica[i].x+C-grafica[i].y);
+		sumae+=pow(divisor,2)/(1+pow(D,2));
 
 	}
 
 	printf("\nC=%f\n",C);
 	E=sqrt(sumae)/(float)tam;
-	printf("E=%f\n",E);*/
-
+	printf("E=%f\n",E);
 
 }
 
