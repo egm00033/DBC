@@ -19,7 +19,6 @@ __kernel void vector_add(__global const int *A, __global  int *B, __global int *
 		B[get_global_id(0)] = max(B[get_global_id(0)],A[pos+i]);
 		C[get_global_id(0)] = min(C[get_global_id(0)],A[pos+i]);
 	}
-	N[get_global_id(0)]=((float)B[get_global_id(0)]-(float)C[get_global_id(0)]+1.0);
 
 	N[get_global_id(0)]=(B[get_global_id(0)]/sPrima-C[get_global_id(0)]/sPrima+1);
 }

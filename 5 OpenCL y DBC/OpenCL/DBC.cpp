@@ -44,12 +44,24 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	for (int s = 2; s <= anchoMatriz/2; s++)
 	{
 		N=programa.CalcularN(entradaOpencl[s-2],anchoMatriz,s);
-		//printf("%i \t%f\t %f\n",s,N,log10((float)N));
+		if(mostrarInfo)printf("%i \t%f\t %f\n",s,N,log10((float)N));
 		grafica[s-2].y=log10((float)N);
 	}
 	fin=clock();	
 	printf("\ntiempo de la ejecucion del shader: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
 
+	//calcular bordes: multiplicando por el area que no está calculada
+	for (int s = 2; s <= anchoMatriz/2; s++)
+	{
+		if(anchoMatriz%s!=0){
+			int mprima=anchoMatriz/s*s;
+
+			double dif=pow((double)anchoMatriz,2)/pow((double)mprima,2);
+			printf("%i diferencia= %f \n",s,dif);
+			grafica[s-2].y=grafica[s-2].y*dif;
+		}
+	}
+	
 	//mostrar resultado de la ejecucion
 	if(mostrarInfo)printf("s; N ; r ;logN;lor(1/r)\n");
 	int mayor=0;
