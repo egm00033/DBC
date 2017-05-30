@@ -65,13 +65,13 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	}
 	
 	//mostrar resultado de la ejecucion
-	if(mostrarInfo)printf("s; N ; r ;logN;lor(1/r)\n");
+	if(mostrarInfo)printf("s; N ; r ;logN;lor(1/r); \n");
 	int mayor=0;
 	for (int s = 2; s <= anchoMatriz/2; s++)
 	{
 		r=(float)s/(float)anchoMatriz;
 		grafica[s-2].x=log10(1/r);
-		if(mostrarInfo)printf("%i;%f;%f;\n",s,grafica[s-2].y,grafica[s-2].x);
+		if(mostrarInfo)printf("%i\t;%f\t;%f\t;%f\n",s,grafica[s-2].y,grafica[s-2].x,grafica[s-2].y/grafica[s-2].x);
 	}
 	//crear gráfica
 	mostrar(grafica,anchoMatriz/2-1);
@@ -134,10 +134,6 @@ void DBC::dividirS(int s){
 	}
 }
 
-void DBC::mostrarGrafica(){
-
-
-}
 
 
 void DBC::calcularDF(){
@@ -189,7 +185,7 @@ void DBC::calcularDF(){
 
 	//printf("\nC=%f\n",C);
 	E=sqrt(sumae)/(float)tam;
-	//printf("E=%f\n",E);
+	printf("E=%f\n",E);
 
 }
 

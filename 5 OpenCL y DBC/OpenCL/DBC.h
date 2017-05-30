@@ -35,7 +35,6 @@ private:
 public:
 	DBC(int **matriz, int M,int G);//constructor
 	~DBC(void);
-	void mostrarGrafica();//muestra por pantalla N sobre 1/r
 	float getDF(){return DF;};//devuelve el valor de la dimensión fractal
 	void calcularDF();//calcula la regresion lineal de la grafica para hallar la pendiente
 };
