@@ -7,28 +7,58 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	char *path=".\\images\\D3.bmp";
-	long int ancho=0;
-	long int alto=0;
-	int niveldeGris=256;
-	
+	unsigned char *img3;
+	bmpInfoHeader info; 
+	img3=LoadBMP(".\\images\\D3.bmp", &info);
 
-	//cargar gif
-	int **imagen=leerImagenBMP(path, ancho, alto);//carga en memoria una matriz con la información de la imagen
+	int i,j,blanco;
+	int **imagen;
+	imagen =(int **) calloc(info.height,sizeof(int *));
+	for (int i = 0; i < info.height; i++){
+		imagen[i]=(int *) calloc(info.width,sizeof(int));
+	}
+
+	printf("tamaño %i ancho alto %i %i\n",info.imgsize,info.height,info.width);
 
 
-	
-	if(false){//cambiar imagen por posicion
-		ancho=8;
-		for (int i = 0; i < ancho; i++)
+	for (i=0; i<info.height; i++)
+	{
+		for (j=0; j<info.width; j++)
 		{
-			for (int j = 0; j < ancho; j++){
-				imagen[i][j]=i*ancho+j;
-				//printf(" %i\t",imagen[i][j]);
-			}
-			//printf("\n");
+			//printf("%i %i %i \n",img3[(i*info.width+j)*3],img3[(i*info.width+j)*3+1],img3[(i*info.width+j)*3+2]);
+			blanco=0;
+			blanco+=img3[(i*info.width+j)*3];
+			blanco+=img3[(i*info.width+j)*3+1];
+			blanco+=img3[(i*info.width+j)*3+2];
+			//printf("blanco %i\n",blanco);
+			blanco=blanco/3;
+			imagen[i][j]=blanco;
 		}
 	}
+
+	char *path=".\\images\\D3.bmp";
+	long int ancho=info.width;
+	long int alto=info.height;
+	int niveldeGris=256;
+
+
+	//cargar gif
+
+	//imagen=leerImagenBMP(path, ancho, alto);//carga en memoria una matriz con la información de la imagen
+
+
+
+	/*if(false){//cambiar imagen por posicion
+	ancho=8;
+	for (int i = 0; i < ancho; i++)
+	{
+	for (int j = 0; j < ancho; j++){
+	imagen[i][j]=i*ancho+j;
+	//printf(" %i\t",imagen[i][j]);
+	}
+	//printf("\n");
+	}
+	}*/
 	//calcular DF
 	DBC c=DBC(imagen, ancho, niveldeGris);
 

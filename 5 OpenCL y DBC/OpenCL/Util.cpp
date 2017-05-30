@@ -184,7 +184,8 @@ unsigned char *LoadBMP(char *filename, bmpInfoHeader *bInfoHeader)
 	}
 	imgdata=(unsigned char*)malloc(bInfoHeader->imgsize);
 	fseek(f, header.offset, SEEK_SET);
-	if(mostrarInfo)printf("leido: %d\n", fread(imgdata, bInfoHeader->imgsize,1, f));
+	printf("leido la imagen: %d\n", fread(imgdata, bInfoHeader->imgsize,1, f));
+
 	fclose(f);
 
 	return imgdata;

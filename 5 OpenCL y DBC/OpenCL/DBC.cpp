@@ -45,7 +45,7 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	{
 		N=programa.CalcularN(entradaOpencl[s-2],anchoMatriz,s);
 		if(mostrarInfo)printf("%i \t%f\t %f\n",s,N,log10((float)N));
-		grafica[s-2].y=log10((float)N);
+		grafica[s-2].y=(float)N;
 	}
 	fin=clock();	
 	printf("\ntiempo de la ejecucion del shader: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
@@ -57,8 +57,10 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 			int mprima=anchoMatriz/s*s;
 
 			double dif=pow((double)anchoMatriz,2)/pow((double)mprima,2);
-			printf("%i diferencia= %f \n",s,dif);
-			grafica[s-2].y=grafica[s-2].y*dif;
+			if(false)printf("%i diferencia= %f \n",s,dif);
+			grafica[s-2].y=log10(grafica[s-2].y*dif);
+		}else{
+		grafica[s-2].y=log10(grafica[s-2].y);
 		}
 	}
 	
