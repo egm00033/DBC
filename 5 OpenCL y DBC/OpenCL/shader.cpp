@@ -158,7 +158,7 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 
 		for(int i = 0; i < global_item_size; i++){//sustituir por global_item_size
 			sumatoria+=n[i];
-			if(mostrarInfo){
+			if(false){
 				if(i<3||i>global_item_size-4)
 				printf("%d. max = %d. min = %d. n = %f\n", i, maximos[i], minimos[i],n[i]);
 			}
@@ -179,7 +179,7 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 
 //Calcula la sumatoria de n para un tamaño s dado
 float shader::CalcularN(int *vEntrada, int M,int s){
-	float sPrima=(float)256/((float)M/(float)s);
+	float sPrima=(float)256/((float)M/(float)(s));//con nivel de gris =950 da un resultado optimo
 	M=M/s*s;//se ajusta la lista de elementos para evitar desbordarse
 	float N=0;
 	mostrarInfo=false;

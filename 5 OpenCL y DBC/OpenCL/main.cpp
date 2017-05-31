@@ -9,7 +9,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	unsigned char *img3;
 	bmpInfoHeader info; 
-	img3=LoadBMP(".\\images\\D3.bmp", &info);
+	img3=LoadBMP(".\\images\\D92.bmp", &info);
 
 	int i,j,blanco;
 	int **imagen;
@@ -32,7 +32,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			blanco+=img3[(i*info.width+j)*3+2];
 			//printf("blanco %i\n",blanco);
 			blanco=blanco/3;
-			imagen[i][j]=blanco;
+			imagen[i][j]=blanco;//dar el mayor contraste = j%2*256
 		}
 	}
 
@@ -61,6 +61,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	}*/
 	//calcular DF
 	DBC c=DBC(imagen, ancho, niveldeGris);
+
+
+	//mostrar imagen
+	system (".\\images\\grafica.bmp");
 
 	system("pause");
 	return 0;

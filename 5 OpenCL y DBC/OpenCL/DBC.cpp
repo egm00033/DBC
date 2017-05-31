@@ -44,7 +44,7 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	for (int s = 2; s <= anchoMatriz/2; s++)
 	{
 		N=programa.CalcularN(entradaOpencl[s-2],anchoMatriz,s);
-		if(mostrarInfo)printf("%i \t%f\t %f\n",s,N,log10((float)N));
+		if(false)printf("s=%i N= \t%f\t %f\n",s,N,log10((float)N));
 		grafica[s-2].y=(float)N;
 	}
 	fin=clock();	
@@ -65,19 +65,19 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	}
 	
 	//mostrar resultado de la ejecucion
-	if(mostrarInfo)printf("s; N ; r ;logN;lor(1/r); \n");
+	if(mostrarInfo)printf("s\t;N\t;r\t;logN\t;lor(1/r)\t; \n");
 	int mayor=0;
 	for (int s = 2; s <= anchoMatriz/2; s++)
 	{
 		r=(float)s/(float)anchoMatriz;
 		grafica[s-2].x=log10(1/r);
-		if(mostrarInfo)printf("%i\t;%f\t;%f\t;%f\n",s,grafica[s-2].y,grafica[s-2].x,grafica[s-2].y/grafica[s-2].x);
+		if(mostrarInfo)printf("%i\t;%f\t;%f\t;%f\t;%f\n",s,pow(10,grafica[s-2].y),1/pow(10,grafica[s-2].x),grafica[s-2].y,grafica[s-2].x);
 	}
 	//crear gráfica
 	mostrar(grafica,anchoMatriz/2-1);
-
+	
 	calcularDF();
-
+	//printf("%f\t%f\t%f\t%f\t%f\t%f\t\n",D,E,pow(10,grafica[318].y),grafica[318].y  ,pow(10,grafica[0].y),grafica[0].y);
 	for (int i = 0; i < anchoMatriz/2-1; i++)
 	{
 		free(entradaOpencl[i]);

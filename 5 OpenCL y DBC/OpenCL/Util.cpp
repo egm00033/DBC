@@ -145,7 +145,7 @@ void mostrar(interpretacion *grafica, int tam){
 	}
 
 	SaveBMP(".\\images\\grafica.bmp", &info, img);
-	system (".\\images\\grafica.bmp");
+	
 
 	free(img);
 
@@ -184,7 +184,7 @@ unsigned char *LoadBMP(char *filename, bmpInfoHeader *bInfoHeader)
 	}
 	imgdata=(unsigned char*)malloc(bInfoHeader->imgsize);
 	fseek(f, header.offset, SEEK_SET);
-	printf("leido la imagen: %d\n", fread(imgdata, bInfoHeader->imgsize,1, f));
+	fread(imgdata, bInfoHeader->imgsize,1, f);
 
 	fclose(f);
 
