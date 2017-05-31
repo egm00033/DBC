@@ -46,4 +46,5 @@ unsigned char calculaColorMedio(unsigned char *pixel);
 unsigned char *LoadBMP(char *filename, bmpInfoHeader *bInfoHeader);
 bmpInfoHeader *createInfoHeader(unsigned w, unsigned h, unsigned ppp);
 
-void mostrar(interpretacion *grafica, int tam);
+void crearGrafica(interpretacion *grafica, int tam);
+void crearMapaZ(int s,float sPrima, int M,float *n);

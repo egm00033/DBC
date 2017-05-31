@@ -1,19 +1,11 @@
-﻿Compilación iniciada a las 31/05/2017 17:38:16.
+﻿Compilación iniciada a las 31/05/2017 20:51:34.
      1>Proyecto "C:\Users\usuario\Desktop\DBC\5 OpenCL y DBC\OpenCL\OpenCL.vcxproj" en el nodo 2 (Build destinos).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OpenCL.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Util.cpp
-         Util.cpp
-     1>c:\users\usuario\desktop\dbc\5 opencl y dbc\opencl\util.cpp(17): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
-     1>c:\users\usuario\desktop\dbc\5 opencl y dbc\opencl\util.cpp(40): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
-     1>c:\users\usuario\desktop\dbc\5 opencl y dbc\opencl\util.cpp(120): warning C4018: '<' : no coinciden signed/unsigned
-     1>c:\users\usuario\desktop\dbc\5 opencl y dbc\opencl\util.cpp(122): warning C4018: '<' : no coinciden signed/unsigned
-     1>c:\users\usuario\desktop\dbc\5 opencl y dbc\opencl\util.cpp(115): warning C4101: 'color' : variable local sin referencia
-     1>c:\users\usuario\desktop\dbc\5 opencl y dbc\opencl\util.cpp(160): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
-     1>c:\users\usuario\desktop\dbc\5 opencl y dbc\opencl\util.cpp(220): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OpenCL.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+     1>c:\users\usuario\desktop\dbc\5 opencl y dbc\opencl\main.cpp(17): warning C4018: '<' : no coinciden signed/unsigned
+     1>c:\users\usuario\desktop\dbc\5 opencl y dbc\opencl\main.cpp(24): warning C4018: '<' : no coinciden signed/unsigned
+     1>c:\users\usuario\desktop\dbc\5 opencl y dbc\opencl\main.cpp(26): warning C4018: '<' : no coinciden signed/unsigned
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\usuario\Desktop\DBC\5 OpenCL y DBC\Debug\OpenCL.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/lib/x86" OpenCL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\usuario\Desktop\DBC\5 OpenCL y DBC\Debug\OpenCL.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\usuario\Desktop\DBC\5 OpenCL y DBC\Debug\OpenCL.lib" /MACHINE:X86 Debug\DBC.obj
          Debug\main.obj
@@ -25,4 +17,4 @@
 
 Compilación correcta.
 
-Tiempo transcurrido 00:00:00.58
+Tiempo transcurrido 00:00:00.53

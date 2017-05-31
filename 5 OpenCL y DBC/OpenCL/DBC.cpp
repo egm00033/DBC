@@ -74,7 +74,7 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 		if(mostrarInfo)printf("%i\t;%f\t;%f\t;%f\t;%f\n",s,pow(10,grafica[s-2].y),1/pow(10,grafica[s-2].x),grafica[s-2].y,grafica[s-2].x);
 	}
 	//crear gráfica
-	mostrar(grafica,anchoMatriz/2-1);
+	crearGrafica(grafica,anchoMatriz/2-1);
 	
 	calcularDF();
 	//printf("%f\t%f\t%f\t%f\t%f\t%f\t\n",D,E,pow(10,grafica[318].y),grafica[318].y  ,pow(10,grafica[0].y),grafica[0].y);

@@ -109,7 +109,7 @@ int **leerImagenBMP(char *nome,long &ancho,long &alto){
 	return matriz;
 }
 
-void mostrar(interpretacion *grafica, int tam){
+void crearGrafica(interpretacion *grafica, int tam){
 	bmpInfoHeader info;  
 	unsigned char *img;
 	unsigned char color[3];
@@ -144,12 +144,69 @@ void mostrar(interpretacion *grafica, int tam){
 		img[3*(posx+posy*info.width)+2]=0;
 	}
 
-	SaveBMP(".\\images\\grafica.bmp", &info, img);
+	SaveBMP(".\\images\\mapaZ\\grafica.bmp", &info, img);
 	
 
 	free(img);
 
 }
+
+void crearMapaZ(int s,float sPrima, int M,float *n){
+	bmpInfoHeader info;  
+	unsigned char *img;
+	unsigned char color[3];
+	unsigned char blanco;
+	int i, j;
+	img=LoadBMP(".\\images\\grafica.bmp", &info);
+
+	for (i=0; i<info.height; i++)
+	{
+		for (j=0; j<info.width; j++)
+		{
+			blanco=255;
+			img[3*(j+i*info.width)]=blanco;
+			img[3*(j+i*info.width)+1]=blanco;
+			img[3*(j+i*info.width)+2]=blanco;
+		}
+	}
+
+	int ngrid=pow(M/s,2.0);
+	int ancho=M/s;
+	printf("n grid = %i,ancho = %i,  s=%i, sprima=%f\n",ngrid,M/s,s, sPrima);
+	for (i=0; i<ngrid; i++)
+	{
+		for (int j = 0; j  < s; j ++)
+		{
+			for (int k = 0; k < s; k++)
+			{
+				//prueba para comprobar que pinta bien los grid=OK
+				/*int c=(i/ancho*10+i%ancho*10)%4*64;
+				int pos=i/ancho*M*s+i%ancho*s+j*M+k;*/
+
+				int c=n[i];
+				int pos=i/ancho*M*s+i%ancho*s+j*M+k;
+				//printf("%i\t",pos);
+				img[pos*3+0]=c;
+				img[pos*3+1]=c;
+				img[pos*3+2]=c;
+			}
+			//printf("\n");
+		}
+		//system("pause");
+	}
+
+
+
+	SaveBMP(".\\images\\mapaZ\\imagenZ.bmp", &info, img);
+	system (".\\images\\mapaZ\\imagenZ.bmp");
+	system("pause");
+	
+
+	free(img);
+
+}
+
+
 unsigned char *LoadBMP(char *filename, bmpInfoHeader *bInfoHeader)
 {
 	bool mostrarInfo=false;

@@ -9,7 +9,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	unsigned char *img3;
 	bmpInfoHeader info; 
-	img3=LoadBMP(".\\images\\D92.bmp", &info);
+	img3=LoadBMP(".\\images\\mia.bmp", &info);
 
 	int i,j,blanco;
 	int **imagen;
@@ -36,16 +36,17 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 
-	char *path=".\\images\\D3.bmp";
+	
 	long int ancho=info.width;
 	long int alto=info.height;
 	int niveldeGris=256;
 
 
 	//cargar gif
-
-	//imagen=leerImagenBMP(path, ancho, alto);//carga en memoria una matriz con la información de la imagen
-
+	/*
+	char *path=".\\images\\D3.bmp";
+	imagen=leerImagenBMP(path, ancho, alto);//carga en memoria una matriz con la información de la imagen
+	*/
 
 
 	/*if(false){//cambiar imagen por posicion

@@ -160,9 +160,15 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 			sumatoria+=n[i];
 			if(false){
 				if(i<3||i>global_item_size-4)
-				printf("%d. max = %d. min = %d. n = %f\n", i, maximos[i], minimos[i],n[i]);
+					printf("%d. max = %d. min = %d. n = %f\n", i, maximos[i], minimos[i],n[i]);
 			}
 		}
+
+		//mostrar mapa de profundidades si se calcula en una llamada a la funcion
+		if(M==640&&tamanioLista==M*M){
+			crearMapaZ(s, sPrima,  M,n);
+		}
+
 
 		// Clean up
 		free(maximos);
@@ -188,7 +194,7 @@ float shader::CalcularN(int *vEntrada, int M,int s){
 	int s2=s*s;
 	int nGrid=M/s;
 	int particiones=1;
-	
+
 
 	//calcular el num particiones; comprueba si se excede el tamaño de global
 	while((tam_lista/particiones)/s2>=CL_DEVICE_ADDRESS_BITS){
@@ -201,8 +207,6 @@ float shader::CalcularN(int *vEntrada, int M,int s){
 		N+=subdividirCalculos(vEntrada, s,M,0,tam_lista,sPrima);
 	}else{
 		//subdividir workgroup
-
-
 		int tamSubLista=tam_lista/particiones;
 		int *subLista = (int *) malloc(tamSubLista * sizeof(int));
 
@@ -217,7 +221,6 @@ float shader::CalcularN(int *vEntrada, int M,int s){
 		}
 
 		//fin for
-
 		free(subLista);
 	}
 
