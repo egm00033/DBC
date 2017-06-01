@@ -86,7 +86,7 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 	size_t local_item_size = 4; // Grupo de trabajo de tamaño sxs
 	//float sPrima=(float)256/((float)M/(float)s);//pondera la altura del grid (s x s x sPrima)
 
-	if(mostrarInfo)printf("sPrima = %f / %f / %f = %f\n",(float)256,(float)M,(float)s,sPrima);
+	if(mostrarInfo)printf("sPrima = %f / (%f / %f) = %f\n",(float)256,(float)M,(float)s,sPrima);
 	if(mostrarInfo)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
 
 	//crear buffers de memoria en el dispositivo por cada vector
@@ -158,14 +158,14 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 
 		for(int i = 0; i < global_item_size; i++){//sustituir por global_item_size
 			sumatoria+=n[i];
-			if(false){
+			if(s==320){
 				if(i<3||i>global_item_size-4)
 					printf("%d. max = %d. min = %d. n = %f\n", i, maximos[i], minimos[i],n[i]);
 			}
 		}
 
 		//mostrar mapa de profundidades si se calcula en una llamada a la funcion
-		if(false){
+		if(true){
 			if(M==640&&tamanioLista==M*M){
 				crearMapaZ(s, sPrima,  M, n);
 			}

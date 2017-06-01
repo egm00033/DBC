@@ -154,7 +154,6 @@ void crearGrafica(interpretacion *grafica, int tam){
 void crearMapaZ(int s,float sPrima, int M,float *n){
 	bmpInfoHeader info;  
 	unsigned char *img;
-	unsigned char color[3];
 	unsigned char blanco;
 	int i, j;
 	img=LoadBMP(".\\images\\grafica.bmp", &info);
@@ -175,20 +174,19 @@ void crearMapaZ(int s,float sPrima, int M,float *n){
 	printf("n grid = %i,ancho = %i,  s=%i, sprima=%f\n",ngrid,M/s,s, sPrima);
 	for (i=0; i<ngrid; i++)
 	{
+		int color=n[i];
 		for (int j = 0; j  < s; j ++)
 		{
 			for (int k = 0; k < s; k++)
 			{
 				//prueba para comprobar que pinta bien los grid=OK
-				/*int c=(i/ancho*10+i%ancho*10)%4*64;
-				int pos=i/ancho*M*s+i%ancho*s+j*M+k;*/
+				/*int pos=i/ancho*M*s+i%ancho*s+j*M+k;*/
 
-				int c=n[i];
 				int pos=i/ancho*M*s+i%ancho*s+j*M+k;
 				//printf("%i\t",pos);
-				img[pos*3+0]=c;
-				img[pos*3+1]=c;
-				img[pos*3+2]=c;
+				img[pos*3+0]=color*sPrima;
+				img[pos*3+1]=color*sPrima;
+				img[pos*3+2]=color*sPrima;
 			}
 			//printf("\n");
 		}
