@@ -174,7 +174,7 @@ void crearMapaZ(int s,float sPrima, int M,float *n){
 	printf("n grid = %i,ancho = %i,  s=%i, sprima=%f\n",ngrid,M/s,s, sPrima);
 	for (i=0; i<ngrid; i++)
 	{
-		int color=n[i];
+		int color=(n[i]-1)*sPrima;
 		for (int j = 0; j  < s; j ++)
 		{
 			for (int k = 0; k < s; k++)
@@ -184,9 +184,9 @@ void crearMapaZ(int s,float sPrima, int M,float *n){
 
 				int pos=i/ancho*M*s+i%ancho*s+j*M+k;
 				//printf("%i\t",pos);
-				img[pos*3+0]=color*sPrima;
-				img[pos*3+1]=color*sPrima;
-				img[pos*3+2]=color*sPrima;
+				img[pos*3+0]=(color);
+				img[pos*3+1]=(color);
+				img[pos*3+2]=(color);
 			}
 			//printf("\n");
 		}
