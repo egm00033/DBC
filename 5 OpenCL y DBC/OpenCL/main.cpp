@@ -9,7 +9,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	unsigned char *img3;
 	bmpInfoHeader info; 
-	img3=LoadBMP(".\\images\\mia.bmp", &info);
+	img3=LoadBMP(".\\images\\plana.bmp", &info);
 
 	int i,j,blanco;
 	int **imagen;

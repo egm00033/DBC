@@ -165,8 +165,10 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 		}
 
 		//mostrar mapa de profundidades si se calcula en una llamada a la funcion
-		if(M==640&&tamanioLista==M*M){
-			crearMapaZ(s, sPrima,  M,n);
+		if(false){
+			if(M==640&&tamanioLista==M*M){
+				crearMapaZ(s, sPrima,  M, n);
+			}
 		}
 
 
