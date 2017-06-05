@@ -35,34 +35,36 @@ shader::shader(void)
 	//mostrar todos las gpu
 	int idPlatforms;
 	int idDispositivo;
-	for (int idPlatforms=0; idPlatforms<ret_num_platforms; idPlatforms++)
-	{
-		//cl_device_id devices[100];
-		clGetDeviceIDs(platforms[idPlatforms], CL_DEVICE_TYPE_ALL, 100, devices, &ret_num_devices);
-
-		printf("=== %d OpenCL device(s) found on platform:%i\n", ret_num_devices,idPlatforms);
-		for (idDispositivo=0; idDispositivo<ret_num_devices; idDispositivo++)
+	if(mostrarDepuracion){
+		for (int idPlatforms=0; idPlatforms<ret_num_platforms; idPlatforms++)
 		{
-			char buffer[10240];
-			cl_uint buf_uint;
-			cl_ulong buf_ulong;
-			printf("  -- %d --\n", idDispositivo);
-			clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_NAME, sizeof(buffer), buffer, NULL);
-			printf("  DEVICE_NAME = %s\n", buffer);
-			clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_VENDOR, sizeof(buffer), buffer, NULL);
-			printf("  DEVICE_VENDOR = %s\n", buffer);
-			clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_VERSION, sizeof(buffer), buffer, NULL);
-			printf("  DEVICE_VERSION = %s\n", buffer);
-			clGetDeviceInfo(devices[idDispositivo], CL_DRIVER_VERSION, sizeof(buffer), buffer, NULL);
-			printf("  DRIVER_VERSION = %s\n", buffer);
-			clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(buf_uint), &buf_uint, NULL);
-			printf("  DEVICE_MAX_COMPUTE_UNITS = %u\n", (unsigned int)buf_uint);
-			clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(buf_uint), &buf_uint, NULL);
-			printf("  DEVICE_MAX_CLOCK_FREQUENCY = %u\n", (unsigned int)buf_uint);
-			clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(buf_ulong), &buf_ulong, NULL);
-			printf("  DEVICE_GLOBAL_MEM_SIZE = %llu\n\n", (unsigned long long)buf_ulong);
-		}
+			//cl_device_id devices[100];
+			clGetDeviceIDs(platforms[idPlatforms], CL_DEVICE_TYPE_ALL, 100, devices, &ret_num_devices);
 
+			printf("=== %d OpenCL device(s) found on platform:%i\n", ret_num_devices,idPlatforms);
+			for (idDispositivo=0; idDispositivo<ret_num_devices; idDispositivo++)
+			{
+				char buffer[10240];
+				cl_uint buf_uint;
+				cl_ulong buf_ulong;
+				printf("  -- %d --\n", idDispositivo);
+				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_NAME, sizeof(buffer), buffer, NULL);
+				printf("  DEVICE_NAME = %s\n", buffer);
+				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_VENDOR, sizeof(buffer), buffer, NULL);
+				printf("  DEVICE_VENDOR = %s\n", buffer);
+				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_VERSION, sizeof(buffer), buffer, NULL);
+				printf("  DEVICE_VERSION = %s\n", buffer);
+				clGetDeviceInfo(devices[idDispositivo], CL_DRIVER_VERSION, sizeof(buffer), buffer, NULL);
+				printf("  DRIVER_VERSION = %s\n", buffer);
+				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(buf_uint), &buf_uint, NULL);
+				printf("  DEVICE_MAX_COMPUTE_UNITS = %u\n", (unsigned int)buf_uint);
+				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(buf_uint), &buf_uint, NULL);
+				printf("  DEVICE_MAX_CLOCK_FREQUENCY = %u\n", (unsigned int)buf_uint);
+				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(buf_ulong), &buf_ulong, NULL);
+				printf("  DEVICE_GLOBAL_MEM_SIZE = %llu\n\n", (unsigned long long)buf_ulong);
+			}
+
+		}
 	}
 	idPlatforms=plataforma;
 	idDispositivo=0;
@@ -74,8 +76,9 @@ shader::shader(void)
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 	// Crear lista de operadiones para ejecutar
-	//por defecto en orden | CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE (4º argumento)
-	command_queue = clCreateCommandQueue(context, devices[idDispositivo], 0, &ret);
+	//(3º argumento) por defecto en orden == 0: CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE ==1 || CL_QUEUE_PROFILING_ENABLE ==2
+	command_queue = clCreateCommandQueue(context, devices[idDispositivo], 0, &ret);//tarda lo mismo en la practica
+	//printf ("clCreateCommandQueue: CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE %i, CL_QUEUE_PROFILING_ENABLE %i;  ",CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE,CL_QUEUE_PROFILING_ENABLE);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 	// Crear programa del codigoShader
@@ -123,8 +126,20 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 	const int LIST_SIZE =tamanioLista;// Lista de elementos de tamaño MxM
 	size_t global_item_size = LIST_SIZE/s2; // numero total de operaciones (tamaño del vector)
 	size_t local_item_size = 1; // Grupo de trabajo de tamaño sxs
-	//local_item_size=(int)sqrt((double)global_item_size);
-	//float sPrima=(float)256/((float)M/(float)s);//pondera la altura del grid (s x s x sPrima)
+
+
+	if(sqrt((double)global_item_size)-(int)sqrt((double)global_item_size)==0){
+		if(mostrarDepuracion)printf("local_item_size=sqrt(global_item_size)\n");
+		local_item_size=(int)sqrt((double)global_item_size);
+	}else if(global_item_size%9==0){
+		if(mostrarDepuracion)printf("local_item_size=global_item_size/9\n");
+		local_item_size=global_item_size/9;
+	}else if(global_item_size%4==0){
+		if(mostrarDepuracion)printf("local_item_size=global_item_size/4\n");
+		local_item_size=global_item_size/4;
+	}
+	
+
 
 	if(mostrarDepuracion)printf("sPrima = %f / (%f / %f) = %f\n",(float)256,(float)M,(float)s,sPrima);
 	if(mostrarDepuracion)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
@@ -186,9 +201,9 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 			&global_item_size, &local_item_size, 0, NULL, NULL);
 
 		if(ret==-54){
-			printf("(ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n");
-			printf("global_work_size(%i), debe ser menor que CL_DEVICE_ADDRESS_BITS(%i)\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
-			printf(" s=%i: globalSize=%i\t localSize=%i\n",s,global_item_size,local_item_size);
+			printf("s=%i (ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n",s);
+			printf("local_item_size(%i) < CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",local_item_size,CL_DEVICE_MAX_WORK_GROUP_SIZE);
+			printf("global_work_size(%i) < CL_DEVICE_ADDRESS_BITS(%i)\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
 		}else if(ret!=0)printf("clEnqueueNDRangeKernel=%i\n",ret,ret);
 		// Copiar el buffer minimos en el vector minimos
 
@@ -227,6 +242,7 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 	ret = clReleaseMemObject(min_mem_obj);
 	ret = clReleaseMemObject(n_mem_obj);
 	//printf("sumatoria = %f \n ",sumatoria);
+
 	return sumatoria;
 }
 
@@ -238,7 +254,8 @@ float shader::CalcularN(int *vEntrada, int M,int s){
 		//float sPrima=(float)256/((float)s/(float)(M));
 		M=M/s*s;//se ajusta la lista de elementos para evitar desbordarse
 
-		if(mostrarDepuracion)printf("\niniciando s=%i M=%i\n",s,M);
+		//if(mostrarDepuracion)
+		printf("\niniciando s=%i M=%i\n",s,M);
 		int tam_lista=M*M;
 		int s2=s*s;
 		int nGrid=M/s;

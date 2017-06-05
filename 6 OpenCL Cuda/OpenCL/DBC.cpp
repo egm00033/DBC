@@ -30,59 +30,76 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	totalInicio=clock();
 	for (int s = 2; s <= anchoMatriz/2; s++)
 	{
+
 		DBC::dividirS(s);
+
 		//printf("subdividiendo s= %i\n",s);
 	}
 	fin=clock();
+
 	printf("\ntiempo total de la ordenacion: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
 
 	//llamar al programa
+
 	shader programa=shader();
 	if(programa.getRet()==0){
 
-	totalInicio=clock();
-	for (int s = 2; s <= anchoMatriz/2; s++)
-	{
-		N=programa.CalcularN(entradaOpencl[s-2],anchoMatriz,s);
-		if(false)printf("s=%i N= \t%f\t %f\n",s,N,log10((float)N));
-		grafica[s-2].y=(float)N;
-	}
-	fin=clock();	
-	printf("\ntiempo de la ejecucion del shader: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
-
-	//calcular bordes: multiplicando por el area que no está calculada
-	for (int s = 2; s <= anchoMatriz/2; s++)
-	{
-		if(anchoMatriz%s!=0){
-			int mprima=anchoMatriz/s*s;
-
-			double dif=pow((double)anchoMatriz,2)/pow((double)mprima,2);
-			if(false)printf("%i diferencia= %f \n",s,dif);
-			grafica[s-2].y=log10(grafica[s-2].y*dif);
+		totalInicio=clock();
+		if(ejecutarOpenCL){
+			//calcular en OpenCL
+			for (int s = 2; s <= anchoMatriz/2; s++)
+			{
+				N=programa.CalcularN(entradaOpencl[s-2],anchoMatriz,s);
+				if(false)printf("s=%i N= \t%f\t %f\n",s,N,log10((float)N));
+				grafica[s-2].y=(float)N;
+			}
 		}else{
-		grafica[s-2].y=log10(grafica[s-2].y);
+			//calcular en c
+			for (int s = 2; s <= anchoMatriz/2; s++)
+			{
+				N=CalcularNenC(entradaOpencl[s-2],anchoMatriz,s);
+				if(false)printf("s=%i N= \t%f\t %f\n",s,N,log10((float)N));
+				grafica[s-2].y=(float)N;
+			}
+
 		}
-	}
-	
-	//mostrar resultado de la ejecucion
-	if(mostrarTabla)printf("s\t;N\t;r\t;logN\t;lor(1/r)\t; \n");
-	int mayor=0;
-	for (int s = 2; s <= anchoMatriz/2; s++)
-	{
-		r=(float)s/(float)anchoMatriz;
-		//r=(float)anchoMatriz/(float)s;
-		grafica[s-2].x=log10(1/r);
-		if(mostrarTabla)printf("%i\t;%f\t;%f\t;%f\t;%f\n",s,pow(10,grafica[s-2].y),1/pow(10,grafica[s-2].x),grafica[s-2].y,grafica[s-2].x);
-	}
-	//crear gráfica
-	if(mostrarGafica)
-	crearGrafica(grafica,anchoMatriz/2-1);
-	
-	calcularDF();
-	//printf("%f\t%f\t%f\t%f\t%f\t%f\t\n",D,E,pow(10,grafica[318].y),grafica[318].y  ,pow(10,grafica[0].y),grafica[0].y);
+		fin=clock();	
+		printf("\ntiempo de la ejecucion del shader: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
+
+		//calcular bordes: multiplicando por el area que no está calculada
+		for (int s = 2; s <= anchoMatriz/2; s++)
+		{
+			if(anchoMatriz%s!=0){
+				int mprima=anchoMatriz/s*s;
+
+				double dif=pow((double)anchoMatriz,2)/pow((double)mprima,2);
+				if(false)printf("%i diferencia= %f \n",s,dif);
+				grafica[s-2].y=log10(grafica[s-2].y*dif);
+			}else{
+				grafica[s-2].y=log10(grafica[s-2].y);
+			}
+		}
+
+
+		//mostrar resultado de la ejecucion
+		if(mostrarTabla)printf("s\t;N\t;r\t;logN\t;lor(1/r)\t; \n");
+		int mayor=0;
+		for (int s = 2; s <= anchoMatriz/2; s++)
+		{
+			r=(float)s/(float)anchoMatriz;
+			//r=(float)anchoMatriz/(float)s;
+			grafica[s-2].x=log10(1/r);
+			if(mostrarTabla)printf("%i\t;%f\t;%f\t;%f\t;%f\n",s,pow(10,grafica[s-2].y),1/pow(10,grafica[s-2].x),grafica[s-2].y,grafica[s-2].x);
+		}
+		//crear gráfica
+		if(mostrarGafica)
+			crearGrafica(grafica,anchoMatriz/2-1);
+
+		calcularDF();
+		//printf("%f\t%f\t%f\t%f\t%f\t%f\t\n",D,E,pow(10,grafica[318].y),grafica[318].y  ,pow(10,grafica[0].y),grafica[0].y);
 	}else{
 		printf("ERROR ret==0\n");
-		
+
 	}
 	for (int i = 0; i < anchoMatriz/2-1; i++)
 	{
@@ -144,7 +161,7 @@ void DBC::dividirS(int s){
 
 
 void DBC::calcularDF(){
-	
+
 	float penxy=0.0;
 	float sumax=0.0;
 	float sumay=0.0;
