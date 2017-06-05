@@ -14,6 +14,7 @@
     <ProjectGuid>{628BEA10-F4FC-48CB-A152-DFA06C392B22}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>OpenCL</RootNamespace>
+    <ProjectName>OpenCL_intel</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
