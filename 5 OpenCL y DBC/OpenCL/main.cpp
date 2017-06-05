@@ -9,10 +9,11 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	unsigned char *img3;
 	bmpInfoHeader info; 
-	img3=LoadBMP(".\\images\\D21.bmp", &info);
+	//char *path=".\\images\\D33.bmp";
+	img3=LoadBMP(path, &info);
 
 	int i,j,blanco;
-	int **imagen;
+	int **imagen;//pasar de array a matriz
 	imagen =(int **) calloc(info.height,sizeof(int *));
 	for (int i = 0; i < info.height; i++){
 		imagen[i]=(int *) calloc(info.width,sizeof(int));
@@ -64,8 +65,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	DBC c=DBC(imagen, ancho, niveldeGris);
 
 
-	//mostrar imagen
-	system (".\\images\\grafica.bmp");
 
 	system("pause");
 	return 0;

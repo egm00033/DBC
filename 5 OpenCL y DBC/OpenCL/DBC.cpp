@@ -6,7 +6,7 @@
 
 DBC::DBC(int **imagen, int ancho,int nivelGris)
 {
-	bool mostrarInfo=true;
+
 	float N=0;
 	float r=0;
 	anchoMatriz=ancho;
@@ -65,15 +65,17 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	}
 	
 	//mostrar resultado de la ejecucion
-	if(mostrarInfo)printf("s\t;N\t;r\t;logN\t;lor(1/r)\t; \n");
+	if(mostrarTabla)printf("s\t;N\t;r\t;logN\t;lor(1/r)\t; \n");
 	int mayor=0;
 	for (int s = 2; s <= anchoMatriz/2; s++)
 	{
 		r=(float)s/(float)anchoMatriz;
+		//r=(float)anchoMatriz/(float)s;
 		grafica[s-2].x=log10(1/r);
-		if(mostrarInfo)printf("%i\t;%f\t;%f\t;%f\t;%f\n",s,pow(10,grafica[s-2].y),1/pow(10,grafica[s-2].x),grafica[s-2].y,grafica[s-2].x);
+		if(mostrarTabla)printf("%i\t;%f\t;%f\t;%f\t;%f\n",s,pow(10,grafica[s-2].y),1/pow(10,grafica[s-2].x),grafica[s-2].y,grafica[s-2].x);
 	}
 	//crear gráfica
+	if(mostrarGafica)
 	crearGrafica(grafica,anchoMatriz/2-1);
 	
 	calcularDF();

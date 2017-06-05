@@ -145,7 +145,7 @@ void crearGrafica(interpretacion *grafica, int tam){
 	}
 
 	SaveBMP(".\\images\\mapaZ\\grafica.bmp", &info, img);
-	
+	system (".\\images\\mapaZ\\grafica.bmp");
 
 	free(img);
 

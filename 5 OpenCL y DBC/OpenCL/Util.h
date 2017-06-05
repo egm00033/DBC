@@ -1,5 +1,13 @@
 #pragma once
 #include "stdafx.h"
+
+//configurar app
+static char *path=".\\images\\D33.bmp";
+static bool mostrarMapaZ=true;//mapa de profindidades
+static bool mostrarGafica=true;//grafica con la pendiente generada por DF
+static bool mostrarDepuracion=false;//informacion de opencl: sPrima, global size y localside
+static bool mostrarMinMax=false;//calculos resumidos del valo minimo y maximo de un grid para todos los s
+static bool mostrarTabla=false;//muestra los resultados de D para cualquier s
 /*
 *Util encapsula todas las funciones necesarias para el resto de clases
 *
@@ -34,6 +42,7 @@ typedef struct bmpInfoHeader
   uint32_t colors;      /* colors used */
   uint32_t imxtcolors;      /* important colors */
 } bmpInfoHeader;
+
 
 int **leerImagenBMP(char *nome,long &ancho,long &alto);
 

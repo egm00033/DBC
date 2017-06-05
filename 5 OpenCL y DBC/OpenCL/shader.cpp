@@ -86,8 +86,8 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 	size_t local_item_size = 4; // Grupo de trabajo de tamaño sxs
 	//float sPrima=(float)256/((float)M/(float)s);//pondera la altura del grid (s x s x sPrima)
 
-	if(mostrarInfo)printf("sPrima = %f / (%f / %f) = %f\n",(float)256,(float)M,(float)s,sPrima);
-	if(mostrarInfo)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
+	if(mostrarDepuracion)printf("sPrima = %f / (%f / %f) = %f\n",(float)256,(float)M,(float)s,sPrima);
+	if(mostrarDepuracion)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
 
 	//crear buffers de memoria en el dispositivo por cada vector
 	cl_mem imagen_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
@@ -155,17 +155,17 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 		float *n = (float*)malloc(sizeof(float)*LIST_SIZE);
 		ret = clEnqueueReadBuffer(command_queue, n_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(float), n, 0, NULL, NULL);
 		//Mostrar solucion
-
+		if(mostrarMinMax)printf("\nCalculos de min y max resumidos para s=%i\n",s);
 		for(int i = 0; i < global_item_size; i++){//sustituir por global_item_size
 			sumatoria+=n[i];
-			if(s==320){
+			if(mostrarMinMax){
 				if(i<3||i>global_item_size-4)
 					printf("%d. max = %d. min = %d. n = %f\n", i, maximos[i], minimos[i],n[i]);
 			}
 		}
 
 		//mostrar mapa de profundidades si se calcula en una llamada a la funcion
-		if(true){
+		if(mostrarMapaZ){
 			if(M==640&&tamanioLista==M*M){
 				crearMapaZ(s, sPrima,  M, n);
 			}
@@ -188,10 +188,10 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 //Calcula la sumatoria de n para un tamaño s dado
 float shader::CalcularN(int *vEntrada, int M,int s){
 	float sPrima=(float)256/((float)M/(float)(s));//con nivel de gris =950 da un resultado optimo
+	//float sPrima=(float)256/((float)s/(float)(M));
 	M=M/s*s;//se ajusta la lista de elementos para evitar desbordarse
 	float N=0;
-	mostrarInfo=false;
-	if(mostrarInfo)printf("\niniciando s=%i M=%i\n",s,M);
+	if(mostrarDepuracion)printf("\niniciando s=%i M=%i\n",s,M);
 	int tam_lista=M*M;
 	int s2=s*s;
 	int nGrid=M/s;
@@ -216,7 +216,7 @@ float shader::CalcularN(int *vEntrada, int M,int s){
 		for (int p = 0; p < particiones; p++)
 		{
 			int inicio=p*tamSubLista;
-			if(mostrarInfo)printf("Iniciando s=%i particion=%i\n",s,p);
+			if(mostrarDepuracion)printf("Iniciando s=%i particion=%i\n",s,p);
 			memcpy(subLista, vEntrada + inicio,tamSubLista*sizeof(int));
 
 			N+=subdividirCalculos(subLista, s,M,inicio,tamSubLista,sPrima);
