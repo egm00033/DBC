@@ -114,188 +114,105 @@ shader::shader(void)
 	}
 
 	// Crear kernel de OpenCL
-	kernel = clCreateKernel(program, "vector_add", &ret);
+	kernel = clCreateKernel(program, "calcularNdes", &ret);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
-}
-
-//permite subdividir la lista de calculos
-float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,const int inicio,const int tamanioLista,const float sPrima){
-	float sumatoria=0;
-	cl_int ret;
-	int s2=s*s;
-	const int LIST_SIZE =tamanioLista;// Lista de elementos de tamaño MxM
-	size_t global_item_size = LIST_SIZE/s2; // numero total de operaciones (tamaño del vector)
-	size_t local_item_size = 1; // Grupo de trabajo de tamaño sxs
-
-
-	if(sqrt((double)global_item_size)-(int)sqrt((double)global_item_size)==0){
-		if(mostrarDepuracion)printf("local_item_size=sqrt(global_item_size)\n");
-		local_item_size=(int)sqrt((double)global_item_size);
-	}else if(global_item_size%9==0){
-		if(mostrarDepuracion)printf("local_item_size=global_item_size/9\n");
-		local_item_size=global_item_size/9;
-	}else if(global_item_size%4==0){
-		if(mostrarDepuracion)printf("local_item_size=global_item_size/4\n");
-		local_item_size=global_item_size/4;
-	}
-	
-
-
-	if(mostrarDepuracion)printf("sPrima = %f / (%f / %f) = %f\n",(float)256,(float)M,(float)s,sPrima);
-	if(mostrarDepuracion)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
-
-	//crear buffers de memoria en el dispositivo por cada vector
-	cl_mem imagen_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
-		LIST_SIZE * sizeof(int), NULL, &ret);
-	cl_mem max_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY,
-		LIST_SIZE * sizeof(int), NULL, &ret);
-	cl_mem min_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
-		LIST_SIZE * sizeof(int), NULL, &ret);
-	cl_mem n_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
-		LIST_SIZE * sizeof(float), NULL, &ret);
-
-
-	/*cl_int clSetKernelArg (	
-	cl_kernel kernel,
-	cl_uint arg_index,
-	size_t arg_size,
-	const void *arg_value)*/
-	ret=clSetKernelArg(kernel, 4, sizeof(s2), &s2);
-	if(ret!=0)printf("clSetKernelArg(s2), linea: %d, error: %d\n", __LINE__, ret);
-
-	ret=clSetKernelArg(kernel, 5, sizeof(s2), &sPrima);
-	if(ret!=0)printf("clSetKernelArg(s2), linea: %d, error: %d\n", __LINE__, ret);
-
-	// Copiar cada vector de entrada en su buffer
-	ret = clEnqueueWriteBuffer(command_queue, imagen_mem_obj, CL_TRUE, 0,
-		LIST_SIZE * sizeof(int), vEntrada, 0, NULL, NULL);
-	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
-
-
-	// Establecer argumentos
-	ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&imagen_mem_obj);
-	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
-
-	ret = clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&max_mem_obj);
-	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
-
-	ret = clSetKernelArg(kernel, 2, sizeof(cl_mem), (void *)&min_mem_obj);
-	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
-
-	ret = clSetKernelArg(kernel, 3, sizeof(cl_mem), (void *)&n_mem_obj);
-	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
-
-	//añadir para arreglar los problemas de salida
-	//ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
-
-
-	//limite hardware
-	if(global_item_size>=CL_DEVICE_ADDRESS_BITS){
-		printf("Excedido el numero de global_work_size(%i), debe ser menor que CL_DEVICE_ADDRESS_BITS(%i)\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
-	}else if(local_item_size>=CL_DEVICE_MAX_WORK_GROUP_SIZE){
-		printf("Excedido el numero de local_item_size(%i), debe ser menor que CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",local_item_size,CL_DEVICE_MAX_WORK_GROUP_SIZE);
-		//}else if(LIST_SIZE>=CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE){
-		//printf("limite buffer = %i\n",CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE );
-	}else{
-		ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
-			&global_item_size, &local_item_size, 0, NULL, NULL);
-
-		if(ret==-54){
-			printf("s=%i (ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n",s);
-			printf("local_item_size(%i) < CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",local_item_size,CL_DEVICE_MAX_WORK_GROUP_SIZE);
-			printf("global_work_size(%i) < CL_DEVICE_ADDRESS_BITS(%i)\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
-		}else if(ret!=0)printf("clEnqueueNDRangeKernel=%i\n",ret,ret);
-		// Copiar el buffer minimos en el vector minimos
-
-		int *maximos = (int*)malloc(sizeof(int)*LIST_SIZE);
-		ret = clEnqueueReadBuffer(command_queue, max_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(int), maximos, 0, NULL, NULL);
-		if(ret!=0)printf("copiar max=%i\n",ret);
-		int *minimos = (int*)malloc(sizeof(int)*LIST_SIZE);
-		ret = clEnqueueReadBuffer(command_queue, min_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(int), minimos, 0, NULL, NULL);
-		float *n = (float*)malloc(sizeof(float)*LIST_SIZE);
-		ret = clEnqueueReadBuffer(command_queue, n_mem_obj, CL_TRUE, 0, LIST_SIZE * sizeof(float), n, 0, NULL, NULL);
-		//Mostrar solucion
-		if(mostrarMinMax)printf("\nCalculos de min y max resumidos para s=%i\n",s);
-		for(int i = 0; i < global_item_size; i++){//sustituir por global_item_size
-			sumatoria+=n[i];
-			if(mostrarMinMax){
-				if(i<3||i>global_item_size-4)
-					printf("%d. max = %d. min = %d. n = %f\n", i, maximos[i], minimos[i],n[i]);
-			}
-		}
-
-		//mostrar mapa de profundidades si se calcula en una llamada a la funcion
-		if(mostrarMapaZ){
-			if(M==640&&tamanioLista==M*M){
-				crearMapaZ(s, sPrima,  M, n);
-			}
-		}
-
-
-		// Clean up
-		free(maximos);
-		free(minimos);
-		free(n);
-	}
-	ret = clReleaseMemObject(imagen_mem_obj);
-	ret = clReleaseMemObject(max_mem_obj);
-	ret = clReleaseMemObject(min_mem_obj);
-	ret = clReleaseMemObject(n_mem_obj);
-	//printf("sumatoria = %f \n ",sumatoria);
-
-	return sumatoria;
 }
 
 //Calcula la sumatoria de n para un tamaño s dado
-float shader::CalcularN(int *vEntrada, int M,int s){
-	float N=0;
+void shader::CalcularN(unsigned char *img3,float *NdeS, int M){
+
 	if(ret==0){
-		float sPrima=(float)256/((float)M/(float)(s));//con nivel de gris =950 da un resultado optimo
-		//float sPrima=(float)256/((float)s/(float)(M));
-		M=M/s*s;//se ajusta la lista de elementos para evitar desbordarse
-
-		//if(mostrarDepuracion)
-		printf("\niniciando s=%i M=%i\n",s,M);
-		int tam_lista=M*M;
-		int s2=s*s;
-		int nGrid=M/s;
-		int particiones=1;
-
-
-		//calcular el num particiones; comprueba si se excede el tamaño de global
-		if(mostrarDepuracion)printf("lista de operaciones=%i : limite del dispositivo=%i\n",tam_lista,CL_DEVICE_ADDRESS_BITS);
-		while((tam_lista/particiones)/s2>CL_DEVICE_ADDRESS_BITS){
-			particiones+=1;
-			while(nGrid%particiones!=0)
-				particiones+=1;
+		for (int s = 2; s <= M/2; s++)
+		{
+			printf("dentro s=%i\n",s);
+			NdeS[s-2]=0;
 		}
-		//si no tiene espacion nuestro dispositivo para ejecutar lodos los global_group a la vez
-		if(mostrarDepuracion)printf("Numero de particiones para s=%i : particion=%i\n",s,particiones);
-		if(particiones==1){
-			N+=subdividirCalculos(vEntrada, s,M,0,tam_lista,sPrima);
+		cl_int ret;
+		const int LIST_SIZE =M*M;// Lista de elementos de tamaño MxM
+		const int tamS=M/2-1;
+
+		size_t global_item_size = tamS; // desde s=2 hasta s=M/2
+		size_t local_item_size = 1; // Grupo de trabajo
+
+
+		//if(sqrt((double)global_item_size)-(int)sqrt((double)global_item_size)==0){
+		//	if(mostrarDepuracion)printf("local_item_size=sqrt(global_item_size)\n");
+		//	local_item_size=(int)sqrt((double)global_item_size);
+		//}else if(global_item_size%9==0){
+		//	if(mostrarDepuracion)printf("local_item_size=global_item_size/9\n");
+		//	local_item_size=global_item_size/9;
+		//}else if(global_item_size%4==0){
+		//	if(mostrarDepuracion)printf("local_item_size=global_item_size/4\n");
+		//	local_item_size=global_item_size/4;
+		//}
+
+
+
+		if(true)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
+
+		//crear buffers de memoria en el dispositivo por cada vector
+		cl_mem entrada_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
+			LIST_SIZE * sizeof(char), NULL, &ret);
+
+		cl_mem salida_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
+			tamS * sizeof(float), NULL, &ret);
+
+
+
+		// Copiar cada vector de entrada en su buffer
+		ret = clEnqueueWriteBuffer(command_queue, entrada_mem_obj, CL_TRUE, 0,
+			LIST_SIZE * sizeof(char), img3, 0, NULL, NULL);
+		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+
+
+		// Establecer argumentos
+		ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&entrada_mem_obj);
+		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+
+		ret = clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&salida_mem_obj);
+		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+
+		//añadir para arreglar los problemas de salida
+		//ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
+
+
+		//limite hardware
+		if(global_item_size>=CL_DEVICE_ADDRESS_BITS){
+			printf("Excedido el numero de global_work_size(%i), debe ser menor que CL_DEVICE_ADDRESS_BITS(%i)\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
+		}else if(local_item_size>=CL_DEVICE_MAX_WORK_GROUP_SIZE){
+			printf("Excedido el numero de local_item_size(%i), debe ser menor que CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",local_item_size,CL_DEVICE_MAX_WORK_GROUP_SIZE);
+			//}else if(LIST_SIZE>=CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE){
+			//printf("limite buffer = %i\n",CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE );
 		}else{
-			//subdividir workgroup
-			int tamSubLista=tam_lista/particiones;
-			int *subLista = (int *) malloc(tamSubLista * sizeof(int));
+			ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
+				&global_item_size, &local_item_size, 0, NULL, NULL);
 
-			//for
-			for (int p = 0; p < particiones; p++)
+			if(ret==-54){
+				//printf("s=%i (ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n",s);
+				printf("local_item_size(%i) < CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",local_item_size,CL_DEVICE_MAX_WORK_GROUP_SIZE);
+				printf("global_work_size(%i) < CL_DEVICE_ADDRESS_BITS(%i)\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
+			}else if(ret!=0)printf("clEnqueueNDRangeKernel=%i\n",ret,ret);
+
+			// Copiar el buffer salida en el vector NdeS
+			printf("copiando NdeS\n");
+
+			ret = clEnqueueReadBuffer(command_queue, salida_mem_obj, CL_TRUE, 0, tamS * sizeof(float), NdeS, 0, NULL, NULL);
+
+
+			for (int s = 2; s <= M/2; s++)
 			{
-				int inicio=p*tamSubLista;
-				if(mostrarDepuracion)printf("Iniciando s=%i particion=%i\n",s,p);
-				memcpy(subLista, vEntrada + inicio,tamSubLista*sizeof(int));
-
-				N+=subdividirCalculos(subLista, s,M,inicio,tamSubLista,sPrima);
+				printf("dentro s=%i, N=%f\n",s,NdeS[s-2]);
 			}
 
-			//fin for
-			free(subLista);
 		}
+
+		ret = clReleaseMemObject(entrada_mem_obj);
+		ret = clReleaseMemObject(salida_mem_obj);
+
 	}else{
-		printf("ERROR ret==0 en s==%i\n",s);
+		printf("ERROR ret==0 en CalcularN\n");
 		system("pause");
 	}
-	return N;
 }
 
 shader::~shader(void)

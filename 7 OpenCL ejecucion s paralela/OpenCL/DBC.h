@@ -23,17 +23,12 @@ private:
 	float D;
 	float C;
 	float E;
-	int **matriz;//matriz con los valores de una imagen en escala de gris
-	int **entradaOpencl;
 	int anchoMatriz;
 	int numElementos;
 	interpretacion *grafica;//array  con todos los resultados necesarios para calcular la Dimensión fractal
 
-
-	void dividirS( int s);//divide la imagen en grill de tamaño s
-	void ordenarS(int s, int I, int J,int &pos);// calcula el valor minimo y maximo de un grill concreto
 public:
-	DBC(int **matriz, int M,int G);//constructor
+	DBC(unsigned char *img3, int M,int G);//constructor
 	~DBC(void);
 	float getDF(){return DF;};//devuelve el valor de la dimensión fractal
 	void calcularDF();//calcula la regresion lineal de la grafica para hallar la pendiente

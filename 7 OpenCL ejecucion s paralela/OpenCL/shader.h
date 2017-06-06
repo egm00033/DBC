@@ -15,11 +15,10 @@ private:
 	cl_platform_id *platforms;
 	cl_command_queue command_queue;
 	cl_kernel kernel;
-	float subdividirCalculos(const int *vEntrada,const int s,const int M,const int inicio,const int tamanioLista,const float sPrima);
 public:
 	shader(void);
 	~shader(void);
-	float CalcularN(int *vEntrada,int M,int s);
+	void CalcularN(unsigned char *img3,float *NdeS,int M);
 	int getRet(){return ret;};
 };
 

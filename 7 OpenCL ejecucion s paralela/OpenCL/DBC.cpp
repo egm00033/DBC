@@ -4,7 +4,7 @@
 
 
 
-DBC::DBC(int **imagen, int ancho,int nivelGris)
+DBC::DBC(unsigned char *img3, int ancho,int nivelGris)
 {
 
 	float N=0;
@@ -12,58 +12,29 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 	anchoMatriz=ancho;
 	//inicializar la entrada de opencl
 	grafica=(interpretacion*) calloc(anchoMatriz/2-1,sizeof(interpretacion));
-	entradaOpencl =(int **) calloc((anchoMatriz/2-1),sizeof(int *));
-	for (int i = 0; i < anchoMatriz/2-1; i++){
-		entradaOpencl[i]=(int *) calloc(anchoMatriz*anchoMatriz,sizeof(int));
-	}
+	float *NdeS=(float*) calloc(anchoMatriz/2-1,sizeof(float));
+
 
 	//tiempo
 	clock_t fin,totalInicio;
 
-	matriz=imagen;
-	anchoMatriz=ancho;
-
-	//guardar los resultado para todos los tamaños de s
-	int *v=(int*)calloc(anchoMatriz/2,sizeof(int));
-
-	//halla N para tamaños M>=s>1d
-	totalInicio=clock();
-	for (int s = 2; s <= anchoMatriz/2; s++)
-	{
-
-		DBC::dividirS(s);
-
-		//printf("subdividiendo s= %i\n",s);
-	}
-	fin=clock();
-
-	printf("\ntiempo total de la ordenacion: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
-
 	//llamar al programa
-
 	shader programa=shader();
 	if(programa.getRet()==0){
 
 		totalInicio=clock();
-		if(ejecutarOpenCL){
-			//calcular en OpenCL
-			for (int s = 2; s <= anchoMatriz/2; s++)
-			{
-				N=programa.CalcularN(entradaOpencl[s-2],anchoMatriz,s);
-				if(false)printf("s=%i N= \t%f\t %f\n",s,N,log10((float)N));
-				grafica[s-2].y=(float)N;
-			}
-		}else{
-			//calcular en c
-			for (int s = 2; s <= anchoMatriz/2; s++)
-			{
-				N=CalcularNenC(entradaOpencl[s-2],anchoMatriz,s);
-				if(false)printf("s=%i N= \t%f\t %f\n",s,N,log10((float)N));
-				grafica[s-2].y=(float)N;
-			}
 
+		//calcular en OpenCL
+
+		programa.CalcularN(img3,NdeS,anchoMatriz);
+		fin=clock();
+		for(int s = 2; s <= anchoMatriz/2; s++){
+			printf("valor de NdeS[%i]=%f\n",s,NdeS[s-2]);
+			grafica[s-2].y=NdeS[s-2];
 		}
-		fin=clock();	
+
+
+
 		printf("\ntiempo de la ejecucion del shader: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
 
 		//calcular bordes: multiplicando por el area que no está calculada
@@ -73,7 +44,7 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 				int mprima=anchoMatriz/s*s;
 
 				double dif=pow((double)anchoMatriz,2)/pow((double)mprima,2);
-				if(false)printf("%i diferencia= %f \n",s,dif);
+				if(false)printf("s=%i diferencia= %f \n",s,dif);
 				grafica[s-2].y=log10(grafica[s-2].y*dif);
 			}else{
 				grafica[s-2].y=log10(grafica[s-2].y);
@@ -101,63 +72,16 @@ DBC::DBC(int **imagen, int ancho,int nivelGris)
 		printf("ERROR ret==0\n");
 
 	}
-	for (int i = 0; i < anchoMatriz/2-1; i++)
-	{
-		free(entradaOpencl[i]);
-	}
-	free(entradaOpencl);
-
+	free(NdeS);
 }
 
 
 DBC::~DBC(void)
 {
-	for (int i = 0; i < anchoMatriz; i++)
-	{
-		free(matriz[i]);
-	}
 
-	free(matriz);
+
+	free(grafica);
 }
-
-//ordena las cadillas de los grid en la fila de la matriz con los valores de entrada
-void DBC::ordenarS(int s, int I, int J,int &pos){
-
-	//corrigiendo el desbordamiento 
-	if(I>anchoMatriz-s)
-		I=anchoMatriz-s;
-	if(J>anchoMatriz-s)
-		J=anchoMatriz-s;
-
-	for (int i = I; i < I+s; i++)
-	{
-		for (int j = J; j  < J+s; j++)
-		{
-
-			entradaOpencl[s-2][pos]=matriz[i][j];
-			//printf("%i\t",matriz[i][j]);
-			pos+=1;
-
-		}
-		//printf("\n");
-	}
-
-}
-
-//Calcula N para un tamaño s dado
-void DBC::dividirS(int s){
-
-	int pos=0;
-	for (int i = 0; i < anchoMatriz/s*s; i+=s)
-	{
-		for (int j = 0; j  < anchoMatriz/s*s; j+=s)
-		{
-			DBC::ordenarS(s, i, j,pos);
-		}
-
-	}
-}
-
 
 
 void DBC::calcularDF(){

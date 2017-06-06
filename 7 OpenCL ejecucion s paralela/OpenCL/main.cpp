@@ -13,15 +13,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	img3=LoadBMP(path, &info);
 
 	int i,j,blanco;
-	int **imagen;//pasar de array a matriz
-	imagen =(int **) calloc(info.height,sizeof(int *));
-	for (int i = 0; i < info.height; i++){
-		imagen[i]=(int *) calloc(info.width,sizeof(int));
-	}
+
 
 	printf("tamaño %i ancho alto %i %i\n",info.imgsize,info.height,info.width);
-
-
 	for (i=0; i<info.height; i++)
 	{
 		for (j=0; j<info.width; j++)
@@ -33,40 +27,34 @@ int _tmain(int argc, _TCHAR* argv[])
 			blanco+=img3[(i*info.width+j)*3+2];
 			//printf("blanco %i\n",blanco);
 			blanco=blanco/3;
-			imagen[i][j]=blanco;//dar el mayor contraste = j%2*256
+			img3[i*info.height+j]=blanco;//dar el mayor contraste = j%2*256
 		}
 	}
 
-	
+
 	long int ancho=info.width;
 	long int alto=info.height;
 	int niveldeGris=256;
 
 
-	//cargar gif
-	/*
-	char *path=".\\images\\D3.bmp";
-	imagen=leerImagenBMP(path, ancho, alto);//carga en memoria una matriz con la información de la imagen
-	*/
-
-
-	/*if(false){//cambiar imagen por posicion
-	ancho=8;
-	for (int i = 0; i < ancho; i++)
-	{
-	for (int j = 0; j < ancho; j++){
-	imagen[i][j]=i*ancho+j;
-	//printf(" %i\t",imagen[i][j]);
+	if(true){//cambiar imagen por posicion
+		ancho=8;
+		for (int i = 0; i < ancho; i++)
+		{
+			for (int j = 0; j < ancho; j++){
+				img3[i*ancho+j]=i*ancho+j;
+				//printf(" %i\t",imagen[i][j]);
+			}
+			//printf("\n");
+		}
 	}
-	//printf("\n");
-	}
-	}*/
 	//calcular DF
-	DBC c=DBC(imagen, ancho, niveldeGris);
+	DBC c=DBC(img3, ancho, niveldeGris);
 
 
 
 	system("pause");
+	free(img3);
 	return 0;
 }
 
