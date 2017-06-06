@@ -122,11 +122,6 @@ shader::shader(void)
 void shader::CalcularN(unsigned char *img3,float *NdeS, int M){
 
 	if(ret==0){
-		for (int s = 2; s <= M/2; s++)
-		{
-			printf("dentro s=%i\n",s);
-			NdeS[s-2]=0;
-		}
 		cl_int ret;
 		const int LIST_SIZE =M*M;// Lista de elementos de tamaño MxM
 		const int tamS=M/2-1;
@@ -157,7 +152,8 @@ void shader::CalcularN(unsigned char *img3,float *NdeS, int M){
 		cl_mem salida_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
 			tamS * sizeof(float), NULL, &ret);
 
-
+		ret=clSetKernelArg(kernel, 2, sizeof(M), &M);
+	if(ret!=0)printf("clSetKernelArg(s2), linea: %d, error: %d\n", __LINE__, ret);
 
 		// Copiar cada vector de entrada en su buffer
 		ret = clEnqueueWriteBuffer(command_queue, entrada_mem_obj, CL_TRUE, 0,
@@ -171,6 +167,8 @@ void shader::CalcularN(unsigned char *img3,float *NdeS, int M){
 
 		ret = clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&salida_mem_obj);
 		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+
+		
 
 		//añadir para arreglar los problemas de salida
 		//ret = clSetKernelArg(kernel, 3, sizeof(int), &LIST_SIZE);
@@ -197,12 +195,6 @@ void shader::CalcularN(unsigned char *img3,float *NdeS, int M){
 			printf("copiando NdeS\n");
 
 			ret = clEnqueueReadBuffer(command_queue, salida_mem_obj, CL_TRUE, 0, tamS * sizeof(float), NdeS, 0, NULL, NULL);
-
-
-			for (int s = 2; s <= M/2; s++)
-			{
-				printf("dentro s=%i, N=%f\n",s,NdeS[s-2]);
-			}
 
 		}
 

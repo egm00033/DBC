@@ -37,7 +37,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	int niveldeGris=256;
 
 
-	if(true){//cambiar imagen por posicion
+	if(false){//cambiar imagen por posicion
 		ancho=8;
 		for (int i = 0; i < ancho; i++)
 		{

@@ -29,7 +29,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris)
 		programa.CalcularN(img3,NdeS,anchoMatriz);
 		fin=clock();
 		for(int s = 2; s <= anchoMatriz/2; s++){
-			printf("valor de NdeS[%i]=%f\n",s,NdeS[s-2]);
+			//printf("valor de NdeS[%i]=%f\n",s,NdeS[s-2]);
 			grafica[s-2].y=NdeS[s-2];
 		}
 
