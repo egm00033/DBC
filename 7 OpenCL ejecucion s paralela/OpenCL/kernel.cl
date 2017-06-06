@@ -8,7 +8,7 @@ get_num_groups	Number of work groups
 get_group_id	Work group ID*/
 __kernel void calcularNdes(__global const char *imagen, __global  float *N, const int M) {
 	//global_id=[0 : M/2-1]
-	int s=get_global_id(0)+2;
+	int s=get_group_id(0)+2;
 	float sPrima=(float)256/((float)M/(float)(s));
 	//sPrima=1;
 	int minV,maxV;

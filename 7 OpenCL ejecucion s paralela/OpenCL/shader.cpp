@@ -127,8 +127,7 @@ void shader::CalcularN(unsigned char *img3,float *NdeS, int M){
 		const int tamS=M/2-1;
 
 		size_t global_item_size = tamS; // desde s=2 hasta s=M/2
-		size_t local_item_size = 1; // Grupo de trabajo
-
+		size_t local_item_size = 11; // Grupo de trabajo
 
 		//if(sqrt((double)global_item_size)-(int)sqrt((double)global_item_size)==0){
 		//	if(mostrarDepuracion)printf("local_item_size=sqrt(global_item_size)\n");
@@ -186,7 +185,7 @@ void shader::CalcularN(unsigned char *img3,float *NdeS, int M){
 				&global_item_size, &local_item_size, 0, NULL, NULL);
 
 			if(ret==-54){
-				//printf("s=%i (ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n",s);
+				printf("(ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n");
 				printf("local_item_size(%i) < CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",local_item_size,CL_DEVICE_MAX_WORK_GROUP_SIZE);
 				printf("global_work_size(%i) < CL_DEVICE_ADDRESS_BITS(%i)\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
 			}else if(ret!=0)printf("clEnqueueNDRangeKernel=%i\n",ret,ret);
