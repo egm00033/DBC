@@ -289,6 +289,7 @@ void SaveBMP(char *filename, bmpInfoHeader *info, unsigned char *imgdata)
 	fwrite(imgdata, info->imgsize, 1, f);
 	fclose(f);
 }
+
 float CalcularNenC(int *vEntrada, int M,int s){
 	float sPrima=(float)256/((float)M/(float)(s));
 	float N=0;
@@ -302,7 +303,8 @@ float CalcularNenC(int *vEntrada, int M,int s){
 		if(min>vEntrada[i])min=vEntrada[i];
 		if((i+1)%gridSize==0){
 			//printf("\nsalto\n");
-			N+=max/sPrima-min/sPrima-1;
+			if(s>300)printf("s=%i, N=%f+%f, sprima=%f, max=%i, min=%i\n",s,N,max/sPrima-min/sPrima-1,sPrima,max,min);
+			N+=max/sPrima-min/sPrima+1;
 			max=0;
 			min=256;
 		}
