@@ -9,7 +9,6 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	unsigned char *img3;
 	bmpInfoHeader info; 
-	//char *path=".\\images\\D33.bmp";
 	img3=LoadBMP(path, &info);
 
 	int i,j,blanco;
@@ -50,6 +49,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	//calcular DF
 	DBC c=DBC(img3, ancho, niveldeGris);
+	miPrograma = _CPU;
+	c=DBC(img3, ancho, niveldeGris);
 
 
 

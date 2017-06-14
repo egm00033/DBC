@@ -198,7 +198,7 @@ void crearMapaZ(int s,float sPrima, int M,float *n){
 	SaveBMP(".\\images\\mapaZ\\imagenZ.bmp", &info, img);
 	system (".\\images\\mapaZ\\imagenZ.bmp");
 	system("pause");
-	
+
 
 	free(img);
 
@@ -290,26 +290,38 @@ void SaveBMP(char *filename, bmpInfoHeader *info, unsigned char *imgdata)
 	fclose(f);
 }
 
-float CalcularNenC(int *vEntrada, int M,int s){
+float CalcularNenC(unsigned char *vEntrada, int M,int s){
 	float sPrima=(float)256/((float)M/(float)(s));
 	float N=0;
 	int listSize=M*M;
 	int gridSize=s*s;
-	int max=0,min=1;
-	for(int i=0; i<listSize;i++){
-		
-		//printf("%i\t",i);
-		if(max<vEntrada[i])max=vEntrada[i];
-		if(min>vEntrada[i])min=vEntrada[i];
-		if((i+1)%gridSize==0){
-			//printf("\nsalto\n");
-			if(s>300)printf("s=%i, N=%f+%f, sprima=%f, max=%i, min=%i\n",s,N,max/sPrima-min/sPrima-1,sPrima,max,min);
-			N+=max/sPrima-min/sPrima+1;
+	unsigned char max=0,min=256;
+	int inicio=0, pos=0;
+	int nCol=M/s;
+	for (int I = 0; I < M; I+=s)
+	{
+		for (int J = 0; J < M; J+=s)
+		{
+			//cada grid de S*S
+			inicio=I*M+J;
 			max=0;
 			min=256;
+			//printf("\ni=%i, j=%i, pos=%i\n",I,J,inicio);
+			for (int i = 0; i < s; i++)
+			{
+				for (int j = 0; j < s; j++)
+				{
+					pos=inicio+i*M+j;
+					//printf("i=%i, j=%i, pos=%i valor=%i\n",i,j,pos,vEntrada[pos]);
+					if(max<vEntrada[pos])max=vEntrada[pos];
+					if(min>vEntrada[pos])min=vEntrada[pos];
+				}
+			}
+			N+=max/(float)sPrima-min/(float)sPrima+1;
+			//printf("\nmax=%i, min=%i, N=%f\n",max,min,N);
 		}
-
 	}
+
 	//system("pause");
 
 	return N;

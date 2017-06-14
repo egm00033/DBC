@@ -30,7 +30,10 @@
     <ClInclude Include="DBC.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="shader.h">
+    <ClInclude Include="shaderGPU.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="shaderCPU.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,16 +47,17 @@
     <ClCompile Include="DBC.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="shader.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="shaderGPU.cpp">
+      <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
+    <ClCompile Include="shaderCPU.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="kernel.cl">
-      <Filter>Archivos de código fuente</Filter>
-    </None>
+    <None Include="kernel.cl" />
   </ItemGroup>
 </Project>

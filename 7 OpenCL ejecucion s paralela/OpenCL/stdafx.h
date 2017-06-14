@@ -26,7 +26,8 @@
 
 #include "targetver.h"
 #include "Util.h"
-#include "shader.h"
+#include "shaderGPU.h"
+#include "shaderCPU.h"
 #include "DBC.h"
 
 

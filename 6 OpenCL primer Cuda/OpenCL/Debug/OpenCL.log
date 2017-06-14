@@ -1,9 +1,22 @@
-﻿Compilación iniciada a las 06/06/2017 19:37:37.
+﻿Compilación iniciada a las 07/06/2017 16:49:36.
      1>Proyecto "C:\Users\usuario\Desktop\DBC\6 OpenCL primer Cuda\OpenCL\OpenCL.vcxproj" en el nodo 2 (Build destinos).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\OpenCL_cuda.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
          stdafx.cpp
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OpenCL_cuda.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt DBC.cpp main.cpp shader.cpp Util.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OpenCL_cuda.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt DBC.cpp Util.cpp main.cpp shader.cpp
+         shader.cpp
+     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(10): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
+     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(39): warning C4018: '<' : no coinciden signed/unsigned
+     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(45): warning C4018: '<' : no coinciden signed/unsigned
+     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(80): warning C4996: 'clCreateCommandQueue': se declaró obsoleto
+                 c:\program files (x86)\intel\opencl sdk\6.3\include\cl\cl.h(1428) : vea la declaración de 'clCreateCommandQueue'
+     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(219): warning C4018: '<' : no coinciden signed/unsigned
+     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(222): warning C4018: '>' : no coinciden signed/unsigned
+         main.cpp
+     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\main.cpp(18): warning C4018: '<' : no coinciden signed/unsigned
+     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\main.cpp(25): warning C4018: '<' : no coinciden signed/unsigned
+     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\main.cpp(27): warning C4018: '<' : no coinciden signed/unsigned
          Util.cpp
      1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\util.cpp(17): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
@@ -20,19 +33,6 @@
                  c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
      1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\util.cpp(275): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
-         shader.cpp
-     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(10): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
-     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(39): warning C4018: '<' : no coinciden signed/unsigned
-     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(45): warning C4018: '<' : no coinciden signed/unsigned
-     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(80): warning C4996: 'clCreateCommandQueue': se declaró obsoleto
-                 c:\program files (x86)\intel\opencl sdk\6.3\include\cl\cl.h(1428) : vea la declaración de 'clCreateCommandQueue'
-     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(219): warning C4018: '<' : no coinciden signed/unsigned
-     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\shader.cpp(222): warning C4018: '>' : no coinciden signed/unsigned
-         main.cpp
-     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\main.cpp(18): warning C4018: '<' : no coinciden signed/unsigned
-     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\main.cpp(25): warning C4018: '<' : no coinciden signed/unsigned
-     1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\main.cpp(27): warning C4018: '<' : no coinciden signed/unsigned
          DBC.cpp
      1>c:\users\usuario\desktop\dbc\6 opencl primer cuda\opencl\dbc.cpp(77): warning C4244: '=' : conversión de 'double' a 'float'; posible pérdida de datos
          Generando código...
@@ -47,4 +47,4 @@
 
 Compilación correcta.
 
-Tiempo transcurrido 00:00:01.01
+Tiempo transcurrido 00:00:01.04

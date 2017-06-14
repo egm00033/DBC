@@ -2,14 +2,17 @@
 #include "stdafx.h"
 
 //configurar app
-static char *path=".\\images\\D33.bmp";
+static char *path=".\\images\\D3.bmp";
 static bool mostrarMapaZ=false;//mapa de profindidades
 static bool mostrarGafica=false;//grafica con la pendiente generada por DF
-static bool mostrarTabla=false;//muestra los resultados de D para cualquier s
-static bool mostrarDepuracion=false;//informacion de opencl: sPrima, global size y localside
+static bool mostrarTabla=true;//muestra los resultados de D para cualquier s
+static bool mostrarDepuracion=true;//informacion de opencl: sPrima, global size y localside
 static bool mostrarMinMax=false;//calculos resumidos del valo minimo y maximo de un grid para todos los s
 static int plataforma=2;//0=intel-1.0; 1=intel 1.2; 2=cuda
 static bool ejecutarOpenCL=true;
+
+enum opcion {_C, _CPU, _GPU};
+static enum opcion miPrograma = _C;
 /*
 *Util encapsula todas las funciones necesarias para el resto de clases
 *
@@ -60,4 +63,4 @@ bmpInfoHeader *createInfoHeader(unsigned w, unsigned h, unsigned ppp);
 void crearGrafica(interpretacion *grafica, int tam);
 void crearMapaZ(int s,float sPrima, int M,float *n);
 
-float CalcularNenC(int *vEntrada, int M,int s);
+float CalcularNenC(unsigned char *vEntrada, int M,int s);

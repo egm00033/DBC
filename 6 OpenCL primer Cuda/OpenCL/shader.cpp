@@ -125,7 +125,7 @@ float shader::subdividirCalculos(const int *vEntrada,const int s,const int M,con
 	int s2=s*s;
 	const int LIST_SIZE =tamanioLista;// Lista de elementos de tamaño MxM
 	size_t global_item_size = LIST_SIZE/s2; // numero total de operaciones (tamaño del vector)
-	size_t local_item_size = 1; // Grupo de trabajo de tamaño sxs
+	size_t local_item_size =22; // Grupo de trabajo de tamaño sxs
 
 
 	if(sqrt((double)global_item_size)-(int)sqrt((double)global_item_size)==0){

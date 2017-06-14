@@ -24,7 +24,7 @@ private:
 	float C;
 	float E;
 	int anchoMatriz;
-	int numElementos;
+	int tamListaS;
 	interpretacion *grafica;//array  con todos los resultados necesarios para calcular la Dimensión fractal
 
 public:

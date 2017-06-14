@@ -14,64 +14,90 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris)
 	grafica=(interpretacion*) calloc(anchoMatriz/2-1,sizeof(interpretacion));
 	float *NdeS=(float*) calloc(anchoMatriz/2-1,sizeof(float));
 
+	//numero de divisores de M/2
+	tamListaS=0;
+	for (int s = 2; s <= anchoMatriz/2; s++)
+	{
+		if(anchoMatriz%s==0)
+			tamListaS+=1;
+	}
+	int *listaS=(int*) calloc(tamListaS,sizeof(int));
+	int pos=0;
+	for (int s = 2; s <= anchoMatriz/2; s++)
+	{
+		if(anchoMatriz%s==0){
+			listaS[pos]=s;
+			pos+=1;
+		}
+	}
+	for (int i = 0; i < tamListaS; i++)
+	{
+		printf("%i : s=%i\n",i,listaS[i]);
+	}
 
 	//tiempo
 	clock_t fin,totalInicio;
+	shaderGPU progGPU=shaderGPU();
+	shaderCPU progCPU=shaderCPU();
 
-	//llamar al programa
-	shader programa=shader();
-	if(programa.getRet()==0){
-
-		totalInicio=clock();
-
-		//calcular en OpenCL
-
-		programa.CalcularN(img3,NdeS,anchoMatriz);
-		fin=clock();
-		for(int s = 2; s <= anchoMatriz/2; s++){
-			//printf("valor de NdeS[%i]=%f\n",s,NdeS[s-2]);
-			grafica[s-2].y=NdeS[s-2];
-		}
-
-
-
-		printf("\ntiempo de la ejecucion del shader: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
-
-		//calcular bordes: multiplicando por el area que no está calculada
-		for (int s = 2; s <= anchoMatriz/2; s++)
+	switch (miPrograma)
+	{
+	case _C:
+		for (int i = 0; i < tamListaS; i++)
 		{
-			if(anchoMatriz%s!=0){
-				int mprima=anchoMatriz/s*s;
+			grafica[i].y=log10(CalcularNenC(img3, anchoMatriz,listaS[i]));
+		}
+		break;
+	case _CPU:
+		progCPU.CalcularN(img3,NdeS,anchoMatriz,tamListaS);
+		for(int i=0; i < tamListaS; i++){
+			grafica[i].y=log10(NdeS[i]);
+		}
+		break;
+	case _GPU:
+		//llamar al programa
 
-				double dif=pow((double)anchoMatriz,2)/pow((double)mprima,2);
-				if(false)printf("s=%i diferencia= %f \n",s,dif);
-				grafica[s-2].y=log10(grafica[s-2].y*dif);
-			}else{
-				grafica[s-2].y=log10(grafica[s-2].y);
+		if(progGPU.getRet()==0){//creacion con éxito
+			totalInicio=clock();
+			//calcular en OpenCL
+			progGPU.CalcularN(img3,NdeS,anchoMatriz);
+			fin=clock();
+			for(int s = 2; s <= anchoMatriz/2; s++){
+				//printf("valor de NdeS[%i]=%f\n",s,NdeS[s-2]);
+				grafica[s-2].y=NdeS[s-2];
 			}
+
+			printf("\ntiempo de la ejecucion del shader: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
+
+
+
+
+			//printf("%f\t%f\t%f\t%f\t%f\t%f\t\n",D,E,pow(10,grafica[318].y),grafica[318].y  ,pow(10,grafica[0].y),grafica[0].y);
+		}else{
+			printf("ERROR ret==0\n");
+
 		}
-
-
-		//mostrar resultado de la ejecucion
-		if(mostrarTabla)printf("s\t;N\t;r\t;logN\t;lor(1/r)\t; \n");
-		int mayor=0;
-		for (int s = 2; s <= anchoMatriz/2; s++)
-		{
-			r=(float)s/(float)anchoMatriz;
-			//r=(float)anchoMatriz/(float)s;
-			grafica[s-2].x=log10(1/r);
-			if(mostrarTabla)printf("%i\t;%f\t;%f\t;%f\t;%f\n",s,pow(10,grafica[s-2].y),1/pow(10,grafica[s-2].x),grafica[s-2].y,grafica[s-2].x);
-		}
-		//crear gráfica
-		if(mostrarGafica)
-			crearGrafica(grafica,anchoMatriz/2-1);
-
-		calcularDF();
-		//printf("%f\t%f\t%f\t%f\t%f\t%f\t\n",D,E,pow(10,grafica[318].y),grafica[318].y  ,pow(10,grafica[0].y),grafica[0].y);
-	}else{
-		printf("ERROR ret==0\n");
-
+		break;
+	default:
+		break;
 	}
+
+	//mostrar resultado de la ejecucion
+	if(mostrarTabla)printf("s\t;N\t;r\t;logN\t;lor(1/r)\t; \n");
+	for (int i = 0; i <tamListaS; i++)
+	{
+		r=listaS[i]/(float)anchoMatriz;
+		//r=(float)anchoMatriz/(float)s;
+		grafica[i].x=log10(1/r);
+		if(mostrarTabla)printf("%i\t;%f\t;%f\t;%f\t;%f\n",listaS[i],pow(10,grafica[i].y),1/pow(10,grafica[i].x),grafica[i].y,grafica[i].x);
+	}
+	//crear gráfica
+	if(mostrarGafica)
+		crearGrafica(grafica,tamListaS);
+
+	calcularDF();
+
+	free(listaS);
 	free(NdeS);
 }
 
@@ -92,7 +118,7 @@ void DBC::calcularDF(){
 	float sumx2=0.0;
 	float sumy2=0.0;
 
-	int tam=anchoMatriz/2-1;
+	int tam=tamListaS;
 
 	//inicia la parte de regresion lineal
 
