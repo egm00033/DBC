@@ -55,26 +55,6 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	case _GPU:
 		//llamar al programa
 
-		/*if(progGPU.getRet()==0){//creacion con éxito
-			totalInicio=clock();
-			//calcular en OpenCL
-			progGPU.CalcularN(img3,NdeS,anchoMatriz);
-			fin=clock();
-			for(int s = 2; s <= anchoMatriz/2; s++){
-				//printf("valor de NdeS[%i]=%f\n",s,NdeS[s-2]);
-				grafica[s-2].y=NdeS[s-2];
-			}
-
-			printf("\ntiempo de la ejecucion del shader: %f segundos\n",(fin-totalInicio)/(double)CLOCKS_PER_SEC);
-
-
-
-
-			//printf("%f\t%f\t%f\t%f\t%f\t%f\t\n",D,E,pow(10,grafica[318].y),grafica[318].y  ,pow(10,grafica[0].y),grafica[0].y);
-		}else{
-			printf("ERROR ret==0\n");
-
-		}*/
 		break;
 	default:
 		break;

@@ -37,11 +37,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	if(false){//cambiar imagen por posicion
-		ancho=8;
+		//ancho=8;
 		for (int i = 0; i < ancho; i++)
 		{
 			for (int j = 0; j < ancho; j++){
-				img3[i*ancho+j]=i*ancho+j;
+				img3[i*ancho+j]=200;
 				//printf(" %i\t",imagen[i][j]);
 			}
 			//printf("\n");

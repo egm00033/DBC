@@ -6,7 +6,7 @@ get_local_size	Number of local work items
 get_local_id	Local work item ID
 get_num_groups	Number of work groups
 get_group_id	Work group ID*/
-__kernel void calcularNdesCPU(__global const char *imagen, __global  float *N, const int M, __global const int *listaS) {
+__kernel void calcularNdesCPU(__global const unsigned char *imagen, __global  float *N, const int M, __global const int *listaS) {
 	int prueba=listaS[get_global_id(0)];
 	int s=max(prueba,2);
 	s=min(s,320);
@@ -23,7 +23,7 @@ __kernel void calcularNdesCPU(__global const char *imagen, __global  float *N, c
 		{
 			inicio=I*M+J;
 			maxV=0;
-			minV=256;
+			minV=500000;
 			for (int i = 0; i < s; i++)
 			{
 				for (int j = 0; j < s; j++)

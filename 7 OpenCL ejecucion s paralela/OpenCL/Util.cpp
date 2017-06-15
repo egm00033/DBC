@@ -297,7 +297,7 @@ float CalcularNenC(unsigned char *vEntrada, int M,int s){
 	float N=0;
 	int listSize=M*M;
 	int gridSize=s*s;
-	unsigned char max=0,min=256;
+	int max=0,min=256;
 	int inicio=0, pos=0;
 	int nCol=M/s;
 	for (int I = 0; I < M; I+=s)
@@ -307,7 +307,7 @@ float CalcularNenC(unsigned char *vEntrada, int M,int s){
 			//cada grid de S*S
 			inicio=I*M+J;
 			max=0;
-			min=256;
+			min=500000;
 			//printf("\ni=%i, j=%i, pos=%i\n",I,J,inicio);
 			for (int i = 0; i < s; i++)
 			{
@@ -317,14 +317,13 @@ float CalcularNenC(unsigned char *vEntrada, int M,int s){
 					//printf("i=%i, j=%i, pos=%i valor=%i\n",i,j,pos,vEntrada[pos]);
 					if(max<vEntrada[pos])max=vEntrada[pos];
 					if(min>vEntrada[pos])min=vEntrada[pos];
+					//if(min>pos)min=inicio;
 				}
 			}
 			N+=max/(float)sPrima-min/(float)sPrima+1;
 			//printf("\nmax=%i, min=%i, N=%f\n",max,min,N);
 		}
 	}
-
-	//system("pause");
 
 	return N;
 }
