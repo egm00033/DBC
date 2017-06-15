@@ -15,11 +15,11 @@ shaderCPU::shaderCPU(void)
 	codigoShader = (char*)malloc(MAX_SOURCE_SIZE);
 	source_size = fread( codigoShader, 1, MAX_SOURCE_SIZE, fp);
 	fclose( fp );
-	printf("codigoShader cargado\n");
+	if(mostrarDepuracion)printf("codigoShader cargado\n");
 	// conseguir informacion de la plataforma y el dispositivo
 
 	ret = clGetPlatformIDs(0, NULL, &ret_num_platforms);
-	printf("num plataformas=%i\n",ret_num_platforms);
+	if(mostrarDepuracion)printf("num plataformas=%i\n",ret_num_platforms);
 	platforms = NULL;
 	platforms = (cl_platform_id*)malloc(ret_num_platforms*sizeof(cl_platform_id));
 
@@ -41,27 +41,27 @@ shaderCPU::shaderCPU(void)
 			//cl_device_id devices[100];
 			clGetDeviceIDs(platforms[idPlatforms], CL_DEVICE_TYPE_ALL, 100, devices, &ret_num_devices);
 
-			printf("=== %d OpenCL device(s) found on platform:%i\n", ret_num_devices,idPlatforms);
+			if(mostrarDepuracion)printf("=== %d OpenCL device(s) found on platform:%i\n", ret_num_devices,idPlatforms);
 			for (idDispositivo=0; idDispositivo<ret_num_devices; idDispositivo++)
 			{
 				char buffer[10240];
 				cl_uint buf_uint;
 				cl_ulong buf_ulong;
-				printf("  -- %d --\n", idDispositivo);
+				if(mostrarDepuracion)printf("  -- %d --\n", idDispositivo);
 				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_NAME, sizeof(buffer), buffer, NULL);
-				printf("  DEVICE_NAME = %s\n", buffer);
+				if(mostrarDepuracion)printf("  DEVICE_NAME = %s\n", buffer);
 				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_VENDOR, sizeof(buffer), buffer, NULL);
-				printf("  DEVICE_VENDOR = %s\n", buffer);
+				if(mostrarDepuracion)printf("  DEVICE_VENDOR = %s\n", buffer);
 				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_VERSION, sizeof(buffer), buffer, NULL);
-				printf("  DEVICE_VERSION = %s\n", buffer);
+				if(mostrarDepuracion)printf("  DEVICE_VERSION = %s\n", buffer);
 				clGetDeviceInfo(devices[idDispositivo], CL_DRIVER_VERSION, sizeof(buffer), buffer, NULL);
-				printf("  DRIVER_VERSION = %s\n", buffer);
+				if(mostrarDepuracion)printf("  DRIVER_VERSION = %s\n", buffer);
 				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(buf_uint), &buf_uint, NULL);
-				printf("  DEVICE_MAX_COMPUTE_UNITS = %u\n", (unsigned int)buf_uint);
+				if(mostrarDepuracion)printf("  DEVICE_MAX_COMPUTE_UNITS = %u\n", (unsigned int)buf_uint);
 				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(buf_uint), &buf_uint, NULL);
-				printf("  DEVICE_MAX_CLOCK_FREQUENCY = %u\n", (unsigned int)buf_uint);
+				if(mostrarDepuracion)printf("  DEVICE_MAX_CLOCK_FREQUENCY = %u\n", (unsigned int)buf_uint);
 				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(buf_ulong), &buf_ulong, NULL);
-				printf("  DEVICE_GLOBAL_MEM_SIZE = %llu\n\n", (unsigned long long)buf_ulong);
+				if(mostrarDepuracion)printf("  DEVICE_GLOBAL_MEM_SIZE = %llu\n\n", (unsigned long long)buf_ulong);
 			}
 
 		}
@@ -115,19 +115,19 @@ shaderCPU::shaderCPU(void)
 	}
 
 	// Crear kernel de OpenCL
-	kernel = clCreateKernel(program, "calcularNdesGPU", &ret);
+	kernel = clCreateKernel(program, "calcularNdesCPU", &ret);
 	if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 }
 
 //Calcula la sumatoria de n para un tamaño s dado
-void shaderCPU::CalcularN(unsigned char *img3,float *NdeS, int M, int tamListaS){
-
+void shaderCPU::CalcularN(unsigned char *img3,float *NdeS, int M, int tamListaS,int *listaS){
+	//éxito en la creación del programa
 	if(ret==0){
 		cl_int ret;
 		const int LIST_SIZE =M*M;// Lista de elementos de tamaño MxM
-		const int tamS=M/2-1;
+		const int tamS=tamListaS;
 
-		size_t global_item_size = tamS; // desde s=2 hasta s=M/2
+		size_t global_item_size = tamS; // desde s=2 hasta s=M/2 si % == 0
 		size_t local_item_size = 11; // Grupo de trabajo
 
 		if(true)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
@@ -135,11 +135,19 @@ void shaderCPU::CalcularN(unsigned char *img3,float *NdeS, int M, int tamListaS)
 		//crear buffers de memoria en el dispositivo por cada vector
 		cl_mem entrada_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
 			LIST_SIZE * sizeof(char), NULL, &ret);
+		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 		cl_mem salida_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
 			tamS * sizeof(float), NULL, &ret);
+		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
-		ret=clSetKernelArg(kernel, 2, sizeof(M), &M);
+		cl_mem listaS_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
+			tamS * sizeof(int), NULL, &ret);
+		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+
+
+
+		ret=clSetKernelArg(kernel, 2, sizeof(M), &M);//set parametro del kernel
 		if(ret!=0)printf("clSetKernelArg(s2), linea: %d, error: %d\n", __LINE__, ret);
 
 		// Copiar cada vector de entrada en su buffer
@@ -147,12 +155,21 @@ void shaderCPU::CalcularN(unsigned char *img3,float *NdeS, int M, int tamListaS)
 			LIST_SIZE * sizeof(char), img3, 0, NULL, NULL);
 		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
+		ret = clEnqueueWriteBuffer(command_queue, listaS_mem_obj, CL_TRUE, 0,
+			tamS * sizeof(int), listaS, 0, NULL, NULL);
+		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 		// Establecer argumentos
 		ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&entrada_mem_obj);
 		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
+		/*ret = clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&listaS_mem_obj);
+		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);*/
+
 		ret = clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&salida_mem_obj);
+		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
+
+		ret = clSetKernelArg(kernel, 3, sizeof(cl_mem), (void *)&listaS_mem_obj);
 		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 
@@ -178,16 +195,9 @@ void shaderCPU::CalcularN(unsigned char *img3,float *NdeS, int M, int tamListaS)
 
 			ret = clEnqueueReadBuffer(command_queue, salida_mem_obj, CL_TRUE, 0, tamS * sizeof(float), NdeS, 0, NULL, NULL);
 
+			printf("NdeS copiado\n");
 		}
-		//chapuza, se calculan todos los s y solo se guardan los divisores de M
-		int pos=0;
-		for (int i = 0; i < tamS; i++)
-		{
-			if(M%(i+2)==0){
-				NdeS[pos]=NdeS[i];
-				pos+=1;
-			}
-		}
+
 
 
 		ret = clReleaseMemObject(entrada_mem_obj);

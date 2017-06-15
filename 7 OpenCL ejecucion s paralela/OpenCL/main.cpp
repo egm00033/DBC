@@ -48,9 +48,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 	//calcular DF
-	DBC c=DBC(img3, ancho, niveldeGris);
-	miPrograma = _CPU;
-	c=DBC(img3, ancho, niveldeGris);
+	DBC c=DBC(img3, ancho, niveldeGris, _C);
+
+	DBC d=DBC(img3, ancho, niveldeGris, _CPU);
 
 
 

@@ -289,7 +289,9 @@ void SaveBMP(char *filename, bmpInfoHeader *info, unsigned char *imgdata)
 	fwrite(imgdata, info->imgsize, 1, f);
 	fclose(f);
 }
-
+/**
+Calcula el valor de N para un s dado utilizando solo instrucciones de C
+*/
 float CalcularNenC(unsigned char *vEntrada, int M,int s){
 	float sPrima=(float)256/((float)M/(float)(s));
 	float N=0;

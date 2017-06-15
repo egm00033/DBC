@@ -4,7 +4,7 @@
 
 
 
-DBC::DBC(unsigned char *img3, int ancho,int nivelGris)
+DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 {
 
 	float N=0;
@@ -27,29 +27,27 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris)
 	{
 		if(anchoMatriz%s==0){
 			listaS[pos]=s;
+			//printf("s=%i\n",s);
 			pos+=1;
 		}
-	}
-	for (int i = 0; i < tamListaS; i++)
-	{
-		printf("%i : s=%i\n",i,listaS[i]);
 	}
 
 	//tiempo
 	clock_t fin,totalInicio;
-	shaderGPU progGPU=shaderGPU();
+	//shaderGPU progGPU=shaderGPU();
 	shaderCPU progCPU=shaderCPU();
-
+	printf("cargando programa %i\n",miPrograma);
 	switch (miPrograma)
 	{
 	case _C:
+		
 		for (int i = 0; i < tamListaS; i++)
 		{
 			grafica[i].y=log10(CalcularNenC(img3, anchoMatriz,listaS[i]));
 		}
 		break;
 	case _CPU:
-		progCPU.CalcularN(img3,NdeS,anchoMatriz,tamListaS);
+		progCPU.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log10(NdeS[i]);
 		}
@@ -57,7 +55,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris)
 	case _GPU:
 		//llamar al programa
 
-		if(progGPU.getRet()==0){//creacion con éxito
+		/*if(progGPU.getRet()==0){//creacion con éxito
 			totalInicio=clock();
 			//calcular en OpenCL
 			progGPU.CalcularN(img3,NdeS,anchoMatriz);
@@ -76,7 +74,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris)
 		}else{
 			printf("ERROR ret==0\n");
 
-		}
+		}*/
 		break;
 	default:
 		break;

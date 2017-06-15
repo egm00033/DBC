@@ -28,7 +28,7 @@ private:
 	interpretacion *grafica;//array  con todos los resultados necesarios para calcular la Dimensión fractal
 
 public:
-	DBC(unsigned char *img3, int M,int G);//constructor
+	DBC(unsigned char *img3, int M,int G,enum opcion miPrograma);//constructor
 	~DBC(void);
 	float getDF(){return DF;};//devuelve el valor de la dimensión fractal
 	void calcularDF();//calcula la regresion lineal de la grafica para hallar la pendiente

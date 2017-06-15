@@ -1,4 +1,4 @@
-﻿Compilación iniciada a las 14/06/2017 21:04:08.
+﻿Compilación iniciada a las 15/06/2017 20:03:56.
      1>Proyecto "C:\Users\usuario\Desktop\DBC\7 OpenCL ejecucion s paralela\OpenCL\OpenCL.vcxproj" en el nodo 2 (Build destinos).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\OpenCL_cuda_paralelo.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
@@ -38,11 +38,13 @@
                  c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
      1>c:\users\usuario\desktop\dbc\7 opencl ejecucion s paralela\opencl\util.cpp(275): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
-     1>c:\users\usuario\desktop\dbc\7 opencl ejecucion s paralela\opencl\util.cpp(298): warning C4305: 'inicializando' : truncamiento de 'int' a 'unsigned char'
-     1>c:\users\usuario\desktop\dbc\7 opencl ejecucion s paralela\opencl\util.cpp(298): warning C4309: 'inicializando' : truncamiento de valor constante
-     1>c:\users\usuario\desktop\dbc\7 opencl ejecucion s paralela\opencl\util.cpp(308): warning C4305: '=' : truncamiento de 'int' a 'unsigned char'
-     1>c:\users\usuario\desktop\dbc\7 opencl ejecucion s paralela\opencl\util.cpp(308): warning C4309: '=' : truncamiento de valor constante
+     1>c:\users\usuario\desktop\dbc\7 opencl ejecucion s paralela\opencl\util.cpp(300): warning C4305: 'inicializando' : truncamiento de 'int' a 'unsigned char'
+     1>c:\users\usuario\desktop\dbc\7 opencl ejecucion s paralela\opencl\util.cpp(300): warning C4309: 'inicializando' : truncamiento de valor constante
+     1>c:\users\usuario\desktop\dbc\7 opencl ejecucion s paralela\opencl\util.cpp(310): warning C4305: '=' : truncamiento de 'int' a 'unsigned char'
+     1>c:\users\usuario\desktop\dbc\7 opencl ejecucion s paralela\opencl\util.cpp(310): warning C4309: '=' : truncamiento de valor constante
          DBC.cpp
+     1>c:\users\usuario\desktop\dbc\7 opencl ejecucion s paralela\opencl\dbc.cpp(36): warning C4101: 'totalInicio' : variable local sin referencia
+     1>c:\users\usuario\desktop\dbc\7 opencl ejecucion s paralela\opencl\dbc.cpp(36): warning C4101: 'fin' : variable local sin referencia
          Generando código...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\usuario\Desktop\DBC\7 OpenCL ejecucion s paralela\Debug\OpenCL_cuda_paralelo.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/lib/x86" OpenCL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\usuario\Desktop\DBC\7 OpenCL ejecucion s paralela\Debug\OpenCL_cuda_paralelo.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\usuario\Desktop\DBC\7 OpenCL ejecucion s paralela\Debug\OpenCL_cuda_paralelo.lib" /MACHINE:X86 Debug\DBC.obj
@@ -56,4 +58,4 @@
 
 Compilación correcta.
 
-Tiempo transcurrido 00:00:00.99
+Tiempo transcurrido 00:00:00.71

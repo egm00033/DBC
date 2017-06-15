@@ -18,7 +18,7 @@ private:
 public:
 	shaderCPU(void);
 	~shaderCPU(void);
-	void CalcularN(unsigned char *img3,float *NdeS,int M, int tamListaS);
+	void CalcularN(unsigned char *img3,float *NdeS,int M, int tamListaS,int *listaS);
 	int getRet(){return ret;};
 };
 
