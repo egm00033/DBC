@@ -10,7 +10,7 @@ shaderGPU::shaderGPU(void)
 	//device_id = NULL;
 	// Cargar codigo del codigoShader
 	FILE *fp;
-	fp = fopen("kernel.cl", "r");
+	fp = fopen("kernel_profundidad_GPU.cl", "r");
 	if (!fp) {
 		fprintf(stderr, "Fallo al cargar el kernel.\n");
 		exit(1);

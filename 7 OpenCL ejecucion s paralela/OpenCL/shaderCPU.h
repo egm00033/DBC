@@ -16,7 +16,7 @@ private:
 	cl_command_queue command_queue;
 	cl_kernel kernel;
 public:
-	shaderCPU(void);
+	shaderCPU(enum tipo_kernel tipo);
 	~shaderCPU(void);
 	void CalcularN(unsigned char *img3,float *NdeS,int M, int tamListaS,int *listaS);
 	int getRet(){return ret;};

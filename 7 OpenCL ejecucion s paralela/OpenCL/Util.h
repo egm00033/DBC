@@ -12,6 +12,7 @@ static int plataforma=1;//0=intel-1.0; 1=intel 1.2; 2=cuda
 static bool ejecutarOpenCL=true;
 
 enum opcion {_C, _CPU, _GPU};
+enum tipo_kernel {_superficie, _profundidad};
 //static enum opcion miPrograma = _CPU;
 
 /*

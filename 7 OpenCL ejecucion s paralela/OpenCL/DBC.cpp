@@ -33,28 +33,34 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	}
 
 	//tiempo
-	clock_t fin,totalInicio;
-	//shaderGPU progGPU=shaderGPU();
-	shaderCPU progCPU=shaderCPU();
+	clock_t fin,inicio;
+	shaderCPU progCPU=shaderCPU(_profundidad);
 	shaderGPU progGPU=shaderGPU();
 	printf("cargando programa %i\n",miPrograma);
+
 	switch (miPrograma)
 	{
 	case _C:
-		
+		inicio=clock();
 		for (int i = 0; i < tamListaS; i++)
 		{
+
 			grafica[i].y=log10(CalcularNenC(img3, anchoMatriz,listaS[i]));
 		}
+		printf("\nTiempo de ejecucion: %f segundos\n",(clock()-inicio)/(double)CLOCKS_PER_SEC);
 		break;
 	case _CPU:
+		inicio=clock();
 		progCPU.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
+		printf("\nTiempo de ejecucion: %f segundos\n",(clock()-inicio)/(double)CLOCKS_PER_SEC);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log10(NdeS[i]);
 		}
 		break;
 	case _GPU:
+		inicio=clock();
 		progGPU.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
+		printf("\nTiempo de ejecucion: %f segundos\n",(clock()-inicio)/(double)CLOCKS_PER_SEC);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log10(NdeS[i]);
 		}

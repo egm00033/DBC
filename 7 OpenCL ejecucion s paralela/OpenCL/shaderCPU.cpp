@@ -2,12 +2,21 @@
 #include "shaderCPU.h"
 
 //creación del programa dependiento de nuestro HW
-shaderCPU::shaderCPU(void)
+shaderCPU::shaderCPU(enum tipo_kernel tipo)
 {
 	//device_id = NULL;
 	// Cargar codigo del codigoShader
 	FILE *fp;
-	fp = fopen("kernel.cl", "r");
+	char * dirName;
+	switch (tipo)
+	{
+	case _profundidad:
+		dirName="kernel_profundidad_CPU.cl";
+		break;
+	default:
+		dirName="kernel_superficie_CPU.cl";
+	}
+	fp = fopen(dirName, "r");
 	if (!fp) {
 		fprintf(stderr, "Fallo al cargar el kernel.\n");
 		exit(1);
