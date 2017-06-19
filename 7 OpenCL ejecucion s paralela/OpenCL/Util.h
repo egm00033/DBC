@@ -2,7 +2,7 @@
 #include "stdafx.h"
 
 //configurar app
-static char *path=".\\images\\D33.bmp";
+static char *path=".\\images\\D3.bmp";
 static bool mostrarMapaZ=false;//mapa de profindidades
 static bool mostrarGafica=false;//grafica con la pendiente generada por DF
 static bool mostrarTabla=true;//muestra los resultados de D para cualquier s

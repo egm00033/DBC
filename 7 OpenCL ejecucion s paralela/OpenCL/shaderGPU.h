@@ -18,6 +18,6 @@ private:
 public:
 	shaderGPU(void);
 	~shaderGPU(void);
-	void CalcularN(unsigned char *img3,float *NdeS,int M);
+	void CalcularN(unsigned char *img3,float *NdeS,int M, int tamListaS,int *listaS);
 	int getRet(){return ret;};
 };

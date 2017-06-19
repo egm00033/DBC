@@ -36,6 +36,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	clock_t fin,totalInicio;
 	//shaderGPU progGPU=shaderGPU();
 	shaderCPU progCPU=shaderCPU();
+	shaderGPU progGPU=shaderGPU();
 	printf("cargando programa %i\n",miPrograma);
 	switch (miPrograma)
 	{
@@ -53,8 +54,10 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		}
 		break;
 	case _GPU:
-		//llamar al programa
-
+		progGPU.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
+		for(int i=0; i < tamListaS; i++){
+			grafica[i].y=log10(NdeS[i]);
+		}
 		break;
 	default:
 		break;

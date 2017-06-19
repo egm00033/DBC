@@ -207,7 +207,6 @@ void crearMapaZ(int s,float sPrima, int M,float *n){
 
 unsigned char *LoadBMP(char *filename, bmpInfoHeader *bInfoHeader)
 {
-	bool mostrarInfo=false;
 	FILE *f;
 	bmpFileHeader header;
 	unsigned char *imgdata;
@@ -222,7 +221,7 @@ unsigned char *LoadBMP(char *filename, bmpInfoHeader *bInfoHeader)
 	}
 	fread(&header, sizeof(bmpFileHeader), 1, f);
 	fread(bInfoHeader, sizeof(bmpInfoHeader), 1, f);
-	if(mostrarInfo){
+	if(mostrarDepuracion){
 		printf ("size: %u\n", header.size);
 		printf ("offs: %u\n", header.offset);
 		printf ("header size:      %d\n", bInfoHeader->headersize);

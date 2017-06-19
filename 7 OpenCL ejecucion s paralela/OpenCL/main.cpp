@@ -9,12 +9,13 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	unsigned char *img3;
 	bmpInfoHeader info; 
+	printf("Leyendo imagen: %s \n",path);
 	img3=LoadBMP(path, &info);
 
 	int i,j,blanco;
 
 
-	printf("tamaño %i ancho alto %i %i\n",info.imgsize,info.height,info.width);
+	printf("Imagen size = (%i x %i)\n",info.height,info.width);
 	for (i=0; i<info.height; i++)
 	{
 		for (j=0; j<info.width; j++)
@@ -52,7 +53,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	DBC d=DBC(img3, ancho, niveldeGris, _CPU);
 
-
+	DBC g=DBC(img3, ancho, niveldeGris, _GPU);
 
 	system("pause");
 	free(img3);
