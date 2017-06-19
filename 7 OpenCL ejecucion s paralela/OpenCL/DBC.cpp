@@ -16,31 +16,34 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 
 	//numero de divisores de M/2
 	tamListaS=0;
-	for (int s = 2; s <= anchoMatriz/2; s++)
+	int sInicial=5;
+	for (int s = sInicial; s <= anchoMatriz/2; s*=2)
 	{
 		if(anchoMatriz%s==0)
 			tamListaS+=1;
 	}
 	int *listaS=(int*) calloc(tamListaS,sizeof(int));
 	int pos=0;
-	for (int s = 2; s <= anchoMatriz/2; s++)
+	for (int s = sInicial; s <= anchoMatriz/2; s*=2)
 	{
 		if(anchoMatriz%s==0){
 			listaS[pos]=s;
-			//printf("s=%i\n",s);
+			printf("s=%i\n",s);
 			pos+=1;
 		}
 	}
 
 	//tiempo
 	clock_t fin,inicio;
-	shaderCPU progCPU=shaderCPU(_profundidad);
+	shaderCPU progCPUp=shaderCPU();
+	shaderCPU_superficie progCPUs=shaderCPU_superficie();
 	shaderGPU progGPU=shaderGPU();
 	printf("cargando programa %i\n",miPrograma);
 
 	switch (miPrograma)
 	{
 	case _C:
+		printf("Ejecutando en c \n");
 		inicio=clock();
 		for (int i = 0; i < tamListaS; i++)
 		{
@@ -49,15 +52,26 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		}
 		printf("\nTiempo de ejecucion: %f segundos\n",(clock()-inicio)/(double)CLOCKS_PER_SEC);
 		break;
-	case _CPU:
+	case _CPU_profundidad:
+		printf("Ejecutando en CPU profundidad\n");
 		inicio=clock();
-		progCPU.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
+		progCPUp.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
+		printf("\nTiempo de ejecucion: %f segundos\n",(clock()-inicio)/(double)CLOCKS_PER_SEC);
+		for(int i=0; i < tamListaS; i++){
+			grafica[i].y=log10(NdeS[i]);
+		}
+		break;
+	case _CPU_superficie:
+		printf("Ejecutando en CPU por superficie\n");
+		inicio=clock();
+		progCPUs.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
 		printf("\nTiempo de ejecucion: %f segundos\n",(clock()-inicio)/(double)CLOCKS_PER_SEC);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log10(NdeS[i]);
 		}
 		break;
 	case _GPU:
+		printf("Ejecutando en GPU \n");
 		inicio=clock();
 		progGPU.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
 		printf("\nTiempo de ejecucion: %f segundos\n",(clock()-inicio)/(double)CLOCKS_PER_SEC);

@@ -2,20 +2,15 @@
 #include "shaderCPU.h"
 
 //creación del programa dependiento de nuestro HW
-shaderCPU::shaderCPU(enum tipo_kernel tipo)
+shaderCPU::shaderCPU()
 {
 	//device_id = NULL;
 	// Cargar codigo del codigoShader
 	FILE *fp;
 	char * dirName;
-	switch (tipo)
-	{
-	case _profundidad:
+
 		dirName="kernel_profundidad_CPU.cl";
-		break;
-	default:
-		dirName="kernel_superficie_CPU.cl";
-	}
+
 	fp = fopen(dirName, "r");
 	if (!fp) {
 		fprintf(stderr, "Fallo al cargar el kernel.\n");
@@ -137,7 +132,7 @@ void shaderCPU::CalcularN(unsigned char *img3,float *NdeS, int M, int tamListaS,
 		const int tamS=tamListaS;
 
 		size_t global_item_size = tamS; // desde s=2 hasta s=M/2 si % == 0
-		size_t local_item_size = 11; // Grupo de trabajo
+		size_t local_item_size = 1; // Grupo de trabajo
 
 		if(true)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
 
