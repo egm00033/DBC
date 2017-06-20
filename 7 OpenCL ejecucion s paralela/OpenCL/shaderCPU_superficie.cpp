@@ -9,7 +9,7 @@ shaderCPU_superficie::shaderCPU_superficie(void)
 	FILE *fp;
 	char * dirName;
 
-		dirName="kernel_superficie_CPU.cl";
+	dirName="kernel_superficie_CPU.cl";
 
 	fp = fopen(dirName, "r");
 	if (!fp) {
@@ -130,16 +130,21 @@ void shaderCPU_superficie::CalcularN(unsigned char *img3,float *NdeS, int M, int
 		cl_int ret;
 		size_t global_item_size = 4; // subdivisiones de cada superficie
 		size_t local_item_size = 1; // Grupo de trabajo
+		size_t * global = (size_t*) malloc(sizeof(size_t)*2);
+		size_t * local = (size_t*) malloc(sizeof(size_t)*2);
+		global[0] = 2; global[1] = 2;
+		local [0] = 1; local [1] = 1;
 
 		const int LIST_SIZE =M*M;// Lista de elementos de tamaño MxM
 		const int tamS=tamListaS;
 
 		int tamSalida=tamListaS*global_item_size;
+		tamSalida=tamListaS*global_item_size;
 		float *vSalida=(float*) calloc(tamSalida,sizeof(float));
 
 		for(int i=0;i<tamSalida;i++){
-				vSalida[i]=(-1)*i;
-			}
+			vSalida[i]=(-1)*i;
+		}
 
 		if(true)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
 
@@ -197,8 +202,7 @@ void shaderCPU_superficie::CalcularN(unsigned char *img3,float *NdeS, int M, int
 			//}else if(LIST_SIZE>=CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE){
 			//printf("limite buffer = %i\n",CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE );
 		}else{
-			ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
-				&global_item_size, &local_item_size, 0, NULL, NULL);
+			ret = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global, local, 0, NULL, NULL);
 
 			if(ret==-54){
 				printf("(ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n");
@@ -212,12 +216,17 @@ void shaderCPU_superficie::CalcularN(unsigned char *img3,float *NdeS, int M, int
 				vSalida[i]=tamSalida-i;
 			}
 
-			ret = clEnqueueReadBuffer(command_queue, salida_mem_obj, CL_TRUE, 0, tamSalida, vSalida, 0, NULL, NULL);
+			ret = clEnqueueReadBuffer(command_queue, salida_mem_obj, CL_TRUE, 0, tamSalida*sizeof(float), vSalida, 0, NULL, NULL);
 
 			printf("salida copiado\n");
 			for(int i=0;i<tamSalida;i++){
 				printf("%i = %f\n",i,vSalida[i]);
+				NdeS[i/global_item_size]+=vSalida[i];
 			}
+			for(int i=0;i<tamS;i++){
+				printf("NdeS[%i] = %f\n",i,NdeS[i]);
+			}
+
 
 			//copiar de salida a nds sumando el valor de cada grupo
 
@@ -228,11 +237,13 @@ void shaderCPU_superficie::CalcularN(unsigned char *img3,float *NdeS, int M, int
 		ret = clReleaseMemObject(entrada_mem_obj);
 		ret = clReleaseMemObject(salida_mem_obj);
 		free(vSalida);
+		free(global);
+		free(local);
 	}else{
 		printf("ERROR ret==0 en CalcularN\n");
 		system("pause");
 	}
-	
+
 }
 
 shaderCPU_superficie::~shaderCPU_superficie(void)

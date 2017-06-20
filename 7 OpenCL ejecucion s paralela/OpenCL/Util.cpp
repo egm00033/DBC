@@ -319,10 +319,11 @@ float CalcularNenC(unsigned char *vEntrada, int M,int s){
 					//if(min>pos)min=inicio;
 				}
 			}
+			if(s==320)printf("n(%f)=%i(max)/%i(min)\n",max/(float)sPrima-min/(float)sPrima+1,max,min);
 			N+=max/(float)sPrima-min/(float)sPrima+1;
 			//printf("\nmax=%i, min=%i, N=%f\n",max,min,N);
 		}
 	}
-
+	if(s==320)printf("Nde320=%f\n",N);
 	return N;
 }

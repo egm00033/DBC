@@ -36,7 +36,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	long int alto=info.height;
 	int niveldeGris=256;
 
-	ancho=40;//borrar
+	//ancho=40;//borrar
 	if(false){//cambiar imagen por posicion
 		ancho=40;
 		for (int i = 0; i < ancho; i++)
@@ -51,7 +51,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//calcular DF
 	DBC c=DBC(img3, ancho, niveldeGris, _C);
 
-	DBC cp=DBC(img3, ancho, niveldeGris, _CPU_profundidad);
+	//DBC cp=DBC(img3, ancho, niveldeGris, _CPU_profundidad);
 
 	DBC cs=DBC(img3, ancho, niveldeGris, _CPU_superficie);
 
