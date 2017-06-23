@@ -7,7 +7,7 @@ private:
 public:
 	shaderCPU_superficie(void);
 	~shaderCPU_superficie(void);
-	void CalcularN(unsigned char *img3,float *NdeS,int M, int tamListaS,int *listaS,int particiones);
+	void CalcularN(unsigned char *img3,float *NdeS,int M, int tamListaS,int *listaS);
 	int getRet(){return ret;};
 };
 

@@ -18,7 +18,6 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	tamListaS=0;
 	int sInicial=2;
 	int *listaS;
-	int divisiones;
 	if(divisoresPares){
 		sInicial=2;
 		for (int s = sInicial; s <= anchoMatriz/2; s*=2)
@@ -32,11 +31,10 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		{
 			if(anchoMatriz%s==0){
 				listaS[pos]=s;
-				printf("s=%i\n",s);
+				//printf("s=%i\n",s);
 				pos+=1;
 			}
 		}
-		divisiones=5;
 	}else{
 		sInicial=5;
 		for (int s = sInicial; s <= anchoMatriz/2; s*=2)
@@ -54,16 +52,20 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 				pos+=1;
 			}
 		}
-		divisiones=2;
+
 	}
 
 
 	//tiempo
 	clock_t inicio;
-	shaderCPU progCPUp=shaderCPU();
-	shaderCPU_superficie progCPUs=shaderCPU_superficie();
-	shaderGPU progGPU=shaderGPU();
-	shaderGPU2_0 progGPU2_0=shaderGPU2_0();
+
+	shaderCPU *progCPUp=NULL;
+
+	shaderCPU_superficie *progCPUs=NULL;
+
+	shaderGPU *progGPU=NULL;
+	shaderGPU2_0 *progGPU2_0=NULL;
+
 	printf("cargando programa %i\n",miPrograma);
 
 	switch (miPrograma)
@@ -78,44 +80,50 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		printf("Tiempo de ejecucion: %f segundoss, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for (int i = 0; i < tamListaS; i++)
 		{
-			grafica[i].y=log10(grafica[i].y);
+			grafica[i].y=log(grafica[i].y)/ log( 2.0 );
 		}
-		
+
 		break;
 	case _CPU_profundidad:
+		progCPUp=new shaderCPU();
 		printf("Ejecutando en CPU profundidad\n");
 		inicio=clock();
-		progCPUp.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
+		progCPUp->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
 		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
-			grafica[i].y=log10(NdeS[i]);
+			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
 		break;
 	case _CPU_superficie:
+		progCPUs=new shaderCPU_superficie();
 		printf("Ejecutando en CPU por superficie\n");
 		inicio=clock();
-		progCPUs.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS,divisiones);
+		progCPUs->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
 		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
-			grafica[i].y=log10(NdeS[i]);
+			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
 		break;
 	case _GPU:
+		progGPU=new shaderGPU();
+
 		printf("Ejecutando en GPU \n");
 		inicio=clock();
-		progGPU.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
+		progGPU->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
 		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
-			grafica[i].y=log10(NdeS[i]);
+			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
 		break;
 	case _GPU2_0:
+
+		progGPU2_0=new shaderGPU2_0();
 		printf("Ejecutando en GPU2_0 \n");
 		inicio=clock();
-		progGPU2_0.CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
+		progGPU2_0->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
 		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
-			grafica[i].y=log10(NdeS[i]);
+			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
 		break;
 	default:
@@ -128,7 +136,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	{
 		r=listaS[i]/(float)anchoMatriz;
 		//r=(float)anchoMatriz/(float)s;
-		grafica[i].x=log10(1/r);
+		grafica[i].x=log(1/r)/ log( 2.0 );
 		if(mostrarTabla)printf("%i\t;%f\t;%f\t;%f\t;%f\n",listaS[i],pow(10,grafica[i].y),1/pow(10,grafica[i].x),grafica[i].y,grafica[i].x);
 	}
 	//crear gráfica
@@ -136,10 +144,15 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		crearGrafica(grafica,tamListaS);
 
 	calcularDF();
-
 	free(listaS);
 	free(NdeS);
-	printf("\n\n");
+	
+	if(progCPUp!=NULL)delete progCPUp;
+	if(progCPUs!=NULL)delete progCPUs;
+	if(progGPU!=NULL)delete progGPU;
+	if(progGPU2_0!=NULL)delete progGPU2_0;
+
+	printf("\n");
 }
 
 

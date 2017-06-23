@@ -1,17 +1,18 @@
 #include "stdafx.h"
 #include "shaderCPU_superficie.h"
 
-//creación del programa dependiento de nuestro HW
-shaderCPU_superficie::shaderCPU_superficie(void) : shader(1,"kernel_superficie_CPU.cl")
+//primera implementación con dimension 2d
+shaderCPU_superficie::shaderCPU_superficie(void) : shader(1,"kernel/kernel_superficie_CPU.cl")
 {
 	
 }
 
 //Calcula la sumatoria de n para un tamaño s dado
-void shaderCPU_superficie::CalcularN(unsigned char *img3,float *NdeS, int M, int tamListaS,int *listaS,int particiones){
+void shaderCPU_superficie::CalcularN(unsigned char *img3,float *NdeS, int M, int tamListaS,int *listaS){
 	//éxito en la creación del programa
 	if(ret==0){
 		cl_int ret;
+		int particiones=M/listaS[tamListaS-1];
 //particiones=veces en las que se subdivide M
 		size_t global_item_size = particiones*particiones; // subdivisiones de cada superficie
 		size_t local_item_size = 1; // Grupo de trabajo

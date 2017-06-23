@@ -8,7 +8,7 @@ static bool mostrarGafica=false;//grafica con la pendiente generada por DF
 static bool mostrarTabla=false;//muestra los resultados de D para cualquier s
 static bool mostrarDepuracion=false;//informacion de opencl: sPrima, global size y localside
 static bool mostrarMinMax=false;//calculos resumidos del valo minimo y maximo de un grid para todos los s
-static bool divisoresPares=false;//se ejecuta con los divisores de 128 hasta 2 o con los de 320 hasta 5
+static bool divisoresPares=true;//se ejecuta con los divisores de 128 hasta 2 o con los de 320 hasta 5
 
 
 enum opcion {_C, _CPU_superficie, _CPU_profundidad, _GPU, _GPU2_0};

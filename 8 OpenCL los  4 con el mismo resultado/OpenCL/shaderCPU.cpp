@@ -2,7 +2,7 @@
 #include "shaderCPU.h"
 
 //creación del programa dependiento de nuestro HW
-shaderCPU::shaderCPU() : shader(1,"kernel_profundidad_CPU.cl")
+shaderCPU::shaderCPU() : shader(1,"kernel/kernel_profundidad_CPU.cl")
 {
 	
 }

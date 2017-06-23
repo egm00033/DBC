@@ -5,7 +5,7 @@
 
 	
 //creación del programa dependiento de nuestro HW
-shaderGPU::shaderGPU(void) : shader(2,"kernel_profundidad_GPU.cl")
+shaderGPU::shaderGPU(void) : shader(2,"kernel/GPU_1_0kernel_profundidad.cl")
 {
 }
 

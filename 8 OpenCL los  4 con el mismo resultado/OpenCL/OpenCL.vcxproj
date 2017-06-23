@@ -109,10 +109,10 @@
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="kernel_profundidad_CPU.cl" />
-    <None Include="kernel_profundidad_GPU.cl" />
-    <None Include="kernel_profundidad_GPU2_0.cl" />
-    <None Include="kernel_superficie_CPU.cl" />
+    <None Include="kernel\kernel_profundidad_CPU.cl" />
+    <None Include="kernel\GPU_1_0kernel_profundidad.cl" />
+    <None Include="kernel\GPU_2_0kernel_memoria compartida.cl" />
+    <None Include="kernel\kernel_superficie_CPU.cl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

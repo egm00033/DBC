@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "shaderGPU2_0.h"
-	
+
 //creación del programa dependiento de nuestro HW
-shaderGPU2_0::shaderGPU2_0(void) : shader(2,"kernel_profundidad_GPU2_0.cl")
+shaderGPU2_0::shaderGPU2_0(void) : shader(2,"kernel/GPU_2_0kernel_memoria compartida.cl")
 {
 
 }
@@ -10,28 +10,40 @@ shaderGPU2_0::shaderGPU2_0(void) : shader(2,"kernel_profundidad_GPU2_0.cl")
 //Calcula la sumatoria de n para un tamaño s dado
 void shaderGPU2_0::CalcularN(unsigned char *img3,float *NdeS, int M, int tamListaS,int *listaS){
 	//éxito en la creación del programa
-	
-	
+
+
 	if(ret==0){
 		//cl_int ret;
 		const int LIST_SIZE =M*M;// Lista de elementos de tamaño MxM
-		const int tamS=tamListaS;
+		const int tamgroup=7;//dimension z del cubo
+		int tamGrid=32;//divide el ancho de la matriz
+		int dimensiones=2;
+		int particinesM=M/tamGrid; 
+		int numgroup=pow((double)particinesM,2);//40*40=1600workgroup
+		int totalThread=numgroup*tamgroup;
 
-		size_t global_item_size = tamS; // desde s=2 hasta s=M/2 si % == 0
-		size_t local_item_size = 1; // Grupo de trabajo
-		if(true)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
+		float * salida = (float*) malloc(sizeof(float)*totalThread);//guarda un valor por cada thread
+
+		size_t * global = (size_t*) malloc(sizeof(size_t)*dimensiones);
+		size_t * local = (size_t*) malloc(sizeof(size_t)*dimensiones);
+		size_t local_item_size = tamgroup; // Grupo de trabajo
+
+		for(int i=0;i<dimensiones;i++){
+			global[i] = particinesM*tamgroup;
+			local [i] = 1;
+		}
+		local [0]=tamgroup;
 
 		//crear buffers de memoria en el dispositivo por cada vector
 		cl_mem entrada_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
 			LIST_SIZE * sizeof(char), NULL, &ret);
 		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
-		printf("llega");
 		cl_mem salida_mem_obj = clCreateBuffer(context, CL_MEM_WRITE_ONLY, 
-			tamS * sizeof(float), NULL, &ret);
+			totalThread * sizeof(float), NULL, &ret);
 		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 		cl_mem listaS_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
-			tamS * sizeof(int), NULL, &ret);
+			tamListaS * sizeof(int), NULL, &ret);
 		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 
@@ -45,7 +57,7 @@ void shaderGPU2_0::CalcularN(unsigned char *img3,float *NdeS, int M, int tamList
 		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 		ret = clEnqueueWriteBuffer(command_queue, listaS_mem_obj, CL_TRUE, 0,
-			tamS * sizeof(int), listaS, 0, NULL, NULL);
+			tamListaS * sizeof(int), listaS, 0, NULL, NULL);
 		if(ret!=0)printf("respuesta de la linea %d es %d\n", __LINE__, ret);
 
 		// Establecer argumentos
@@ -63,28 +75,29 @@ void shaderGPU2_0::CalcularN(unsigned char *img3,float *NdeS, int M, int tamList
 
 
 		//limite hardware
-		if(global_item_size>=CL_DEVICE_ADDRESS_BITS){
-			printf("Excedido el numero de global_work_size(%i), debe ser menor que CL_DEVICE_ADDRESS_BITS(%i)\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
-		}else if(local_item_size>=CL_DEVICE_MAX_WORK_GROUP_SIZE){
-			printf("Excedido el numero de local_item_size(%i), debe ser menor que CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",local_item_size,CL_DEVICE_MAX_WORK_GROUP_SIZE);
-			//}else if(LIST_SIZE>=CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE){
-			//printf("limite buffer = %i\n",CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE );
-		}else{
-			ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
-				&global_item_size, &local_item_size, 0, NULL, NULL);
 
-			if(ret==-54){
-				printf("(ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n");
-				printf("local_item_size(%i) < CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",local_item_size,CL_DEVICE_MAX_WORK_GROUP_SIZE);
-				printf("global_work_size(%i) < CL_DEVICE_ADDRESS_BITS(%i)\n",global_item_size,CL_DEVICE_ADDRESS_BITS);
-			}else if(ret!=0)printf("clEnqueueNDRangeKernel=%i\n",ret,ret);
+		ret = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global, local, 0, NULL, NULL);
+
+		if(ret==-54){
+			printf("(ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n");
+			printf("local_item_size(%i) < CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",tamgroup,CL_DEVICE_MAX_WORK_GROUP_SIZE);
+			printf("global_work_size(%i) < CL_DEVICE_ADDRESS_BITS(%i)\n",totalThread,CL_DEVICE_ADDRESS_BITS);
+		}else if(ret!=0){
+			printf("clEnqueueNDRangeKernel=%i\n",ret,ret);
+		}else{
 
 			// Copiar el buffer salida en el vector NdeS
 
-			ret = clEnqueueReadBuffer(command_queue, salida_mem_obj, CL_TRUE, 0, tamS * sizeof(float), NdeS, 0, NULL, NULL);
+			ret = clEnqueueReadBuffer(command_queue, salida_mem_obj, CL_TRUE, 0, totalThread * sizeof(float), salida, 0, NULL, NULL);
 
+
+			for(int i=0; i<totalThread; i++){
+				printf("i=%i, salida=%f\n",i,salida[i]);
+			}
+			for(int i=0; i<tamListaS; i++){
+				NdeS[i]=(float)i;
+			}
 		}
-
 
 
 		ret = clReleaseMemObject(entrada_mem_obj);
@@ -98,4 +111,5 @@ void shaderGPU2_0::CalcularN(unsigned char *img3,float *NdeS, int M, int tamList
 
 shaderGPU2_0::~shaderGPU2_0(void)
 {
+
 }
