@@ -16,11 +16,11 @@ void shaderGPU2_0::CalcularN(unsigned char *img3,float *NdeS, int M, int tamList
 		//cl_int ret;
 		const int LIST_SIZE =M*M;// Lista de elementos de tamaño MxM
 		const int tamgroup=7;//dimension z del cubo
-		int tamGrid=32;//divide el ancho de la matriz
+		int tamGrid=128;//divide el ancho de la matriz
 		int dimensiones=2;
-		int particinesM=M/tamGrid; 
-		int numgroup=pow((double)particinesM,2);//40*40=1600workgroup
-		int totalThread=numgroup*tamgroup;
+		int particinesM=M/tamGrid; //5
+		int numgroup=pow((double)particinesM,2);//5*5=25workgroup
+		int totalThread=numgroup*tamgroup;//5*5*7=175
 
 		float * salida = (float*) malloc(sizeof(float)*totalThread);//guarda un valor por cada thread
 
@@ -28,11 +28,13 @@ void shaderGPU2_0::CalcularN(unsigned char *img3,float *NdeS, int M, int tamList
 		size_t * local = (size_t*) malloc(sizeof(size_t)*dimensiones);
 		size_t local_item_size = tamgroup; // Grupo de trabajo
 
-		for(int i=0;i<dimensiones;i++){
-			global[i] = particinesM*tamgroup;
-			local [i] = 1;
-		}
-		local [0]=tamgroup;
+
+		global[0] = particinesM*tamgroup;
+		global[1] = particinesM;
+		//global[2] = tamgroup;
+		local [0] = tamgroup;
+		local [1] = 1;
+		//local [2] = 1;
 
 		//crear buffers de memoria en el dispositivo por cada vector
 		cl_mem entrada_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 

@@ -1,4 +1,4 @@
-﻿Compilación iniciada a las 23/06/2017 17:30:30.
+﻿Compilación iniciada a las 23/06/2017 19:31:48.
      1>Proyecto "C:\Users\usuario\Desktop\DBC\8 OpenCL los  4 con el mismo resultado\OpenCL\OpenCL.vcxproj" en el nodo 2 (Build destinos).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OpenCL_4_kernels2.0.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt shaderGPU2_0.cpp
@@ -19,4 +19,4 @@
 
 Compilación correcta.
 
-Tiempo transcurrido 00:00:00.45
+Tiempo transcurrido 00:00:00.77
