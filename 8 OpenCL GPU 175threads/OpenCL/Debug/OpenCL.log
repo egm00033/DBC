@@ -1,0 +1,31 @@
+﻿Compilación iniciada a las 26/06/2017 17:02:24.
+     1>Proyecto "C:\Users\usuario\Desktop\DBC\8 OpenCL GPU 175threads\OpenCL\OpenCL.vcxproj" en el nodo 2 (Build destinos).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\OpenCL_GPU_2Dimensiones.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\OpenCL_GPU_2Dimensiones.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt DBC.cpp Util.cpp main.cpp shader.cpp shaderCPU.cpp shaderCPU_superficie.cpp shaderGPU.cpp shaderGPU2_0.cpp
+         Omitiendo... (no se detectaron cambios relevantes)
+         shaderGPU2_0.cpp
+         shaderGPU.cpp
+         shaderCPU_superficie.cpp
+         shaderCPU.cpp
+         shader.cpp
+         main.cpp
+         Util.cpp
+         DBC.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\usuario\Desktop\DBC\8 OpenCL GPU 175threads\Debug\OpenCL_GPU_2Dimensiones.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/lib/x86" OpenCL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\usuario\Desktop\DBC\8 OpenCL GPU 175threads\Debug\OpenCL_GPU_2Dimensiones.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\usuario\Desktop\DBC\8 OpenCL GPU 175threads\Debug\OpenCL_GPU_2Dimensiones.lib" /MACHINE:X86 Debug\DBC.obj
+         Debug\shader.obj
+         Debug\shaderCPU.obj
+         Debug\main.obj
+         Debug\shaderCPU_superficie.obj
+         Debug\shaderGPU.obj
+         Debug\shaderGPU2_0.obj
+         Debug\stdafx.obj
+         Debug\Util.obj
+         OpenCL.vcxproj -> C:\Users\usuario\Desktop\DBC\8 OpenCL GPU 175threads\Debug\OpenCL_GPU_2Dimensiones.exe
+     1>Compilación del proyecto terminada "C:\Users\usuario\Desktop\DBC\8 OpenCL GPU 175threads\OpenCL\OpenCL.vcxproj" (Build destinos).
+
+Compilación correcta.
+
+Tiempo transcurrido 00:00:00.52
