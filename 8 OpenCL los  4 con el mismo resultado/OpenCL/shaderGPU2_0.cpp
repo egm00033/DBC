@@ -92,13 +92,18 @@ void shaderGPU2_0::CalcularN(unsigned char *img3,float *NdeS, int M, int tamList
 
 			ret = clEnqueueReadBuffer(command_queue, salida_mem_obj, CL_TRUE, 0, totalThread * sizeof(float), salida, 0, NULL, NULL);
 
-
-			for(int i=0; i<totalThread; i++){
-				printf("i=%i, salida=%f\n",i,salida[i]);
-			}
+			int pos=0;
 			for(int i=0; i<tamListaS; i++){
-				NdeS[i]=(float)i;
+				
+				NdeS[i]=0;
+				for(int j=0; j<numgroup; j++){
+					//pos=i*numgroup+j;
+					//printf("i=%i, salida=%f\n",pos,salida[pos]);
+					NdeS[i]+=salida[i*numgroup+j];
+				}
+				//printf("----------s=%i, N=%f\n",listaS[i],NdeS[i]);
 			}
+
 		}
 
 
