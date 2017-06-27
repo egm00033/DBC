@@ -16,7 +16,7 @@ void shaderGPU2_1::CalcularN(unsigned char *img3,float *NdeS, int M, int tamList
 		const int LIST_SIZE =M*M;// Lista de elementos de tamaño MxM
 		const int tamgroup=7;//dimension z del cubo
 		int tamGrid=listaS[tamListaS-1];//divide el ancho de la matriz
-		int dimensiones=2;
+		int dimensiones=3;
 		int particinesM=M/tamGrid; //5
 		int numgroup=pow((double)particinesM,2);//5*5=25workgroup
 		int totalThread=numgroup*tamgroup;//5*5*7=175
@@ -28,12 +28,13 @@ void shaderGPU2_1::CalcularN(unsigned char *img3,float *NdeS, int M, int tamList
 		size_t local_item_size = tamgroup; // Grupo de trabajo
 
 
-		global[0] = particinesM*tamgroup;
+		global[0] = particinesM;
 		global[1] = particinesM;
-		//global[2] = tamgroup;
-		local [0] = tamgroup;
-		local [1] = 1;
-		//local [2] = 1;
+		global[2] = tamgroup;
+
+		local [0] = particinesM;
+		local [1] = particinesM;
+		local [2] = tamgroup;
 
 		//crear buffers de memoria en el dispositivo por cada vector
 		cl_mem entrada_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
@@ -77,7 +78,7 @@ void shaderGPU2_1::CalcularN(unsigned char *img3,float *NdeS, int M, int tamList
 
 		//limite hardware
 
-		ret = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global, local, 0, NULL, NULL);
+		ret = clEnqueueNDRangeKernel(command_queue, kernel, dimensiones, NULL, global, local, 0, NULL, NULL);
 
 		if(ret==-54){
 			printf("(ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n");
