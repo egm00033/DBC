@@ -91,6 +91,7 @@
     <ClInclude Include="shaderGPU.h" />
     <ClInclude Include="shaderGPU2_0.h" />
     <ClInclude Include="shaderGPU2_1.h" />
+    <ClInclude Include="shaderGPU2_2.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Util.h" />
@@ -104,6 +105,7 @@
     <ClCompile Include="shaderGPU.cpp" />
     <ClCompile Include="shaderGPU2_0.cpp" />
     <ClCompile Include="shaderGPU2_1.cpp" />
+    <ClCompile Include="shaderGPU2_2.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -111,7 +113,8 @@
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="kernel\GPU_2_1_memoria_compartida.cl" />
+    <None Include="kernel\GPU_2_1_3D.cl" />
+    <None Include="kernel\GPU_2_2_memoria.cl" />
     <None Include="kernel\kernel_profundidad_CPU.cl" />
     <None Include="kernel\GPU_1_0kernel_profundidad.cl" />
     <None Include="kernel\GPU_2_0_2Dimensiones.cl" />

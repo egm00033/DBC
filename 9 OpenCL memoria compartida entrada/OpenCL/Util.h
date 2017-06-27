@@ -11,7 +11,7 @@ static bool mostrarMinMax=false;//calculos resumidos del valo minimo y maximo de
 static bool divisoresPares=true;//se ejecuta con los divisores de 128 hasta 2 o con los de 320 hasta 5
 
 
-enum opcion {_C, _CPU_profundidad, _CPU_superficie, _GPU, _GPU2_0, _GPU2_1};
+enum opcion {_C, _CPU_profundidad, _CPU_superficie, _GPU, _GPU2_0, _GPU2_1, _GPU2_2};
 //static enum opcion miPrograma = _CPU;
 
 /*

@@ -61,6 +61,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	DBC(img3, ancho, niveldeGris, _GPU2_1);
 
+	DBC(img3, ancho, niveldeGris, _GPU2_2);
+
 	system("pause");
 	free(img3);
 	return 0;

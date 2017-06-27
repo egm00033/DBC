@@ -66,6 +66,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	shaderGPU *progGPU=NULL;
 	shaderGPU2_0 *progGPU2_0=NULL;
 	shaderGPU2_1 *progGPU2_1=NULL;
+	shaderGPU2_2 *progGPU2_2=NULL;
 
 	printf("cargando programa %i\n",miPrograma);
 
@@ -130,9 +131,20 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	case _GPU2_1:
 
 		progGPU2_1=new shaderGPU2_1();
-		printf("Ejecutando en GPU2_1 memoria compartida \n");
+		printf("Ejecutando en GPU2_1 3D \n");
 		inicio=clock();
 		progGPU2_1->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
+		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
+		for(int i=0; i < tamListaS; i++){
+			grafica[i].y=log(NdeS[i])/ log( 2.0 );
+		}
+		break;
+		case _GPU2_2:
+
+		progGPU2_2=new shaderGPU2_2();
+		printf("Ejecutando en GPU2_2 memoria compartida \n");
+		inicio=clock();
+		progGPU2_2->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
 		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
@@ -163,7 +175,8 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	if(progCPUs!=NULL)delete progCPUs;
 	if(progGPU!=NULL)delete progGPU;
 	if(progGPU2_0!=NULL)delete progGPU2_0;
-
+	if(progGPU2_1!=NULL)delete progGPU2_1;
+	if(progGPU2_2!=NULL)delete progGPU2_2;
 	printf("\n");
 }
 

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "shaderGPU2_1.h"
 
-shaderGPU2_1::shaderGPU2_1(void) : shader(2,"kernel/GPU_2_1_memoria_compartida.cl")
+shaderGPU2_1::shaderGPU2_1(void) : shader(2,"kernel/GPU_2_1_3D.cl")
 {
 
 }

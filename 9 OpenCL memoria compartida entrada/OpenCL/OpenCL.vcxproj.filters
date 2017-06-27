@@ -48,6 +48,9 @@
     <ClInclude Include="shaderGPU2_1.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="shaderGPU2_2.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -80,12 +83,16 @@
     <ClCompile Include="shaderGPU2_1.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
+    <ClCompile Include="shaderGPU2_2.cpp">
+      <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="kernel\kernel_profundidad_CPU.cl" />
     <None Include="kernel\kernel_superficie_CPU.cl" />
     <None Include="kernel\GPU_1_0kernel_profundidad.cl" />
     <None Include="kernel\GPU_2_0_2Dimensiones.cl" />
-    <None Include="kernel\GPU_2_1_memoria_compartida.cl" />
+    <None Include="kernel\GPU_2_1_3D.cl" />
+    <None Include="kernel\GPU_2_2_memoria.cl" />
   </ItemGroup>
 </Project>

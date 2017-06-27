@@ -1,6 +1,6 @@
 #pragma once
 #include "stdafx.h"
-class shaderGPU2_1 : public shader//mejora shaderGPU con memoria compartida
+class shaderGPU2_1 : public shader//mejora shaderGPU con 3D
 {
 private: 
 

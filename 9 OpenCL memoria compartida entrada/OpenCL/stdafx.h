@@ -33,6 +33,7 @@
 #include "shaderGPU.h"
 #include "shaderGPU2_0.h"
 #include "shaderGPU2_1.h"
+#include "shaderGPU2_2.h"
 
 
 
