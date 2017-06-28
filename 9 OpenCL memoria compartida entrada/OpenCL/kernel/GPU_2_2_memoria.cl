@@ -24,8 +24,29 @@ __kernel void calcularNdesCPU(__global const unsigned char *imagen, __global  fl
 	int s=listaS[capa];
 	int posV=inicio+fila+colum;
 
+	//para copiar a memoria compartida
+	local unsigned char imagenLocal[640*640];
+
+
 	int tabulador=M/get_local_size(0);//numero de filas de la subimagen 640/5=128
 	int posMatriz=0;
+	int row=capa;
+	int col=0;
+	
+	for (int I = tabulador*get_local_id(0)+capa; I < tabulador*get_local_id(0)+tabulador; I+=get_local_size(2))
+	{
+		col=0;
+		for (int J = tabulador*get_local_id(1); J < tabulador*get_local_id(1)+tabulador; J++)
+		{
+			posMatriz=I*M+J;
+			imagenLocal[posMatriz]=imagen[posMatriz];
+			col+=1;
+		}
+		row+=get_local_size(2);
+	}
+
+	
+	barrier( CLK_LOCAL_MEM_FENCE ); 
 
 	int minV,maxV;
 	int inicioMatriz;
@@ -53,6 +74,7 @@ __kernel void calcularNdesCPU(__global const unsigned char *imagen, __global  fl
 	}
 
 	N[posV] = n;
+
 }
 /*//3d sin mememoria
 int inicio=get_local_size(0)*get_local_size(1)*get_local_id(2);

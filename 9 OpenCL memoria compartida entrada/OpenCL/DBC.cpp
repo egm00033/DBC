@@ -154,7 +154,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	case _GPU2_2:
 
 		progGPU2_2=new shaderGPU2_2();
-		printf("Ejecutando en GPU2_2 memoria compartida \n");
+		printf("Ejecutando en GPU2_2 3D memoria compartida \n");
 		inicio=clock();
 		progGPU2_2->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
 		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
