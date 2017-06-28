@@ -55,9 +55,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	DBC(img3, ancho, niveldeGris, _CPU_superficie);
 
-	DBC(img3, ancho, niveldeGris, _GPU);
+	DBC(img3, ancho, niveldeGris, _GPU1);
 
-	DBC(img3, ancho, niveldeGris, _GPU2_0);
+	DBC(img3, ancho, niveldeGris, _GPU2_0_0);
+
+	DBC(img3, ancho, niveldeGris, _GPU2_0_1);
 
 	DBC(img3, ancho, niveldeGris, _GPU2_1);
 

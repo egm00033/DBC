@@ -71,7 +71,9 @@ shader::shader(int plataforma, char * dirName)
 				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_MAX_CLOCK_FREQUENCY, sizeof(buf_uint), &buf_uint, NULL);
 				if(mostrarDepuracion)printf("  DEVICE_MAX_CLOCK_FREQUENCY = %u\n", (unsigned int)buf_uint);
 				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(buf_ulong), &buf_ulong, NULL);
-				if(mostrarDepuracion)printf("  DEVICE_GLOBAL_MEM_SIZE = %llu\n\n", (unsigned long long)buf_ulong);
+				if(mostrarDepuracion)printf("  DEVICE_GLOBAL_MEM_SIZE = %llu\n", (unsigned long long)buf_ulong);
+				clGetDeviceInfo(devices[idDispositivo], CL_DEVICE_LOCAL_MEM_SIZE, sizeof(buf_ulong), &buf_ulong, NULL);
+				if(mostrarDepuracion)printf("  CL_DEVICE_LOCAL_MEM_SIZE = %llu\n\n", (unsigned long long)buf_ulong);
 			}
 
 		}

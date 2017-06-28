@@ -31,9 +31,11 @@
 #include "shaderCPU.h"
 #include "shaderCPU_superficie.h"
 #include "shaderGPU.h"
-#include "shaderGPU2_0.h"
+#include "shaderGPU2_0_0.h"
+#include "shaderGPU2_0_1.h"
 #include "shaderGPU2_1.h"
 #include "shaderGPU2_2.h"
+
 
 
 

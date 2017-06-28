@@ -39,9 +39,6 @@
     <ClInclude Include="shaderCPU_superficie.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="shaderGPU2_0.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="shader.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -49,6 +46,12 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="shaderGPU2_2.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="shaderGPU2_0_1.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="shaderGPU2_0_0.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,9 +77,6 @@
     <ClCompile Include="shaderCPU_superficie.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="shaderGPU2_0.cpp">
-      <Filter>Archivos de código fuente</Filter>
-    </ClCompile>
     <ClCompile Include="shader.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
@@ -86,13 +86,20 @@
     <ClCompile Include="shaderGPU2_2.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
+    <ClCompile Include="shaderGPU2_0_1.cpp">
+      <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
+    <ClCompile Include="shaderGPU2_0_0.cpp">
+      <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="kernel\kernel_profundidad_CPU.cl" />
     <None Include="kernel\kernel_superficie_CPU.cl" />
     <None Include="kernel\GPU_1_0kernel_profundidad.cl" />
-    <None Include="kernel\GPU_2_0_2Dimensiones.cl" />
     <None Include="kernel\GPU_2_1_3D.cl" />
     <None Include="kernel\GPU_2_2_memoria.cl" />
+    <None Include="kernel\GPU_2_0_1-2D_mem_entrada.cl" />
+    <None Include="kernel\GPU_2_0_0-2Dimensiones.cl" />
   </ItemGroup>
 </Project>

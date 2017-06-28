@@ -89,7 +89,8 @@
     <ClInclude Include="shaderCPU.h" />
     <ClInclude Include="shaderCPU_superficie.h" />
     <ClInclude Include="shaderGPU.h" />
-    <ClInclude Include="shaderGPU2_0.h" />
+    <ClInclude Include="shaderGPU2_0_0.h" />
+    <ClInclude Include="shaderGPU2_0_1.h" />
     <ClInclude Include="shaderGPU2_1.h" />
     <ClInclude Include="shaderGPU2_2.h" />
     <ClInclude Include="stdafx.h" />
@@ -103,7 +104,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="shaderCPU_superficie.cpp" />
     <ClCompile Include="shaderGPU.cpp" />
-    <ClCompile Include="shaderGPU2_0.cpp" />
+    <ClCompile Include="shaderGPU2_0_0.cpp" />
+    <ClCompile Include="shaderGPU2_0_1.cpp" />
     <ClCompile Include="shaderGPU2_1.cpp" />
     <ClCompile Include="shaderGPU2_2.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -113,11 +115,12 @@
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="kernel\GPU_2_0_1-2D_mem_entrada.cl" />
     <None Include="kernel\GPU_2_1_3D.cl" />
     <None Include="kernel\GPU_2_2_memoria.cl" />
     <None Include="kernel\kernel_profundidad_CPU.cl" />
     <None Include="kernel\GPU_1_0kernel_profundidad.cl" />
-    <None Include="kernel\GPU_2_0_2Dimensiones.cl" />
+    <None Include="kernel\GPU_2_0_0-2Dimensiones.cl" />
     <None Include="kernel\kernel_superficie_CPU.cl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

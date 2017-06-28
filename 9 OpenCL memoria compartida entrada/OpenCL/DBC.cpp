@@ -64,7 +64,8 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	shaderCPU_superficie *progCPUs=NULL;
 
 	shaderGPU *progGPU=NULL;
-	shaderGPU2_0 *progGPU2_0=NULL;
+	shaderGPU2_0_0 *progGPU2_0_0=NULL;
+	shaderGPU2_0_1 *progGPU2_0_1=NULL;
 	shaderGPU2_1 *progGPU2_1=NULL;
 	shaderGPU2_2 *progGPU2_2=NULL;
 
@@ -106,7 +107,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
 		break;
-	case _GPU:
+	case _GPU1:
 		progGPU=new shaderGPU();
 
 		printf("Ejecutando en GPU \n");
@@ -117,12 +118,23 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
 		break;
-	case _GPU2_0:
+	case _GPU2_0_0:
 
-		progGPU2_0=new shaderGPU2_0();
-		printf("Ejecutando en GPU2_0 2D\n");
+		progGPU2_0_0=new shaderGPU2_0_0();
+		printf("Ejecutando en GPU2_0_0 2D\n");
 		inicio=clock();
-		progGPU2_0->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
+		progGPU2_0_0->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
+		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
+		for(int i=0; i < tamListaS; i++){
+			grafica[i].y=log(NdeS[i])/ log( 2.0 );
+		}
+		break;
+	case _GPU2_0_1:
+
+		progGPU2_0_1=new shaderGPU2_0_1();
+		printf("Ejecutando en GPU2_0_1 2D con memoria compartida en la lectura\n");
+		inicio=clock();
+		progGPU2_0_1->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
 		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
@@ -139,7 +151,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
 		break;
-		case _GPU2_2:
+	case _GPU2_2:
 
 		progGPU2_2=new shaderGPU2_2();
 		printf("Ejecutando en GPU2_2 memoria compartida \n");
@@ -174,7 +186,8 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	if(progCPUp!=NULL)delete progCPUp;
 	if(progCPUs!=NULL)delete progCPUs;
 	if(progGPU!=NULL)delete progGPU;
-	if(progGPU2_0!=NULL)delete progGPU2_0;
+	if(progGPU2_0_0!=NULL)delete progGPU2_0_0;
+	if(progGPU2_0_1!=NULL)delete progGPU2_0_1;
 	if(progGPU2_1!=NULL)delete progGPU2_1;
 	if(progGPU2_2!=NULL)delete progGPU2_2;
 	printf("\n");
