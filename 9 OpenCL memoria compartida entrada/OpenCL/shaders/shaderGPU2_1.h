@@ -1,8 +1,8 @@
 #pragma once
 #include "stdafx.h"
 /**
-@file 
-@brief 
+@file shaderGPU2_1.h
+@brief shader con 3Dimensiones 
 @author Emilio Gallardo Molina
 @date 23/06/2017
 */

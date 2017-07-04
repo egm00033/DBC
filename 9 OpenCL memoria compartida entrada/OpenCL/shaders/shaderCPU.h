@@ -1,8 +1,8 @@
 #pragma once
 #include "stdafx.h"
 /**
-@file 
-@brief 
+@file shaderCPU.h
+@brief shader que ejecuta un hilo por cada s en la CPU
 @author Emilio Gallardo Molina
 @date 06/06/2017
 */

@@ -1,8 +1,8 @@
 #pragma once
 #include "stdafx.h"
 /**
-@file 
-@brief 
+@file shaderGPU.h
+@brief shader sin optimización, un hilo por cada tamaño de s
 @author Emilio Gallardo Molina
 @date 05/06/2017
 */

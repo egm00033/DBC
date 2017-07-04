@@ -1,4 +1,4 @@
-﻿Compilación iniciada a las 04/07/2017 18:51:19.
+﻿Compilación iniciada a las 04/07/2017 19:39:32.
      1>Proyecto "C:\Users\usuario\Desktop\DBC\9 OpenCL memoria compartida entrada\OpenCL\OpenCL.vcxproj" en el nodo 2 (Build destinos).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\OpenCL_Agrupado.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
@@ -30,12 +30,15 @@
          Util.cpp
      1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\util.cpp(15): warning C4018: '<' : no coinciden signed/unsigned
      1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\util.cpp(17): warning C4018: '<' : no coinciden signed/unsigned
-     1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\util.cpp(42): error C3861: 'SaveBMP': no se encontró el identificador
+     1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\util.cpp(10): warning C4101: 'color' : variable local sin referencia
      1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\util.cpp(56): warning C4018: '<' : no coinciden signed/unsigned
      1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\util.cpp(58): warning C4018: '<' : no coinciden signed/unsigned
      1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\util.cpp(67): warning C4244: 'inicializando' : conversión de 'double' a 'int'; posible pérdida de datos
      1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\util.cpp(72): warning C4244: 'inicializando' : conversión de 'float' a 'int'; posible pérdida de datos
-     1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\util.cpp(93): error C3861: 'SaveBMP': no se encontró el identificador
+     1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\util.cpp(108): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
+     1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\util.cpp(168): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : vea la declaración de 'fopen'
          DBC.cpp
      1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\dbc.cpp(86): warning C4244: '=' : conversión de 'double' a 'float'; posible pérdida de datos
      1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\dbc.cpp(97): warning C4244: '=' : conversión de 'double' a 'float'; posible pérdida de datos
@@ -47,8 +50,22 @@
      1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\dbc.cpp(162): warning C4244: '=' : conversión de 'double' a 'float'; posible pérdida de datos
      1>c:\users\usuario\desktop\dbc\9 opencl memoria compartida entrada\opencl\dbc.cpp(175): warning C4244: '=' : conversión de 'double' a 'float'; posible pérdida de datos
          Generando código...
-     1>Compilación del proyecto terminada "C:\Users\usuario\Desktop\DBC\9 OpenCL memoria compartida entrada\OpenCL\OpenCL.vcxproj" (Build destinos) -- ERROR.
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\usuario\Desktop\DBC\9 OpenCL memoria compartida entrada\Debug\OpenCL_Agrupado.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/lib/x86" OpenCL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\usuario\Desktop\DBC\9 OpenCL memoria compartida entrada\Debug\OpenCL_Agrupado.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\usuario\Desktop\DBC\9 OpenCL memoria compartida entrada\Debug\OpenCL_Agrupado.lib" /MACHINE:X86 Debug\DBC.obj
+         Debug\shader.obj
+         Debug\shaderCPU.obj
+         Debug\main.obj
+         Debug\shaderCPU_superficie.obj
+         Debug\shaderGPU.obj
+         Debug\shaderGPU2_0_0.obj
+         Debug\shaderGPU2_0_1.obj
+         Debug\shaderGPU2_1.obj
+         Debug\shaderGPU2_2.obj
+         Debug\stdafx.obj
+         Debug\Util.obj
+         OpenCL.vcxproj -> C:\Users\usuario\Desktop\DBC\9 OpenCL memoria compartida entrada\Debug\OpenCL_Agrupado.exe
+     1>Compilación del proyecto terminada "C:\Users\usuario\Desktop\DBC\9 OpenCL memoria compartida entrada\OpenCL\OpenCL.vcxproj" (Build destinos).
 
-ERROR al compilar.
+Compilación correcta.
 
-Tiempo transcurrido 00:00:00.99
+Tiempo transcurrido 00:00:01.35
