@@ -14,7 +14,7 @@
     <ProjectGuid>{628BEA10-F4FC-48CB-A152-DFA06C392B22}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>OpenCL</RootNamespace>
-    <ProjectName>OpenCL_GPU_memoria</ProjectName>
+    <ProjectName>OpenCL_Agrupado</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -85,29 +85,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DBC.h" />
-    <ClInclude Include="shader.h" />
-    <ClInclude Include="shaderCPU.h" />
-    <ClInclude Include="shaderCPU_superficie.h" />
-    <ClInclude Include="shaderGPU.h" />
-    <ClInclude Include="shaderGPU2_0_0.h" />
-    <ClInclude Include="shaderGPU2_0_1.h" />
-    <ClInclude Include="shaderGPU2_1.h" />
-    <ClInclude Include="shaderGPU2_2.h" />
+    <ClInclude Include="shaders\shader.h" />
+    <ClInclude Include="shaders\shaderCPU.h" />
+    <ClInclude Include="shaders\shaderCPU_superficie.h" />
+    <ClInclude Include="shaders\shaderGPU.h" />
+    <ClInclude Include="shaders\shaderGPU2_0_0.h" />
+    <ClInclude Include="shaders\shaderGPU2_0_1.h" />
+    <ClInclude Include="shaders\shaderGPU2_1.h" />
+    <ClInclude Include="shaders\shaderGPU2_2.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DBC.cpp" />
-    <ClCompile Include="shader.cpp" />
-    <ClCompile Include="shaderCPU.cpp" />
+    <ClCompile Include="shaders\shader.cpp" />
+    <ClCompile Include="shaders\shaderCPU.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="shaderCPU_superficie.cpp" />
-    <ClCompile Include="shaderGPU.cpp" />
-    <ClCompile Include="shaderGPU2_0_0.cpp" />
-    <ClCompile Include="shaderGPU2_0_1.cpp" />
-    <ClCompile Include="shaderGPU2_1.cpp" />
-    <ClCompile Include="shaderGPU2_2.cpp" />
+    <ClCompile Include="shaders\shaderCPU_superficie.cpp" />
+    <ClCompile Include="shaders\shaderGPU.cpp" />
+    <ClCompile Include="shaders\shaderGPU2_0_0.cpp" />
+    <ClCompile Include="shaders\shaderGPU2_0_1.cpp" />
+    <ClCompile Include="shaders\shaderGPU2_1.cpp" />
+    <ClCompile Include="shaders\shaderGPU2_2.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

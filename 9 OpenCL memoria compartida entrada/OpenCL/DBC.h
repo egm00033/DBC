@@ -1,20 +1,11 @@
 #pragma once
 
-//G=nivel de gris(8bpp)
-//M=tamaño de la imagen
-//s=tamaño del grid M>=s>1
-//s'=tamrangoColor=tamaño de cada particion del nivel de gris 
-//k= minimo valor en sxs
-//l= maximo valor en sxs
-//n=l-k+1 en sxs
-//N=Sumatoria n
-//r=s/ancho comparscion de el tamaño total y el grill seleccionado
+/**
+@file DBC.cpp
+@brief Clase Differential Box-Counting encapsula el cálculo de la Dimensión Fractal de una imagen
 
-/*
-*Clase Differential Box-Counting permite calcular la Dimensión Fractal de una imagen
-*
-*
-*
+@author Emilio Gallardo Molina
+@date 24/04/2017
 */
 class DBC
 {
@@ -28,9 +19,30 @@ private:
 	interpretacion *grafica;//array  con todos los resultados necesarios para calcular la Dimensión fractal
 
 public:
-	DBC(unsigned char *img3, int M,int G,enum opcion miPrograma);//constructor
+	/**
+	@brief calcula la dimensión fractal 
+
+	@param array con la imagen cargada en memoria
+	@param ancho de la imagen
+	@param nivel de gris utilizado para la representación del color
+	@param tipo de ejecución
+	*/
+	DBC(unsigned char *img3, int M,int G,enum opcion miPrograma);
+	
+	/**
+	@brief libera la memoria utilizada por la instacia
+	*/
 	~DBC(void);
-	float getDF(){return DF;};//devuelve el valor de la dimensión fractal
+	
+	/**
+	@brief devuelve el valor del dimensión fractal
+	@returns DF
+	*/
+	float getDF(){return DF;};
+	
+	/**
+	@brief realiza todas las operaciones necesarias para realizar el cálculo objetivo.
+	*/
 	void calcularDF();//calcula la regresion lineal de la grafica para hallar la pendiente
 };
 

@@ -1,10 +1,21 @@
-// OpenCL.cpp: define el punto de entrada de la aplicacion de consola.
-//
+/**
+  @file main.cpp
+  @brief define el punto de entrada de la aplicacion de consola. 
 
-
+  @author Emilio Gallardo Molina
+  @date 24/04/2017
+*/
 
 #include "stdafx.h"
 
+/**
+  @brief Carga la imagen en memoria y llama a cada versión u optimización del algoritmo Differential Box Counting.
+
+  @param argc
+  @param argv[]
+
+  @returns EXIT_SUCCESS = 0, EXIT_FAILURE <> 0.
+  */
 int _tmain(int argc, _TCHAR* argv[])
 {
 	unsigned char *img3;
@@ -36,18 +47,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	long int alto=info.height;
 	int niveldeGris=256;
 
-	//ancho=40;//borrar
-	/*if(false){//cambiar imagen por posicion
-		ancho=40;
-		for (int i = 0; i < ancho; i++)
-		{
-			for (int j = 0; j < ancho; j++){
-				img3[i*ancho+j]=200;
-				//printf(" %i\t",imagen[i][j]);
-			}
-			//printf("\n");
-		}
-	}*/
 	//calcular DF
 	DBC(img3, ancho, niveldeGris, _C);
 
@@ -67,6 +66,5 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	system("pause");
 	free(img3);
-	return 0;
 }
 

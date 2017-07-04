@@ -30,28 +30,28 @@
     <ClInclude Include="DBC.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="shaderGPU.h">
+    <ClInclude Include="shaders\shaderGPU2_2.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="shaderCPU.h">
+    <ClInclude Include="shaders\shaderGPU2_1.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="shaderCPU_superficie.h">
+    <ClInclude Include="shaders\shaderGPU2_0_1.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="shader.h">
+    <ClInclude Include="shaders\shaderGPU2_0_0.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="shaderGPU2_1.h">
+    <ClInclude Include="shaders\shaderGPU.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="shaderGPU2_2.h">
+    <ClInclude Include="shaders\shaderCPU_superficie.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="shaderGPU2_0_1.h">
+    <ClInclude Include="shaders\shaderCPU.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="shaderGPU2_0_0.h">
+    <ClInclude Include="shaders\shader.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,28 +68,28 @@
     <ClCompile Include="main.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="shaderGPU.cpp">
+    <ClCompile Include="shaders\shaderGPU2_2.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="shaderCPU.cpp">
+    <ClCompile Include="shaders\shaderGPU2_1.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="shaderCPU_superficie.cpp">
+    <ClCompile Include="shaders\shaderGPU2_0_1.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="shader.cpp">
+    <ClCompile Include="shaders\shaderGPU2_0_0.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="shaderGPU2_1.cpp">
+    <ClCompile Include="shaders\shaderGPU.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="shaderGPU2_2.cpp">
+    <ClCompile Include="shaders\shaderCPU_superficie.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="shaderGPU2_0_1.cpp">
+    <ClCompile Include="shaders\shaderCPU.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
-    <ClCompile Include="shaderGPU2_0_0.cpp">
+    <ClCompile Include="shaders\shader.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
   </ItemGroup>
