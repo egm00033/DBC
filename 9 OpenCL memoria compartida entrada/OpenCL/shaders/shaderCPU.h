@@ -15,6 +15,17 @@ private:
 public:
 	shaderCPU(void);
 	~shaderCPU(void);
+	/**
+	@brief 
+
+	@param 
+	@param
+	@param
+	@param
+	@param
+
+	@return 
+	*/
 	void CalcularN(unsigned char *img3,float *NdeS,int M, int tamListaS,int *listaS);
 };
 
