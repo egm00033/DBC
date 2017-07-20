@@ -10,59 +10,39 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	float N=0;
 	float r=0;
 	anchoMatriz=ancho;
-	//inicializar la entrada de opencl
-	grafica=(interpretacion*) calloc(anchoMatriz/2-1,sizeof(interpretacion));
+	
+	grafica=(interpretacion*) calloc(anchoMatriz/2-1,sizeof(interpretacion));//inicializar la entrada de opencl
 	float *NdeS=(float*) calloc(anchoMatriz/2-1,sizeof(float));
 	int pos=0;
-	//numero de divisores de M/2
+
 	tamListaS=0;
 	int sInicial=2;
 	int *listaS;
-	if(divisoresPares){
-		sInicial=2;
-		for (int s = sInicial; s <= anchoMatriz/2; s*=2)
-		{
-			if(anchoMatriz%s==0)
-				tamListaS+=1;
-		}
-		listaS=(int*) calloc(tamListaS,sizeof(int));
 
-		for (int s = sInicial; s <= anchoMatriz/2; s*=2)
-		{
-			if(anchoMatriz%s==0){
-				listaS[pos]=s;
-				//printf("s=%i\n",s);
-				pos+=1;
-			}
-		}
-	}else{
-		sInicial=5;
-		for (int s = sInicial; s <= anchoMatriz/2; s*=2)
-		{
-			if(anchoMatriz%s==0)
-				tamListaS+=1;
-		}
-		listaS=(int*) calloc(tamListaS,sizeof(int));
+	//solo las potencias de 2 divisoras del ancho de la imagen
+	sInicial=2;
+	for (int s = sInicial; s <= anchoMatriz/2; s*=2)
+	{
+		if(anchoMatriz%s==0)
+			tamListaS+=1;
+	}
+	listaS=(int*) calloc(tamListaS,sizeof(int));
 
-		for (int s = sInicial; s <= anchoMatriz/2; s*=2)
-		{
-			if(anchoMatriz%s==0){
-				listaS[pos]=s;
-				//printf("s=%i\n",s);
-				pos+=1;
-			}
+	for (int s = sInicial; s <= anchoMatriz/2; s*=2)
+	{
+		if(anchoMatriz%s==0){
+			listaS[pos]=s;
+			pos+=1;
 		}
-
 	}
 
 
-	//tiempo
-	clock_t inicio;
+
+	
+	clock_t inicio;//almacena el tiempo de ejecución del algoritmo
 
 	shaderCPU *progCPUp=NULL;
-
 	shaderCPU_superficie *progCPUs=NULL;
-
 	shaderGPU *progGPU=NULL;
 	shaderGPU2_0_0 *progGPU2_0_0=NULL;
 	shaderGPU2_0_1 *progGPU2_0_1=NULL;
@@ -71,6 +51,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 
 	printf("cargando programa %i\n",miPrograma);
 
+	//se ejecuta el programa según el tipo que se desee
 	switch (miPrograma)
 	{
 	case _C:
@@ -196,7 +177,6 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 
 DBC::~DBC(void)
 {
-	
 	free(grafica);
 }
 

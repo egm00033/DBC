@@ -15,7 +15,6 @@ static bool mostrarGafica=false;//grafica con la pendiente generada por DF
 static bool mostrarTabla=false;//muestra los resultados de D para cualquier s
 static bool mostrarDepuracion=false;//informacion de opencl: sPrima, global size y localside
 static bool mostrarMinMax=false;//calculos resumidos del valo minimo y maximo de un grid para todos los s
-static bool divisoresPares=true;//se ejecuta con los divisores de 128 hasta 2 o con los de 320 hasta 5
 
 /**
   @brief enumeracióntipos de shader
@@ -26,10 +25,8 @@ enum opcion {_C, _CPU_profundidad, _CPU_superficie, _GPU1, _GPU2_0_0, _GPU2_0_1,
 @brief guarda el valor 'x' e 'y' de un punto para la representación del cálculo diferencial
 */
 typedef struct interpretacion{
-	//guarda la sumatoria de el valor maximo-minimo+1 para sxs
-	float y; 
-	//guarda la relacion del tamaño de la muestra s/ancho de la imagen
-	float x;
+	float y; //guarda la sumatoria de el valor maximo-minimo+1 para sxs
+	float x; //guarda la relacion del tamaño de la muestra s/ancho de la imagen
 }interpretacion;
 
 /**
@@ -100,7 +97,7 @@ void crearMapaZ(int s,float sPrima, int M,float *n);
 bmpInfoHeader *createInfoHeader(unsigned w, unsigned h, unsigned ppp);
 
 /**
-  @brief calcula el valor N de una imagen dada para un tamaño de grid sxs
+  @brief calcula el valor N de una imagen dada para un tamaño de grid sxs sin utilizar OpenCL
 
   @param imagen cargada en memoria
   @param tamaño de la imagen

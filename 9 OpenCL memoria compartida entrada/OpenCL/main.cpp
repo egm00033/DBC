@@ -23,31 +23,31 @@ int _tmain(int argc, _TCHAR* argv[])
 	printf("Leyendo imagen: %s \n",path);
 	img3=LoadBMP(path, &info);
 
-	int i,j,blanco;
+	int i,j,color;
 
-
+	//Pasar la imagen a escala de grises promediando la intensidad del pixel
 	printf("Imagen size = (%i x %i)\n",info.height,info.width);
 	for (i=0; i<info.height; i++)
 	{
 		for (j=0; j<info.width; j++)
 		{
-			//printf("%i %i %i \n",img3[(i*info.width+j)*3],img3[(i*info.width+j)*3+1],img3[(i*info.width+j)*3+2]);
-			blanco=0;
-			blanco+=img3[(i*info.width+j)*3];
-			blanco+=img3[(i*info.width+j)*3+1];
-			blanco+=img3[(i*info.width+j)*3+2];
-			//printf("blanco %i\n",blanco);
-			blanco=blanco/3;
-			img3[i*info.height+j]=blanco;//dar el mayor contraste = j%2*256
+			color=0;
+			color+=img3[(i*info.width+j)*3];
+			color+=img3[(i*info.width+j)*3+1];
+			color+=img3[(i*info.width+j)*3+2];
+			color=color/3;
+			img3[i*info.height+j]=color;
 		}
 	}
 
 
 	long int ancho=info.width;
 	long int alto=info.height;
-	int niveldeGris=256;
+	
+	int niveldeGris=256;//Intensidad máxima para cada pixel, utilizado dentro del algoritmo para el cálulo de sPrima
 
 	//calcular DF
+	
 	DBC(img3, ancho, niveldeGris, _C);
 
 	DBC(img3, ancho, niveldeGris, _CPU_profundidad);

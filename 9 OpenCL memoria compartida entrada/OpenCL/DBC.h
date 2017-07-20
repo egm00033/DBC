@@ -41,7 +41,7 @@ public:
 	float getDF(){return DF;};
 	
 	/**
-	@brief realiza todas las operaciones necesarias para realizar el cálculo objetivo.
+	@brief realiza todas las operaciones necesarias para realizar el cálculo de la dimensión fractal mediante la recta generada por el método de mínimos cuadrados 
 	*/
 	void calcularDF();//calcula la regresion lineal de la grafica para hallar la pendiente
 };
