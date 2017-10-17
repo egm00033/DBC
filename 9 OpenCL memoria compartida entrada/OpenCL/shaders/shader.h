@@ -24,6 +24,7 @@ protected:
 	cl_device_id devices[100];   //Almacena todos los dispositivos que se pueden utilizar para ejecutar el código
 	cl_uint ret_num_devices; //Numero de dispositivos
 	cl_uint ret_num_platforms; //Numero de plataformas
+	clock_t tEjecucion;//almacena el tiempo de ejecución en el dispositivo
 
 	/**
 	@brief constructor para las clases que hereden de ella
@@ -38,6 +39,6 @@ protected:
 	~shader(void);
 
 public:
-
+	clock_t getTiempoEjecucion(){return tEjecucion;};
 };
 

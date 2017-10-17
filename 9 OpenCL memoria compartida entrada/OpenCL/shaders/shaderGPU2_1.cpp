@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "shaderGPU2_1.h"
 
-shaderGPU2_1::shaderGPU2_1(void) : shader(2,"kernel/GPU_2_1_3D.cl")
+shaderGPU2_1::shaderGPU2_1(void) : shader(0,"kernel/GPU_2_1_3D.cl")
 {
 
 }
@@ -78,7 +78,12 @@ void shaderGPU2_1::CalcularN(unsigned char *img3,float *NdeS, int M, int tamList
 
 		//limite hardware
 
+		
+		tEjecucion = clock();
+
 		ret = clEnqueueNDRangeKernel(command_queue, kernel, dimensiones, NULL, global, local, 0, NULL, NULL);
+
+		tEjecucion = tEjecucion-clock();
 
 		if(ret==-54){
 			printf("(ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n");

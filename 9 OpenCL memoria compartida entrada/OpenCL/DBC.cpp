@@ -10,7 +10,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 	float N=0;
 	float r=0;
 	anchoMatriz=ancho;
-	
+
 	grafica=(interpretacion*) calloc(anchoMatriz/2-1,sizeof(interpretacion));//inicializar la entrada de opencl
 	float *NdeS=(float*) calloc(anchoMatriz/2-1,sizeof(float));
 	int pos=0;
@@ -38,7 +38,7 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 
 
 
-	
+
 	clock_t inicio;//almacena el tiempo de ejecución del algoritmo
 
 	shaderCPU *progCPUp=NULL;
@@ -73,7 +73,8 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		printf("Ejecutando en CPU profundidad\n");
 		inicio=clock();
 		progCPUp->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
-		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
+		printf("Tiempo de ejecucion  clocks=%i \n",progCPUp->getTiempoEjecucion());
+		printf("Tiempo total: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
@@ -83,7 +84,8 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		printf("Ejecutando en CPU por superficie\n");
 		inicio=clock();
 		progCPUs->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
-		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
+		printf("Tiempo de ejecucion  clocks=%i \n",progCPUs->getTiempoEjecucion());
+		printf("Tiempo total: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
@@ -94,7 +96,8 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		printf("Ejecutando en GPU \n");
 		inicio=clock();
 		progGPU->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
-		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
+		printf("Tiempo de ejecucion  clocks=%i \n",progGPU->getTiempoEjecucion());
+		printf("Tiempo total: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
@@ -105,7 +108,8 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		printf("Ejecutando en GPU2_0_0 2D\n");
 		inicio=clock();
 		progGPU2_0_0->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
-		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
+		printf("Tiempo de ejecucion  clocks=%i \n",progGPU2_0_0->getTiempoEjecucion());
+		printf("Tiempo total: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
@@ -116,7 +120,8 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		printf("Ejecutando en GPU2_0_1 2D con memoria compartida en la lectura\n");
 		inicio=clock();
 		progGPU2_0_1->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
-		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
+		printf("Tiempo de ejecucion  clocks=%i \n",progGPU2_0_1->getTiempoEjecucion());
+		printf("Tiempo total: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
@@ -127,7 +132,8 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		printf("Ejecutando en GPU2_1 3D \n");
 		inicio=clock();
 		progGPU2_1->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
-		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
+		printf("Tiempo de ejecucion  clocks=%i \n",progGPU2_1->getTiempoEjecucion());
+		printf("Tiempo total: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}
@@ -138,7 +144,8 @@ DBC::DBC(unsigned char *img3, int ancho,int nivelGris,enum opcion miPrograma)
 		printf("Ejecutando en GPU2_2 3D memoria compartida en la salida \n");
 		inicio=clock();
 		progGPU2_2->CalcularN(img3,NdeS,anchoMatriz,tamListaS,listaS);
-		printf("Tiempo de ejecucion: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
+		printf("Tiempo de ejecucion  clocks=%i \n",progGPU2_2->getTiempoEjecucion());
+		printf("Tiempo total: %f segundos, clocks=%i \n",(clock()-inicio)/(double)CLOCKS_PER_SEC,clock()-inicio);
 		for(int i=0; i < tamListaS; i++){
 			grafica[i].y=log(NdeS[i])/ log( 2.0 );
 		}

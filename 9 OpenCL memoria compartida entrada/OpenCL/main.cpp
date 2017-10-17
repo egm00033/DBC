@@ -45,7 +45,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	long int alto=info.height;
 	
 	int niveldeGris=256;//Intensidad máxima para cada pixel, utilizado dentro del algoritmo para el cálulo de sPrima
-
 	//calcular DF
 	
 	DBC(img3, ancho, niveldeGris, _C);

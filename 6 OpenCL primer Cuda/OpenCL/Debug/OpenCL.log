@@ -1,4 +1,4 @@
-﻿Compilación iniciada a las 07/06/2017 16:49:36.
+﻿Compilación iniciada a las 17/10/2017 13:43:56.
      1>Proyecto "C:\Users\usuario\Desktop\DBC\6 OpenCL primer Cuda\OpenCL\OpenCL.vcxproj" en el nodo 2 (Build destinos).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Program Files (x86)\Intel\OpenCL SDK\6.3\/include" /ZI /nologo /W3 /WX- /sdl- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /U_CRT_SECURE_NO_WARNINGS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\OpenCL_cuda.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
@@ -47,4 +47,4 @@
 
 Compilación correcta.
 
-Tiempo transcurrido 00:00:01.04
+Tiempo transcurrido 00:00:01.10

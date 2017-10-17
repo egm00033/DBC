@@ -3,9 +3,9 @@
 
 
 
-	
+
 //creación del programa dependiento de nuestro HW
-shaderGPU::shaderGPU(void) : shader(2,"kernel/GPU_1_0kernel_profundidad.cl")
+shaderGPU::shaderGPU(void) : shader(0,"kernel/GPU_1_0kernel_profundidad.cl")
 {
 }
 
@@ -20,7 +20,7 @@ void shaderGPU::CalcularN(unsigned char *img3,float *NdeS, int M, int tamListaS,
 		size_t global_item_size = tamS; // desde s=2 hasta s=M/2 si % == 0
 		size_t local_item_size = 1; // Grupo de trabajo
 
-		if(true)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
+		if(false)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
 
 		//crear buffers de memoria en el dispositivo por cada vector
 		cl_mem entrada_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
@@ -71,8 +71,13 @@ void shaderGPU::CalcularN(unsigned char *img3,float *NdeS, int M, int tamListaS,
 			//}else if(LIST_SIZE>=CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE){
 			//printf("limite buffer = %i\n",CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE );
 		}else{
-			ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, 
-				&global_item_size, &local_item_size, 0, NULL, NULL);
+
+
+			tEjecucion = clock();
+
+			ret = clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &global_item_size, &local_item_size, 0, NULL, NULL);
+
+			tEjecucion = tEjecucion-clock();
 
 			if(ret==-54){
 				printf("(ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n");

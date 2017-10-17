@@ -2,7 +2,7 @@
 #include "shaderGPU2_0_0.h"
 
 //creación del programa dependiento de nuestro HW
-shaderGPU2_0_0::shaderGPU2_0_0(void) : shader(2,"kernel/GPU_2_0_0-2Dimensiones.cl")
+shaderGPU2_0_0::shaderGPU2_0_0(void) : shader(0,"kernel/GPU_2_0_0-2Dimensiones.cl")
 {
 
 }
@@ -78,8 +78,12 @@ void shaderGPU2_0_0::CalcularN(unsigned char *img3,float *NdeS, int M, int tamLi
 
 		//limite hardware
 
+		
+		tEjecucion = clock();
+
 		ret = clEnqueueNDRangeKernel(command_queue, kernel, 2, NULL, global, local, 0, NULL, NULL);
 
+		tEjecucion = tEjecucion-clock();
 		if(ret==-54){
 			printf("(ERROR -54)clEnqueueNDRangeKernel=CL_INVALID_WORK_GROUP_SIZE\n");
 			printf("local_item_size(%i) < CL_DEVICE_MAX_WORK_GROUP_SIZE(%i)\n",tamgroup,CL_DEVICE_MAX_WORK_GROUP_SIZE);

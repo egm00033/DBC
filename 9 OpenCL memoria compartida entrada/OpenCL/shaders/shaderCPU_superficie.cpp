@@ -32,7 +32,7 @@ void shaderCPU_superficie::CalcularN(unsigned char *img3,float *NdeS, int M, int
 			vSalida[i]=(-1)*i;
 		}
 
-		if(true)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
+		if(false)printf("global size =%i\t localsize= %i\n",global_item_size,local_item_size);
 
 		//crear buffers de memoria en el dispositivo por cada vector
 		cl_mem entrada_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY, 
@@ -100,8 +100,12 @@ void shaderCPU_superficie::CalcularN(unsigned char *img3,float *NdeS, int M, int
 			for(int i=0;i<tamSalida;i++){
 				vSalida[i]=tamSalida-i;
 			}
+			tEjecucion = clock();
 
 			ret = clEnqueueReadBuffer(command_queue, salida_mem_obj, CL_TRUE, 0, tamSalida*sizeof(float), vSalida, 0, NULL, NULL);
+
+			tEjecucion = tEjecucion-clock();
+			
 
 			//printf("salida copiado\n");
 			for(int i=0;i<tamSalida;i++){
